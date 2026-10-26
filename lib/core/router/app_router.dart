@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/about/presentation/about_screen.dart';
 import '../../features/about/presentation/privacy_screen.dart';
+import '../../features/about/presentation/terms_screen.dart';
 import '../../features/account/presentation/account_screen.dart';
 import '../../features/admin/domain/admin_models.dart';
 import '../../features/admin/presentation/admin_login_screen.dart';
@@ -55,6 +56,7 @@ abstract final class Routes {
   static const vault = '/coffre-fort';
   static const about = '/a-propos';
   static const privacy = '/confidentialite';
+  static const terms = '/conditions';
   static const admin = '/admin';
   static String event(String id) => '/evenement/$id';
   static String budget(String id) => '/evenement/$id/budget';
@@ -105,7 +107,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         return null;
       }
       // La politique de confidentialité reste lisible, connecté ou non.
-      if (loc == Routes.privacy) return null;
+      if (loc == Routes.privacy || loc == Routes.terms) return null;
       final public =
           loc == Routes.onboarding ||
           loc.startsWith(Routes.signIn) ||
@@ -290,6 +292,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: Routes.about,
         parentNavigatorKey: _rootKey,
         builder: (c, s) => _bounded(const AboutScreen()),
+      ),
+      GoRoute(
+        path: Routes.terms,
+        parentNavigatorKey: _rootKey,
+        builder: (c, s) => _bounded(const TermsScreen()),
       ),
       GoRoute(
         path: Routes.privacy,

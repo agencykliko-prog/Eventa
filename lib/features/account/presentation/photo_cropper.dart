@@ -187,7 +187,8 @@ class _CropScreenState extends State<_CropScreen> {
                 children: [
                   if (!_preview) ...[
                     Text(
-                      'Glissez pour cadrer, pincez ou utilisez le curseur pour zoomer.'.tr,
+                      'Glissez pour cadrer, pincez ou utilisez le curseur pour zoomer.'
+                          .tr,
                       textAlign: TextAlign.center,
                       style: context.text.bodySmall?.copyWith(
                         color: Colors.white60,

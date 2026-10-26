@@ -115,11 +115,7 @@ class AccountScreen extends ConsumerWidget {
                 onTap: () => context.push(Routes.business),
                 child: Row(
                   children: [
-                    IconTile(
-                      icon: AppIcons.briefcase,
-                      hue: Hue.gold,
-                      size: 44,
-                    ),
+                    IconTile(icon: AppIcons.briefcase, hue: Hue.gold, size: 44),
                     const SizedBox(width: 14),
                     Expanded(
                       child: Column(
@@ -153,11 +149,7 @@ class AccountScreen extends ConsumerWidget {
                 onTap: () => context.push(Routes.premium),
                 child: Row(
                   children: [
-                    IconTile(
-                      icon: AppIcons.crown,
-                      hue: Hue.gold,
-                      size: 44,
-                    ),
+                    IconTile(icon: AppIcons.crown, hue: Hue.gold, size: 44),
                     const SizedBox(width: 14),
                     Expanded(
                       child: Column(
@@ -173,7 +165,8 @@ class AccountScreen extends ConsumerWidget {
                           ),
                           Text(
                             plan == Plan.free
-                                ? 'IA, coffre-fort, collaboration · dès 2 900 FCFA/mois'.tr
+                                ? 'IA, coffre-fort, collaboration · dès 2 900 FCFA/mois'
+                                      .tr
                                 : '{0} / mois · gérer'.trf([fcfa(plan.price)]),
                             style: context.text.bodySmall?.copyWith(
                               color: Colors.white60,
@@ -286,6 +279,12 @@ class AccountScreen extends ConsumerWidget {
                   () => context.push(Routes.about),
                 ),
                 _Row(
+                  AppIcons.file,
+                  'Conditions générales'.tr,
+                  'Utilisation, paiements, annulations'.tr,
+                  () => context.push(Routes.terms),
+                ),
+                _Row(
                   AppIcons.scroll,
                   'Politique de confidentialité'.tr,
                   'Vos données et vos droits'.tr,
@@ -371,7 +370,11 @@ class AccountScreen extends ConsumerWidget {
       title: 'Confidentialité'.tr,
       items: [
         ('Profil visible des collaborateurs'.tr, 'Nom et photo'.tr, true),
-        ('Partager mes statistiques anonymes'.tr, 'Pour améliorer Eventa'.tr, false),
+        (
+          'Partager mes statistiques anonymes'.tr,
+          'Pour améliorer Eventa'.tr,
+          false,
+        ),
         (
           'Afficher mon numéro aux prestataires'.tr,
           'Après une demande de devis'.tr,
@@ -428,15 +431,18 @@ class AccountScreen extends ConsumerWidget {
         for (final (q, a) in [
           (
             'Mes paiements sont-ils sécurisés ?'.tr,
-            'Les fonds sont conservés jusqu’à la validation de la prestation, puis reversés au prestataire.'.tr,
+            'Les fonds sont conservés jusqu’à la validation de la prestation, puis reversés au prestataire.'
+                .tr,
           ),
           (
             'Puis-je annuler une réservation ?'.tr,
-            'Oui, selon les conditions du devis. L’annulation est gratuite jusqu’à J-30 en général.'.tr,
+            'Oui, selon les conditions du devis. L’annulation est gratuite jusqu’à J-30 en général.'
+                .tr,
           ),
           (
             'Comment inviter un co-organisateur ?'.tr,
-            'Depuis l’événement, touchez l’icône Partager. Deux collaborateurs sont offerts.'.tr,
+            'Depuis l’événement, touchez l’icône Partager. Deux collaborateurs sont offerts.'
+                .tr,
           ),
         ])
           ExpansionTile(
@@ -508,11 +514,7 @@ class _Group extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Icon(
-                      AppIcons.chevron,
-                      size: 15,
-                      color: Confetti.inkFaint,
-                    ),
+                    Icon(AppIcons.chevron, size: 15, color: Confetti.inkFaint),
                   ],
                 ),
               ),
@@ -572,9 +574,7 @@ class _ToggleSheetState extends State<_ToggleSheet> {
               ),
             ),
           const SizedBox(height: 8),
-          FieldLabel(
-            'Les préférences sont enregistrées automatiquement.'.tr,
-          ),
+          FieldLabel('Les préférences sont enregistrées automatiquement.'.tr),
         ],
       ),
     );

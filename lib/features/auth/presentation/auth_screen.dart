@@ -293,10 +293,15 @@ class _SignInFormState extends ConsumerState<_SignInForm> {
             ),
           ),
           const SizedBox(height: 6),
-          PillButton(label: 'Se connecter'.tr, loading: _busy, onPressed: _submit),
+          PillButton(
+            label: 'Se connecter'.tr,
+            loading: _busy,
+            onPressed: _submit,
+          ),
           const SizedBox(height: 10),
           Text(
-            'Démonstration : saisissez n’importe quel identifiant et mot de passe.'.tr,
+            'Démonstration : saisissez n’importe quel identifiant et mot de passe.'
+                .tr,
             textAlign: TextAlign.center,
             style: context.text.bodySmall,
           ),
@@ -477,20 +482,33 @@ class _OrganizerSignUpState extends ConsumerState<_OrganizerSignUp> {
           ),
           const SizedBox(height: 10),
           Text(
-            'En créant un compte, vous acceptez les conditions d’utilisation et la politique de confidentialité.'.tr,
+            'En créant un compte, vous acceptez les conditions d’utilisation et la politique de confidentialité.'
+                .tr,
             textAlign: TextAlign.center,
             style: context.text.bodySmall,
           ),
-          Center(
-            child: TextButton(
-              onPressed: () => context.push(Routes.privacy),
-              child: Text(
-                'Lire la politique de confidentialité'.tr,
-                style: context.text.labelMedium?.copyWith(
-                  color: Confetti.coralDeep,
+          Wrap(
+            alignment: WrapAlignment.center,
+            children: [
+              TextButton(
+                onPressed: () => context.push(Routes.terms),
+                child: Text(
+                  'Conditions générales'.tr,
+                  style: context.text.labelMedium?.copyWith(
+                    color: Confetti.coralDeep,
+                  ),
                 ),
               ),
-            ),
+              TextButton(
+                onPressed: () => context.push(Routes.privacy),
+                child: Text(
+                  'Politique de confidentialité'.tr,
+                  style: context.text.labelMedium?.copyWith(
+                    color: Confetti.coralDeep,
+                  ),
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 8),
           _SwitchLine(
@@ -916,7 +934,9 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
 
   List<Widget> _activity(BuildContext context) => [
     AppField(
-      label: _kind == CreatorKind.agency ? 'Nom de l’agence'.tr : 'Nom commercial'.tr,
+      label: _kind == CreatorKind.agency
+          ? 'Nom de l’agence'.tr
+          : 'Nom commercial'.tr,
       controller: _business,
       validator: Validators.required,
     ),

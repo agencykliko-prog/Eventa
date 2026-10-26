@@ -46,8 +46,10 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen> {
       AppIcons.database,
       bi('2. Les données que nous collectons', '2. The data we collect'),
       [
-        _p('Nous ne collectons que ce qui est utile au service :',
-            'We only collect what the service needs:'),
+        _p(
+          'Nous ne collectons que ce qui est utile au service :',
+          'We only collect what the service needs:',
+        ),
         _ul(
           'Identité et contact : nom, prénom, e-mail, téléphone, ville, photo de profil (facultative).\n'
               'Événements : type, date, lieu, budget, tâches, liste d’invités et réponses (RSVP), documents ajoutés au coffre-fort.\n'
@@ -114,7 +116,10 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen> {
       AppIcons.share,
       bi('5. Partage avec des tiers', '5. Sharing with third parties'),
       [
-        _p('Vos données ne sont partagées qu’avec :', 'Your data is only shared with:'),
+        _p(
+          'Vos données ne sont partagées qu’avec :',
+          'Your data is only shared with:',
+        ),
         _ul(
           'Les prestataires que vous contactez : le nécessaire pour établir un devis (date, lieu, nombre d’invités, budget indicatif) et, après une demande de devis, votre numéro si vous l’autorisez.\n'
               'Les collaborateurs que vous invitez sur un événement, selon leurs droits.\n'
@@ -240,18 +245,16 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen> {
                       ),
                       const SizedBox(height: 6),
                       Text(
-                        bi('Dernière mise à jour : 26 octobre 2026',
-                            'Last updated: 26 October 2026'),
+                        bi(
+                          'Dernière mise à jour : 26 octobre 2026',
+                          'Last updated: 26 October 2026',
+                        ),
                         style: context.text.bodySmall,
                       ),
                     ],
                   ),
                 ),
-                const Mascot(
-                  size: 84,
-                  color: MascotColor.violet,
-                  cover: true,
-                ),
+                const Mascot(size: 84, color: MascotColor.violet, cover: true),
               ],
             ),
             const SizedBox(height: 12),
@@ -285,21 +288,32 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    bi('L’essentiel en 30 secondes', 'The essentials in 30 seconds'),
+                    bi(
+                      'L’essentiel en 30 secondes',
+                      'The essentials in 30 seconds',
+                    ),
                     style: context.text.titleMedium?.copyWith(
                       color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 10),
                   for (final t in [
-                    bi('Nous collectons seulement ce qui sert à organiser vos événements.',
-                        'We only collect what helps organize your events.'),
-                    bi('Nous ne vendons jamais vos données.',
-                        'We never sell your data.'),
-                    bi('Vos paiements et documents sont chiffrés.',
-                        'Your payments and documents are encrypted.'),
-                    bi('Vous pouvez tout consulter, exporter ou supprimer.',
-                        'You can view, export or delete everything.'),
+                    bi(
+                      'Nous collectons seulement ce qui sert à organiser vos événements.',
+                      'We only collect what helps organize your events.',
+                    ),
+                    bi(
+                      'Nous ne vendons jamais vos données.',
+                      'We never sell your data.',
+                    ),
+                    bi(
+                      'Vos paiements et documents sont chiffrés.',
+                      'Your payments and documents are encrypted.',
+                    ),
+                    bi(
+                      'Vous pouvez tout consulter, exporter ou supprimer.',
+                      'You can view, export or delete everything.',
+                    ),
                   ])
                     Padding(
                       padding: const EdgeInsets.only(bottom: 6),
@@ -473,8 +487,10 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen> {
     context.go(Routes.onboarding);
     toast(
       context,
-      bi('Demande de suppression enregistrée (démo)',
-          'Deletion request recorded (demo)'),
+      bi(
+        'Demande de suppression enregistrée (démo)',
+        'Deletion request recorded (demo)',
+      ),
     );
   }
 }

@@ -73,14 +73,22 @@ class AboutScreen extends StatelessWidget {
         Hue.coral,
         MascotColor.orange,
         [
-          bi('Un budget lisible en un coup d’œil, mis à jour à chaque paiement',
-              'A budget you can read at a glance, updated with every payment'),
-          bi('Un rétroplanning prêt selon le type d’événement',
-              'A countdown plan ready for your type of event'),
-          bi('Des prestataires vérifiés, des devis comparables',
-              'Verified vendors and comparable quotes'),
-          bi('Un paiement conservé jusqu’à la validation de la prestation',
-              'Payment held until you approve the service'),
+          bi(
+            'Un budget lisible en un coup d’œil, mis à jour à chaque paiement',
+            'A budget you can read at a glance, updated with every payment',
+          ),
+          bi(
+            'Un rétroplanning prêt selon le type d’événement',
+            'A countdown plan ready for your type of event',
+          ),
+          bi(
+            'Des prestataires vérifiés, des devis comparables',
+            'Verified vendors and comparable quotes',
+          ),
+          bi(
+            'Un paiement conservé jusqu’à la validation de la prestation',
+            'Payment held until you approve the service',
+          ),
         ],
       ),
       (
@@ -88,12 +96,18 @@ class AboutScreen extends StatelessWidget {
         Hue.lagoon,
         MascotColor.lagoon,
         [
-          bi('Une invitation claire, avec réponse en un geste',
-              'A clear invitation, with a one-tap reply'),
-          bi('Lieu, horaires et plan d’accès toujours à jour',
-              'Venue, times and directions always up to date'),
-          bi('Des rappels utiles par WhatsApp, sans application à installer',
-              'Helpful WhatsApp reminders, no app to install'),
+          bi(
+            'Une invitation claire, avec réponse en un geste',
+            'A clear invitation, with a one-tap reply',
+          ),
+          bi(
+            'Lieu, horaires et plan d’accès toujours à jour',
+            'Venue, times and directions always up to date',
+          ),
+          bi(
+            'Des rappels utiles par WhatsApp, sans application à installer',
+            'Helpful WhatsApp reminders, no app to install',
+          ),
         ],
       ),
       (
@@ -101,12 +115,18 @@ class AboutScreen extends StatelessWidget {
         Hue.violet,
         MascotColor.violet,
         [
-          bi('Des demandes de devis qualifiées, avec budget et date',
-              'Qualified quote requests, with budget and date'),
-          bi('Un agenda et des paiements centralisés',
-              'A centralised calendar and payments'),
-          bi('Une vitrine visible des organisateurs qui préparent leur fête',
-              'A storefront seen by organizers planning their party'),
+          bi(
+            'Des demandes de devis qualifiées, avec budget et date',
+            'Qualified quote requests, with budget and date',
+          ),
+          bi(
+            'Un agenda et des paiements centralisés',
+            'A centralised calendar and payments',
+          ),
+          bi(
+            'Une vitrine visible des organisateurs qui préparent leur fête',
+            'A storefront seen by organizers planning their party',
+          ),
         ],
       ),
     ];
@@ -168,8 +188,10 @@ class AboutScreen extends StatelessWidget {
                   const EventaWordmark(size: 26),
                   const SizedBox(height: 6),
                   Text(
-                    bi('Le budget parfait pour célébrer.',
-                        'The perfect budget to celebrate.'),
+                    bi(
+                      'Le budget parfait pour célébrer.',
+                      'The perfect budget to celebrate.',
+                    ),
                     textAlign: TextAlign.center,
                     style: context.text.bodyLarge?.copyWith(
                       color: Confetti.inkMuted,
@@ -226,7 +248,8 @@ class AboutScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
               child: Column(
                 children: [
-                  for (final (i, (icon, hue, title, text)) in values.indexed) ...[
+                  for (final (i, (icon, hue, title, text))
+                      in values.indexed) ...[
                     if (i > 0) const Divider(height: 1),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 14),
@@ -252,7 +275,9 @@ class AboutScreen extends StatelessWidget {
                 ],
               ),
             ),
-            SectionTitle(bi('Ce qu’Eventa vous apporte', 'What Eventa gives you')),
+            SectionTitle(
+              bi('Ce qu’Eventa vous apporte', 'What Eventa gives you'),
+            ),
             for (final (title, hue, mascot, items) in benefits)
               Padding(
                 padding: const EdgeInsets.only(bottom: 12),
@@ -299,12 +324,7 @@ class AboutScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Mascot(
-                        size: 58,
-                        color: mascot,
-                        arms: false,
-                        legs: false,
-                      ),
+                      Mascot(size: 58, color: mascot, arms: false, legs: false),
                     ],
                   ),
                 ),
@@ -331,8 +351,10 @@ class AboutScreen extends StatelessWidget {
                   _ContactRow(
                     icon: AppIcons.message,
                     title: bi('Écrire au support', 'Write to support'),
-                    caption: bi('Réponse sous 24 h ouvrées',
-                        'Reply within 24 business hours'),
+                    caption: bi(
+                      'Réponse sous 24 h ouvrées',
+                      'Reply within 24 business hours',
+                    ),
                     onTap: () => toast(
                       context,
                       'Message envoyé, réponse sous 24 h'.tr,
@@ -343,8 +365,10 @@ class AboutScreen extends StatelessWidget {
                   _ContactRow(
                     icon: AppIcons.whatsapp,
                     title: bi('Assistance WhatsApp', 'WhatsApp support'),
-                    caption: bi('Du lundi au samedi, 8 h – 20 h (GMT)',
-                        'Monday to Saturday, 8 am – 8 pm (GMT)'),
+                    caption: bi(
+                      'Du lundi au samedi, 8 h – 20 h (GMT)',
+                      'Monday to Saturday, 8 am – 8 pm (GMT)',
+                    ),
                     onTap: () => toast(
                       context,
                       bi('Ouverture de WhatsApp…', 'Opening WhatsApp…'),
@@ -353,10 +377,22 @@ class AboutScreen extends StatelessWidget {
                   ),
                   const Divider(height: 1),
                   _ContactRow(
+                    icon: AppIcons.file,
+                    title: bi('Conditions générales', 'Terms and conditions'),
+                    caption: bi(
+                      'Utilisation, paiements, annulations',
+                      'Use, payments, cancellations',
+                    ),
+                    onTap: () => context.push(Routes.terms),
+                  ),
+                  const Divider(height: 1),
+                  _ContactRow(
                     icon: AppIcons.shield,
                     title: bi('Politique de confidentialité', 'Privacy policy'),
-                    caption: bi('Vos données et vos droits',
-                        'Your data and your rights'),
+                    caption: bi(
+                      'Vos données et vos droits',
+                      'Your data and your rights',
+                    ),
                     onTap: () => context.push(Routes.privacy),
                   ),
                 ],

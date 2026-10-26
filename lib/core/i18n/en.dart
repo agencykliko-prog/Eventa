@@ -976,6 +976,8 @@ const en = <String, String>{
   '1 000 000 – 3 000 000 FCFA': '1,000,000 – 3,000,000 FCFA',
   'Plus de 3 000 000 FCFA': 'Over 3,000,000 FCFA',
   'Lire la politique de confidentialité': 'Read the privacy policy',
+  'Conditions générales': 'Terms and conditions',
+  'Utilisation, paiements, annulations': 'Use, payments, cancellations',
 
   // ─── Espace pro (Creator) ──────────────────────────────────────────────
   'Mon espace pro': 'My pro space',
