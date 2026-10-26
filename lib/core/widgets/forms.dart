@@ -1,0 +1,414 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../theme/app_icons.dart';
+import '../theme/app_theme.dart';
+import '../theme/eventa_colors.dart';
+import 'pressable.dart';
+import 'ui.dart';
+
+/// Libellé de champ : petit, au-dessus, aligné à gauche.
+class FieldLabel extends StatelessWidget {
+  const FieldLabel(this.text, {super.key, this.optional = false});
+
+  final String text;
+  final bool optional;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 7, left: 2),
+      child: Text.rich(
+        TextSpan(
+          text: text,
+          children: [
+            if (optional)
+              TextSpan(
+                text: '  facultatif',
+                style: context.text.labelSmall?.copyWith(
+                  color: Confetti.inkFaint,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+          ],
+        ),
+        style: context.text.labelMedium,
+      ),
+    );
+  }
+}
+
+/// Champ texte avec libellé. Gère le mot de passe (afficher/masquer).
+class AppField extends StatefulWidget {
+  const AppField({
+    super.key,
+    required this.label,
+    required this.controller,
+    this.hint,
+    this.keyboard,
+    this.password = false,
+    this.optional = false,
+    this.maxLines = 1,
+    this.prefix,
+    this.suffixText,
+    this.validator,
+    this.formatters,
+    this.autofocus = false,
+    this.textInputAction = TextInputAction.next,
+    this.onChanged,
+  });
+
+  final String label;
+  final TextEditingController controller;
+  final String? hint;
+  final TextInputType? keyboard;
+  final bool password;
+  final bool optional;
+  final int maxLines;
+  final Widget? prefix;
+  final String? suffixText;
+  final String? Function(String?)? validator;
+  final List<TextInputFormatter>? formatters;
+  final bool autofocus;
+  final TextInputAction textInputAction;
+  final ValueChanged<String>? onChanged;
+
+  @override
+  State<AppField> createState() => _AppFieldState();
+}
+
+class _AppFieldState extends State<AppField> {
+  bool _hidden = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        FieldLabel(widget.label, optional: widget.optional),
+        TextFormField(
+          controller: widget.controller,
+          keyboardType: widget.keyboard,
+          obscureText: widget.password && _hidden,
+          maxLines: widget.password ? 1 : widget.maxLines,
+          minLines: widget.maxLines > 1 ? 3 : 1,
+          autofocus: widget.autofocus,
+          inputFormatters: widget.formatters,
+          textInputAction: widget.maxLines > 1
+              ? TextInputAction.newline
+              : widget.textInputAction,
+          validator: widget.validator,
+          onChanged: widget.onChanged,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          style: context.text.bodyLarge,
+          decoration: InputDecoration(
+            hintText: widget.hint,
+            prefixIcon: widget.prefix,
+            suffixText: widget.suffixText,
+            errorStyle: const TextStyle(color: Confetti.danger, fontSize: 12),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(color: Confetti.danger),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(14),
+              borderSide: const BorderSide(color: Confetti.danger, width: 1.4),
+            ),
+            suffixIcon: widget.password
+                ? IconButton(
+                    tooltip: _hidden ? 'Afficher' : 'Masquer',
+                    onPressed: () => setState(() => _hidden = !_hidden),
+                    icon: Icon(
+                      _hidden ? AppIcons.eye : AppIcons.eyeOff,
+                      size: 19,
+                      color: Confetti.inkMuted,
+                    ),
+                  )
+                : null,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Préfixe téléphone ivoirien (+225 par défaut).
+class PhonePrefix extends StatelessWidget {
+  const PhonePrefix({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 14, right: 10),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(2),
+            child: const SizedBox(
+              width: 18,
+              height: 12,
+              child: Row(
+                children: [
+                  Expanded(child: ColoredBox(color: Color(0xFFF77F00))),
+                  Expanded(child: ColoredBox(color: Colors.white)),
+                  Expanded(child: ColoredBox(color: Color(0xFF009E60))),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text('+225', style: context.text.titleSmall),
+          const SizedBox(width: 10),
+          Container(width: 1, height: 20, color: Confetti.line),
+        ],
+      ),
+    );
+  }
+}
+
+/// Menu déroulant homogène : un champ qui ouvre une liste d'options.
+class AppSelect<T> extends StatelessWidget {
+  const AppSelect({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.options,
+    required this.labelOf,
+    required this.onChanged,
+    this.hint = 'Choisir',
+    this.iconOf,
+    this.optional = false,
+  });
+
+  final String label;
+  final T? value;
+  final List<T> options;
+  final String Function(T) labelOf;
+  final IconData Function(T)? iconOf;
+  final ValueChanged<T> onChanged;
+  final String hint;
+  final bool optional;
+
+  Future<void> _open(BuildContext context) async {
+    final picked = await showEventaSheet<T>(
+      context,
+      builder: (ctx) => ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.fromLTRB(12, 12, 12, 16),
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(8, 4, 8, 10),
+            child: Text(label, style: ctx.text.titleLarge),
+          ),
+          for (final o in options)
+            Pressable(
+              scale: 0.98,
+              onTap: () => Navigator.of(ctx).pop(o),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 14,
+                ),
+                decoration: BoxDecoration(
+                  color: o == value
+                      ? Confetti.lavender.withValues(alpha: 0.7)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  children: [
+                    if (iconOf != null) ...[
+                      Icon(iconOf!(o), size: 19, color: Confetti.inkMuted),
+                      const SizedBox(width: 12),
+                    ],
+                    Expanded(
+                      child: Text(labelOf(o), style: ctx.text.titleSmall),
+                    ),
+                    if (o == value)
+                      const Icon(
+                        AppIcons.check,
+                        size: 17,
+                        color: Confetti.coral,
+                      ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+    if (picked != null) onChanged(picked);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final v = value;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        FieldLabel(label, optional: optional),
+        Pressable(
+          scale: 0.99,
+          onTap: () => _open(context),
+          child: Container(
+            height: 54,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: Confetti.line),
+            ),
+            child: Row(
+              children: [
+                if (v != null && iconOf != null) ...[
+                  Icon(iconOf!(v), size: 18, color: Confetti.inkMuted),
+                  const SizedBox(width: 10),
+                ],
+                Expanded(
+                  child: Text(
+                    v == null ? hint : labelOf(v),
+                    style: context.text.bodyLarge?.copyWith(
+                      color: v == null ? Confetti.inkFaint : Confetti.ink,
+                    ),
+                  ),
+                ),
+                const Icon(
+                  AppIcons.chevronDown,
+                  size: 16,
+                  color: Confetti.inkMuted,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Ligne avec case à cocher, et contenu conditionnel révélé quand cochée.
+class CheckRow extends StatelessWidget {
+  const CheckRow({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.onChanged,
+    this.caption,
+    this.revealed,
+  });
+
+  final String label;
+  final String? caption;
+  final bool value;
+  final ValueChanged<bool> onChanged;
+
+  /// Champs supplémentaires affichés seulement si la case est cochée.
+  final Widget? revealed;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: Motion.fast,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: value ? Confetti.ink : Confetti.line,
+          width: value ? 1.3 : 1,
+        ),
+      ),
+      child: Column(
+        children: [
+          Pressable(
+            scale: 0.99,
+            onTap: () => onChanged(!value),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+              child: Row(
+                children: [
+                  AnimatedContainer(
+                    duration: Motion.fast,
+                    width: 20,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: value ? Confetti.ink : Colors.white,
+                      borderRadius: BorderRadius.circular(6),
+                      border: Border.all(
+                        color: value ? Confetti.ink : const Color(0xFFC9C2D8),
+                        width: 1.5,
+                      ),
+                    ),
+                    child: value
+                        ? const Icon(
+                            AppIcons.check,
+                            size: 13,
+                            color: Colors.white,
+                          )
+                        : null,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(label, style: context.text.titleSmall),
+                        if (caption != null)
+                          Text(caption!, style: context.text.bodySmall),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          AnimatedSize(
+            duration: Motion.base,
+            curve: Motion.easeOut,
+            alignment: Alignment.topCenter,
+            child: value && revealed != null
+                ? Padding(
+                    padding: const EdgeInsets.fromLTRB(14, 0, 14, 14),
+                    child: revealed,
+                  )
+                : const SizedBox(width: double.infinity),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Validateurs partagés.
+abstract final class Validators {
+  static String? required(String? v) =>
+      (v == null || v.trim().isEmpty) ? 'Champ obligatoire' : null;
+
+  static String? email(String? v) {
+    if (v == null || v.trim().isEmpty) return 'Champ obligatoire';
+    return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(v.trim())
+        ? null
+        : 'Adresse e-mail invalide';
+  }
+
+  static String? phone(String? v) {
+    final d = (v ?? '').replaceAll(RegExp(r'\D'), '');
+    return d.length == 10 ? null : 'Numéro à 10 chiffres';
+  }
+
+  static String? password(String? v) =>
+      (v ?? '').length >= 8 ? null : '8 caractères minimum';
+}
+
+const ivoryCities = [
+  'Abidjan',
+  'Bouaké',
+  'Yamoussoukro',
+  'San-Pédro',
+  'Daloa',
+  'Korhogo',
+  'Man',
+  'Grand-Bassam',
+  'Assinie',
+  'Autre',
+];

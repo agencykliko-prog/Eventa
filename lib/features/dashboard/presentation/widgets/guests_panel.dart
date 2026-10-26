@@ -1,0 +1,151 @@
+import 'package:flutter/material.dart';
+
+import '../../../../core/theme/app_theme.dart';
+import '../../../../core/theme/app_icons.dart';
+import '../../../../core/theme/eventa_colors.dart';
+import '../../../../core/widgets/ui.dart';
+import '../../../events/domain/models.dart';
+
+class GuestsPanel extends StatelessWidget {
+  const GuestsPanel({super.key, required this.guests, required this.onRemind});
+
+  final Guests guests;
+  final VoidCallback onRemind;
+
+  @override
+  Widget build(BuildContext context) {
+    final g = guests;
+    final total = g.invited == 0 ? 1 : g.invited;
+    return Panel(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text('${g.confirmed}', style: context.text.headlineMedium),
+              const SizedBox(width: 6),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Text(
+                  'confirmés sur ${g.invited}',
+                  style: context.text.titleSmall?.copyWith(
+                    color: context.eventa.muted,
+                  ),
+                ),
+              ),
+              const Spacer(),
+              if (g.todayNew > 0)
+                Tag(
+                  label: "+${g.todayNew} aujourd'hui",
+                  hue: Hue.coral,
+                  icon: AppIcons.trendUp,
+                ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: 1),
+            duration: const Duration(milliseconds: 900),
+            curve: Motion.easeOut,
+            builder: (context, t, _) => ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: SizedBox(
+                height: 12,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Expanded(
+                      flex: (g.confirmed * t * 1000 / total).round() + 1,
+                      child: const ColoredBox(color: Confetti.coral),
+                    ),
+                    const SizedBox(width: 2),
+                    Expanded(
+                      flex: (g.declined * t * 1000 / total).round() + 1,
+                      child: const ColoredBox(color: Confetti.inkMuted),
+                    ),
+                    const SizedBox(width: 2),
+                    Expanded(
+                      flex:
+                          ((g.pending + (1 - t) * (g.confirmed + g.declined)) *
+                                  1000 /
+                                  total)
+                              .round() +
+                          1,
+                      child: const ColoredBox(color: Confetti.lavender),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              _Legend(
+                color: Confetti.coral,
+                label: 'Présents',
+                value: g.confirmed,
+              ),
+              _Legend(
+                color: Confetti.inkMuted,
+                label: 'Absents',
+                value: g.declined,
+              ),
+              _Legend(
+                color: const Color(0xFFCFC9DF),
+                label: 'En attente',
+                value: g.pending,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          PillButton(
+            label: 'Relancer les ${g.pending} en attente',
+            icon: AppIcons.send,
+            tone: ButtonTone.ghost,
+            height: 48,
+            onPressed: g.pending > 0 ? onRemind : null,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Legend extends StatelessWidget {
+  const _Legend({
+    required this.color,
+    required this.label,
+    required this.value,
+  });
+
+  final Color color;
+  final String label;
+  final int value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Row(
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: 6),
+          Text('$value ', style: context.text.titleSmall),
+          Flexible(
+            child: Text(
+              label,
+              overflow: TextOverflow.ellipsis,
+              style: context.text.bodySmall,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

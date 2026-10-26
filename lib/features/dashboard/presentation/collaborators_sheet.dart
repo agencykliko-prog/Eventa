@@ -1,0 +1,384 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../core/theme/app_icons.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/eventa_colors.dart';
+import '../../../core/widgets/avatars.dart';
+import '../../../core/widgets/pressable.dart';
+import '../../../core/widgets/ui.dart';
+import '../../commerce/domain/commerce_models.dart';
+import '../../commerce/presentation/commerce_providers.dart';
+import '../../events/domain/models.dart';
+import '../../events/presentation/events_providers.dart';
+import '../../premium/presentation/paywall.dart';
+
+const freeCollaborators = 2;
+
+Future<void> showCollaboratorsSheet(BuildContext context, String eventId) =>
+    showEventaSheet<void>(
+      context,
+      builder: (_) => _Collaborators(eventId: eventId),
+    );
+
+class _Collaborators extends ConsumerWidget {
+  const _Collaborators({required this.eventId});
+
+  final String eventId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final e = ref.watch(eventProvider(eventId)).value;
+    if (e == null) return const SizedBox();
+    final unlocked = ref.watch(
+      featureUnlockedProvider((PremiumFeature.collaborators, eventId)),
+    );
+    final used = e.collaborators;
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Partager l’événement', style: context.text.headlineSmall),
+          const SizedBox(height: 4),
+          Text(
+            unlocked
+                ? 'Collaborateurs selon votre offre. Chacun a ses propres droits.'
+                : '$freeCollaborators collaborateurs offerts, Premium à partir du 3ᵉ. '
+                      'Chacun a ses propres droits.',
+            style: context.text.bodySmall,
+          ),
+          const SizedBox(height: 14),
+          Row(
+            children: [
+              Expanded(
+                child: Meter(
+                  value: unlocked ? 1 : (used / freeCollaborators).clamp(0, 1),
+                  color: used > freeCollaborators && !unlocked
+                      ? Confetti.coral
+                      : Confetti.candy,
+                  height: 6,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                unlocked
+                    ? '$used invités'
+                    : '$used / $freeCollaborators gratuits',
+                style: context.text.labelMedium,
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          PillButton(
+            label: 'Inviter un collaborateur',
+            icon: AppIcons.userPlus,
+            tone: ButtonTone.dark,
+            onPressed: () {
+              void open() => _invite(context, ref, e);
+              if (used < freeCollaborators) {
+                open();
+              } else {
+                requirePremium(
+                  context,
+                  ref,
+                  feature: PremiumFeature.collaborators,
+                  eventId: eventId,
+                  onUnlocked: open,
+                );
+              }
+            },
+          ),
+          const SizedBox(height: 10),
+          Pressable(
+            onTap: () =>
+                toast(context, 'Lien d’invitation copié', icon: AppIcons.share),
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: Confetti.line),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    AppIcons.share,
+                    size: 18,
+                    color: Confetti.inkMuted,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      'eventa.ci/e/${e.id.substring(0, 8)}',
+                      style: context.text.bodyMedium?.copyWith(
+                        color: Confetti.inkMuted,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    'Copier',
+                    style: context.text.labelMedium?.copyWith(
+                      color: Confetti.coralDeep,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+          for (final m in e.team)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Panel(
+                padding: const EdgeInsets.all(12),
+                onTap: m.role == TeamRole.owner
+                    ? null
+                    : () => _editRights(context, ref, e.id, m),
+                child: Row(
+                  children: [
+                    Avatar(
+                      image: m.avatar,
+                      initials: m.initials,
+                      size: 38,
+                      online: m.online,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(m.name, style: context.text.titleSmall),
+                          Text(
+                            m.pending
+                                ? 'Invitation envoyée'
+                                : _rightsSummary(m),
+                            style: context.text.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Tag(
+                      label: m.role.label,
+                      hue: m.role == TeamRole.owner
+                          ? Hue.candy
+                          : (m.role == TeamRole.admin ? Hue.violet : Hue.ink),
+                    ),
+                    if (m.role != TeamRole.owner) ...[
+                      const SizedBox(width: 6),
+                      const Icon(
+                        AppIcons.chevron,
+                        size: 14,
+                        color: Confetti.inkFaint,
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  String _rightsSummary(TeamMember m) {
+    final p = m.permissions;
+    final on = [
+      if (p.budget) 'budget',
+      if (p.tasks) 'tâches',
+      if (p.vendors) 'prestataires',
+      if (p.guests) 'invités',
+      if (p.payments) 'paiements',
+    ];
+    return on.isEmpty ? 'Lecture seule' : 'Modifie : ${on.join(', ')}';
+  }
+
+  void _invite(BuildContext context, WidgetRef ref, Event e) {
+    final name = TextEditingController();
+    var role = TeamRole.editor;
+    showEventaSheet<void>(
+      context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, set) => Padding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Nouveau collaborateur', style: ctx.text.headlineSmall),
+              const SizedBox(height: 14),
+              TextField(
+                controller: name,
+                autofocus: true,
+                decoration: const InputDecoration(
+                  hintText: 'Nom ou numéro WhatsApp',
+                ),
+              ),
+              const SizedBox(height: 14),
+              Text('Rôle', style: ctx.text.labelMedium),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  for (final r in [
+                    TeamRole.admin,
+                    TeamRole.editor,
+                    TeamRole.viewer,
+                  ]) ...[
+                    if (r != TeamRole.admin) const SizedBox(width: 8),
+                    Expanded(
+                      child: Pressable(
+                        onTap: () => set(() => role = r),
+                        child: AnimatedContainer(
+                          duration: Motion.fast,
+                          height: 44,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            color: role == r ? Confetti.ink : Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                              color: role == r ? Confetti.ink : Confetti.line,
+                            ),
+                          ),
+                          child: Text(
+                            r.label,
+                            style: ctx.text.labelMedium?.copyWith(
+                              color: role == r ? Colors.white : Confetti.ink,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              const SizedBox(height: 6),
+              Text(switch (role) {
+                TeamRole.admin => 'Tous les droits, y compris les paiements.',
+                TeamRole.editor => 'Modifie budget, tâches, prestataires et invités. Pas de paiement.',
+                _ => 'Consulte sans rien modifier.',
+              }, style: ctx.text.bodySmall),
+              const SizedBox(height: 16),
+              PillButton(
+                label: 'Envoyer l’invitation',
+                icon: AppIcons.send,
+                onPressed: () {
+                  final n = name.text.trim().isEmpty
+                      ? 'Invité'
+                      : name.text.trim();
+                  ref
+                      .read(eventsProvider.notifier)
+                      .addMember(
+                        e.id,
+                        TeamMember(
+                          id: 'm-${DateTime.now().microsecondsSinceEpoch}',
+                          name: n,
+                          role: role,
+                          pending: true,
+                          permissions: switch (role) {
+                            TeamRole.admin => Permissions.all,
+                            TeamRole.viewer => Permissions.readOnly,
+                            _ => const Permissions(),
+                          },
+                        ),
+                      );
+                  Navigator.of(ctx).pop();
+                  toast(
+                    context,
+                    'Invitation envoyée à $n',
+                    icon: AppIcons.send,
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _editRights(
+    BuildContext context,
+    WidgetRef ref,
+    String eventId,
+    TeamMember m,
+  ) {
+    showEventaSheet<void>(
+      context,
+      builder: (ctx) => Consumer(
+        builder: (ctx, ref, _) {
+          final e = ref.watch(eventProvider(eventId)).value;
+          final cur = e?.member(m.id);
+          if (cur == null) return const SizedBox();
+          void set(Permissions p) => ref
+              .read(eventsProvider.notifier)
+              .updateMember(
+                eventId,
+                TeamMember(
+                  id: cur.id,
+                  name: cur.name,
+                  role: cur.role,
+                  avatar: cur.avatar,
+                  online: cur.online,
+                  side: cur.side,
+                  pending: cur.pending,
+                  permissions: p,
+                ),
+              );
+          final p = cur.permissions;
+          Widget row(String label, bool v, Permissions Function(bool) f) =>
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    Expanded(child: Text(label, style: ctx.text.titleSmall)),
+                    Switch(value: v, onChanged: (x) => set(f(x))),
+                  ],
+                ),
+              );
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Avatar(image: cur.avatar, initials: cur.initials, size: 44),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(cur.name, style: ctx.text.titleLarge),
+                          Text(cur.role.label, style: ctx.text.bodySmall),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                row('Budget', p.budget, (x) => p.copyWith(budget: x)),
+                row('Tâches', p.tasks, (x) => p.copyWith(tasks: x)),
+                row('Prestataires', p.vendors, (x) => p.copyWith(vendors: x)),
+                row('Invités', p.guests, (x) => p.copyWith(guests: x)),
+                row('Paiements', p.payments, (x) => p.copyWith(payments: x)),
+                const SizedBox(height: 12),
+                PillButton(
+                  label: 'Retirer de l’événement',
+                  tone: ButtonTone.ghost,
+                  icon: AppIcons.trash,
+                  onPressed: () {
+                    ref
+                        .read(eventsProvider.notifier)
+                        .removeMember(eventId, cur.id);
+                    Navigator.of(ctx).pop();
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
