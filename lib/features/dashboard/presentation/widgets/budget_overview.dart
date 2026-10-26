@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../../../core/i18n/tr.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/eventa_colors.dart';
@@ -37,7 +38,7 @@ class BudgetOverview extends StatelessWidget {
           Row(
             children: [
               Text(
-                'Budget total',
+                'Budget total'.tr,
                 style: context.text.labelMedium?.copyWith(
                   color: Confetti.inkMuted,
                 ),
@@ -46,17 +47,17 @@ class BudgetOverview extends StatelessWidget {
               if (onEditTarget != null)
                 Pressable(
                   onTap: onEditTarget,
-                  semanticLabel: 'Modifier le budget total',
+                  semanticLabel: 'Modifier le budget total'.tr,
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         AppIcons.edit,
                         size: 14,
                         color: Confetti.coralDeep,
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        'Modifier',
+                        'Modifier'.tr,
                         style: context.text.labelMedium?.copyWith(
                           color: Confetti.coralDeep,
                         ),
@@ -81,7 +82,7 @@ class BudgetOverview extends StatelessWidget {
                 ),
                 children: [
                   TextSpan(
-                    text: ' FCFA',
+                    text: ' FCFA'.tr,
                     style: context.text.titleMedium?.copyWith(
                       color: Confetti.inkMuted,
                     ),
@@ -95,11 +96,11 @@ class BudgetOverview extends StatelessWidget {
           const SizedBox(height: 14),
           Row(
             children: [
-              _Figure(color: c.deep, label: 'Dépensé', value: event.paid),
-              _Figure(color: c.base, label: 'Engagé', value: event.committed),
+              _Figure(color: c.deep, label: 'Dépensé'.tr, value: event.paid),
+              _Figure(color: c.base, label: 'Engagé'.tr, value: event.committed),
               _Figure(
-                color: over ? Confetti.danger : const Color(0xFFD9D4E4),
-                label: over ? 'Dépassement' : 'Disponible',
+                color: over ? Confetti.danger : Confetti.border,
+                label: over ? 'Dépassement'.tr : 'Disponible'.tr,
                 value: event.available.abs(),
                 strong: true,
               ),
@@ -186,7 +187,7 @@ class BudgetBar extends StatelessWidget {
               height: height,
               child: Stack(
                 children: [
-                  const Positioned.fill(
+                  Positioned.fill(
                     child: ColoredBox(color: Confetti.lavender),
                   ),
                   Positioned(

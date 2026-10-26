@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/eventa_colors.dart';
@@ -62,8 +63,7 @@ class _Paywall extends ConsumerWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'Disponible dès l’abonnement ${plan.label}. Sans engagement, '
-            'résiliable à tout moment.',
+            'Disponible dès l’abonnement {0}. Sans engagement, résiliable à tout moment.'.trf([plan.label]),
             style: context.text.bodyMedium?.copyWith(color: Colors.white70),
           ),
           const SizedBox(height: 20),
@@ -72,7 +72,7 @@ class _Paywall extends ConsumerWidget {
               padding: const EdgeInsets.only(bottom: 10),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     AppIcons.checkCircle,
                     size: 18,
                     color: Confetti.gold,
@@ -80,7 +80,7 @@ class _Paywall extends ConsumerWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      f,
+                      f.tr,
                       style: context.text.bodyMedium?.copyWith(
                         color: Colors.white,
                       ),
@@ -91,23 +91,23 @@ class _Paywall extends ConsumerWidget {
             ),
           const SizedBox(height: 12),
           PillButton(
-            label: 'Passer à ${plan.label} · ${fcfa(plan.price)}/mois',
+            label: 'Passer à {0} · {1}/mois'.trf([plan.label, fcfa(plan.price)]),
             tone: ButtonTone.gold,
             onPressed: () async {
               final r = await showPaymentSheet(
                 context,
-                title: 'Abonnement ${plan.label}',
-                payee: 'Eventa',
-                options: [PayOption('Mensuel', plan.price)],
+                title: 'Abonnement {0}'.trf([plan.label]),
+                payee: 'Eventa'.tr,
+                options: [PayOption('Mensuel'.tr, plan.price)],
                 onPay: (amount, method) {
                   ref.read(planProvider.notifier).subscribe(plan);
                   return Receipt(
                     ref: receiptRef(),
-                    label: 'Abonnement ${plan.label}',
+                    label: 'Abonnement {0}'.trf([plan.label]),
                     amount: amount,
                     method: method,
                     date: DateTime.now(),
-                    payee: 'Eventa',
+                    payee: 'Eventa'.tr,
                   );
                 },
               );
@@ -122,7 +122,7 @@ class _Paywall extends ConsumerWidget {
                 context.push(Routes.premium);
               },
               child: Text(
-                'Comparer les offres et les packs',
+                'Comparer les offres et les packs'.tr,
                 style: context.text.labelMedium?.copyWith(
                   color: Colors.white70,
                 ),

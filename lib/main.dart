@@ -7,5 +7,6 @@ import 'app.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await initializeDateFormatting('fr_FR');
+  await initializeDateFormatting('en_US');
   runApp(const ProviderScope(child: EventaApp()));
 }

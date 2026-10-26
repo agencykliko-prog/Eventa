@@ -2,16 +2,23 @@
 
 **Le budget parfait pour célébrer.**
 
-Application d'organisation d'événements (Côte d'Ivoire, FCFA) : budget, planification des tâches, marketplace de prestataires, réservations, paiements et coordination d'équipe. Deux profils : **Organisateur** et **Creator** (prestataires, agences).
+Application d'organisation d'événements (Côte d'Ivoire, FCFA) : budget, planification des tâches, marketplace de prestataires, réservations, paiements et coordination d'équipe. Trois espaces : **Organisateur**, **Creator** (prestataires, agences) et **centre de contrôle** de l'équipe Eventa.
 
 > Version de démonstration : données fictives locales, connexion simulée, paiements et agent IA simulés. Aucun backend n'est encore branché (Supabase prévu).
 
 ## Fonctionnalités
 
-- **Organisateur** : accueil (événement à venir, budget, échéances, actions prioritaires), dashboard par événement, budget éditable avec répartition et export CSV, agenda Jour / Semaine / Mois, marketplace avec filtres et demande de devis, réservation en 7 étapes, coffre-fort et agent IA (Premium), collaborateurs avec droits.
-- **Creator** : tableau de bord (chiffre d'affaires, demandes à traiter, prestations), boîte des demandes de devis, agenda, profil public, offre Business / Creator et Publicité Premium.
+- **Organisateur** : accueil avec la mascotte, dashboard par événement, budget éditable avec répartition et export CSV, agenda Jour / Semaine / Mois, marketplace avec filtres et demande de devis, réservation en 7 étapes, coffre-fort et agent IA (Premium), collaborateurs avec droits, suggestions Premium contextuelles.
+- **Creator – espace pro** (`/pro/...`) : profil et catalogue (forfaits, options, conditions de vente), disponibilités (dates bloquées, capacité, anti-double réservation), devis détaillés avec questions au client, suivi des commandes jusqu'à la clôture, revenus et reversements (relevés CSV), réputation et performance.
+- **Centre de contrôle** (`/admin`) : vue d'ensemble temps réel et 10 modules (comptes, vérification des prestataires, catalogue, réservations et litiges, paiements, modèle économique, marketing, service client, analytics, rôles et sécurité avec journal d'audit).
+- Mascotte animée (connexion, accueil, compte, agenda, chargements), mode sombre, français / anglais, effets sonores.
+- Pages À propos et Politique de confidentialité (brouillon à valider par un juriste).
 - Inscription et connexion pour les deux profils, photo de profil avec recadrage.
 - Interface responsive : barre d'onglets sur mobile, rail latéral sur tablette et ordinateur.
+
+## Tester sur mobile
+
+Après `flutter build web --release`, servir `build/web` sur le réseau local (port 8080), puis scanner les QR codes générés à la racine du dossier projet (`eventa_qr_demo.html`).
 
 ## Stack
 

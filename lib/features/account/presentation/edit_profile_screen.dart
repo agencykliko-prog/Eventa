@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/eventa_colors.dart';
 import '../../../core/widgets/forms.dart';
@@ -27,7 +28,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
   late final _phone = TextEditingController(
     text: p.phone.replaceFirst('+225 ', ''),
   );
-  late String? _city = ivoryCities.contains(p.city) ? p.city : 'Autre';
+  late String? _city = ivoryCities.contains(p.city) ? p.city : 'Autre'.tr;
   late final _display = TextEditingController(
     text: p.creator?.displayName ?? '',
   );
@@ -80,7 +81,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
           ),
         );
     context.pop();
-    toast(context, 'Profil mis à jour');
+    toast(context, 'Profil mis à jour'.tr);
   }
 
   @override
@@ -105,12 +106,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
-                          'Modifier le profil',
+                          'Modifier le profil'.tr,
                           style: context.text.titleLarge,
                         ),
                       ),
                       PillButton(
-                        label: 'Enregistrer',
+                        label: 'Enregistrer'.tr,
                         tone: ButtonTone.dark,
                         expand: false,
                         height: 40,
@@ -131,22 +132,22 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  const _Section('Informations personnelles'),
+                  _Section('Informations personnelles'.tr),
                   AppField(
-                    label: 'Nom et prénom',
+                    label: 'Nom et prénom'.tr,
                     controller: _name,
                     validator: Validators.required,
                   ),
                   const SizedBox(height: 14),
                   AppField(
-                    label: 'Adresse e-mail',
+                    label: 'Adresse e-mail'.tr,
                     controller: _email,
                     keyboard: TextInputType.emailAddress,
                     validator: Validators.email,
                   ),
                   const SizedBox(height: 14),
                   AppField(
-                    label: 'Téléphone',
+                    label: 'Téléphone'.tr,
                     controller: _phone,
                     keyboard: TextInputType.phone,
                     prefix: const PhonePrefix(),
@@ -158,7 +159,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   ),
                   const SizedBox(height: 14),
                   AppSelect<String>(
-                    label: 'Ville de résidence',
+                    label: 'Ville de résidence'.tr,
                     value: _city,
                     options: ivoryCities,
                     labelOf: (c) => c,
@@ -166,37 +167,37 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   ),
                   if (p.creator != null) ...[
                     const SizedBox(height: 28),
-                    const _Section('Profil public'),
+                    _Section('Profil public'.tr),
                     AppField(
-                      label: 'Nom affiché sur la plateforme',
+                      label: 'Nom affiché sur la plateforme'.tr,
                       controller: _display,
                       validator: Validators.required,
                     ),
                     const SizedBox(height: 14),
                     AppField(
-                      label: 'Tarif de départ',
+                      label: 'Tarif de départ'.tr,
                       controller: _price,
                       keyboard: TextInputType.number,
-                      suffixText: 'FCFA',
+                      suffixText: 'FCFA'.tr,
                       formatters: [FilteringTextInputFormatter.digitsOnly],
                       validator: Validators.required,
                     ),
                     const SizedBox(height: 14),
                     AppField(
-                      label: 'Description de votre activité',
+                      label: 'Description de votre activité'.tr,
                       controller: _desc,
                       maxLines: 4,
                       validator: Validators.required,
                     ),
                     const SizedBox(height: 14),
                     AppField(
-                      label: 'Adresse professionnelle',
+                      label: 'Adresse professionnelle'.tr,
                       controller: _address,
                       validator: Validators.required,
                     ),
                     const SizedBox(height: 14),
                     AppField(
-                      label: 'Site web',
+                      label: 'Site web'.tr,
                       controller: _website,
                       optional: true,
                       prefix: const Icon(AppIcons.globe, size: 18),

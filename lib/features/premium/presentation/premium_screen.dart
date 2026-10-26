@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
@@ -27,21 +28,21 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
     amount: amount,
     method: m,
     date: DateTime.now(),
-    payee: 'Eventa',
+    payee: 'Eventa'.tr,
   );
 
   Future<void> _subscribe(Plan p) async {
     final r = await showPaymentSheet(
       context,
-      title: 'Abonnement ${p.label}',
-      payee: 'Eventa',
-      options: [PayOption('Mensuel', p.price)],
+      title: 'Abonnement {0}'.trf([p.label]),
+      payee: 'Eventa'.tr,
+      options: [PayOption('Mensuel'.tr, p.price)],
       onPay: (amount, m) {
         ref.read(planProvider.notifier).subscribe(p);
-        return _receipt('Abonnement ${p.label}', amount, m);
+        return _receipt('Abonnement {0}'.trf([p.label]), amount, m);
       },
     );
-    if (r != null && mounted) toast(context, 'Bienvenue dans ${p.label}');
+    if (r != null && mounted) toast(context, 'Bienvenue dans {0}'.trf([p.label]));
   }
 
   @override
@@ -66,7 +67,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                       onTap: () => context.pop(),
                     ),
                     const Spacer(),
-                    const PremiumBadge(label: 'Eventa Premium', onDark: true),
+                    PremiumBadge(label: 'Eventa Premium'.tr, onDark: true),
                   ],
                 ),
               ),
@@ -78,15 +79,14 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Organisez comme\nun professionnel.',
+                      'Organisez comme\nun professionnel.'.tr,
                       style: context.text.displaySmall?.copyWith(
                         color: Colors.white,
                       ),
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      'IA, coffre-fort, collaboration illimitée. Sans engagement, '
-                      'résiliable à tout moment.',
+                      'IA, coffre-fort, collaboration illimitée. Sans engagement, résiliable à tout moment.'.tr,
                       style: context.text.bodyLarge?.copyWith(
                         color: Colors.white70,
                       ),
@@ -176,14 +176,14 @@ class _PlanCard extends StatelessWidget {
                 plan.label.toUpperCase(),
                 style: context.text.labelMedium?.copyWith(
                   letterSpacing: 1.2,
-                  color: highlight ? Confetti.ink : Colors.white,
+                  color: highlight ? Confetti.inkFixed : Colors.white,
                 ),
               ),
               const Spacer(),
               if (highlight && !current)
-                const Tag(label: 'Le plus choisi', hue: Hue.coral, solid: true),
+                Tag(label: 'Le plus choisi'.tr, hue: Hue.coral, solid: true),
               if (current)
-                const Tag(label: 'Votre offre', hue: Hue.lagoon, solid: true),
+                Tag(label: 'Votre offre'.tr, hue: Hue.lagoon, solid: true),
             ],
           ),
           const SizedBox(height: 14),
@@ -191,13 +191,13 @@ class _PlanCard extends StatelessWidget {
             TextSpan(
               text: fcfa(plan.price).replaceAll(' FCFA', ''),
               style: context.text.headlineMedium?.copyWith(
-                color: highlight ? Confetti.ink : Colors.white,
+                color: highlight ? Confetti.inkFixed : Colors.white,
               ),
               children: [
                 TextSpan(
-                  text: '  FCFA / mois',
+                  text: '  FCFA / mois'.tr,
                   style: context.text.bodySmall?.copyWith(
-                    color: highlight ? Confetti.inkMuted : Colors.white60,
+                    color: highlight ? const Color(0xFF645A7C) : Colors.white60,
                   ),
                 ),
               ],
@@ -217,10 +217,10 @@ class _PlanCard extends StatelessWidget {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      f,
+                      f.tr,
                       style: context.text.bodyMedium?.copyWith(
                         color: highlight
-                            ? Confetti.ink
+                            ? Confetti.inkFixed
                             : Colors.white.withValues(alpha: 0.88),
                       ),
                     ),
@@ -230,7 +230,7 @@ class _PlanCard extends StatelessWidget {
             ),
           const SizedBox(height: 10),
           PillButton(
-            label: current ? 'Offre active' : 'Choisir ${plan.label}',
+            label: current ? 'Offre active'.tr : 'Choisir {0}'.trf([plan.label]),
             tone: highlight ? ButtonTone.primary : ButtonTone.light,
             height: 48,
             onPressed: onTap,

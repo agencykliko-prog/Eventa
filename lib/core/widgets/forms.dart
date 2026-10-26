@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../core/i18n/tr.dart';
 import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/eventa_colors.dart';
@@ -105,18 +106,18 @@ class _AppFieldState extends State<AppField> {
             hintText: widget.hint,
             prefixIcon: widget.prefix,
             suffixText: widget.suffixText,
-            errorStyle: const TextStyle(color: Confetti.danger, fontSize: 12),
+            errorStyle: TextStyle(color: Confetti.danger, fontSize: 12),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: Confetti.danger),
+              borderSide: BorderSide(color: Confetti.danger),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: const BorderSide(color: Confetti.danger, width: 1.4),
+              borderSide: BorderSide(color: Confetti.danger, width: 1.4),
             ),
             suffixIcon: widget.password
                 ? IconButton(
-                    tooltip: _hidden ? 'Afficher' : 'Masquer',
+                    tooltip: _hidden ? 'Afficher'.tr : 'Masquer'.tr,
                     onPressed: () => setState(() => _hidden = !_hidden),
                     icon: Icon(
                       _hidden ? AppIcons.eye : AppIcons.eyeOff,
@@ -226,7 +227,7 @@ class AppSelect<T> extends StatelessWidget {
                       child: Text(labelOf(o), style: ctx.text.titleSmall),
                     ),
                     if (o == value)
-                      const Icon(
+                      Icon(
                         AppIcons.check,
                         size: 17,
                         color: Confetti.coral,
@@ -255,7 +256,7 @@ class AppSelect<T> extends StatelessWidget {
             height: 54,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Confetti.surface,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(color: Confetti.line),
             ),
@@ -273,7 +274,7 @@ class AppSelect<T> extends StatelessWidget {
                     ),
                   ),
                 ),
-                const Icon(
+                Icon(
                   AppIcons.chevronDown,
                   size: 16,
                   color: Confetti.inkMuted,
@@ -311,7 +312,7 @@ class CheckRow extends StatelessWidget {
     return AnimatedContainer(
       duration: Motion.fast,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Confetti.surface,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
           color: value ? Confetti.ink : Confetti.line,
@@ -332,10 +333,10 @@ class CheckRow extends StatelessWidget {
                     width: 20,
                     height: 20,
                     decoration: BoxDecoration(
-                      color: value ? Confetti.ink : Colors.white,
+                      color: value ? Confetti.ink : Confetti.surface,
                       borderRadius: BorderRadius.circular(6),
                       border: Border.all(
-                        color: value ? Confetti.ink : const Color(0xFFC9C2D8),
+                        color: value ? Confetti.ink : Confetti.border,
                         width: 1.5,
                       ),
                     ),
@@ -382,22 +383,22 @@ class CheckRow extends StatelessWidget {
 /// Validateurs partagés.
 abstract final class Validators {
   static String? required(String? v) =>
-      (v == null || v.trim().isEmpty) ? 'Champ obligatoire' : null;
+      (v == null || v.trim().isEmpty) ? 'Champ obligatoire'.tr : null;
 
   static String? email(String? v) {
-    if (v == null || v.trim().isEmpty) return 'Champ obligatoire';
+    if (v == null || v.trim().isEmpty) return 'Champ obligatoire'.tr;
     return RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(v.trim())
         ? null
-        : 'Adresse e-mail invalide';
+        : 'Adresse e-mail invalide'.tr;
   }
 
   static String? phone(String? v) {
     final d = (v ?? '').replaceAll(RegExp(r'\D'), '');
-    return d.length == 10 ? null : 'Numéro à 10 chiffres';
+    return d.length == 10 ? null : 'Numéro à 10 chiffres'.tr;
   }
 
   static String? password(String? v) =>
-      (v ?? '').length >= 8 ? null : '8 caractères minimum';
+      (v ?? '').length >= 8 ? null : '8 caractères minimum'.tr;
 }
 
 const ivoryCities = [

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/eventa_colors.dart';
@@ -13,6 +14,7 @@ import '../../commerce/presentation/commerce_providers.dart';
 import '../../commerce/presentation/payment_sheet.dart';
 import '../../events/presentation/events_providers.dart';
 import '../../premium/presentation/paywall.dart';
+import '../../premium/presentation/premium_nudge.dart';
 
 /// Parcours de réservation en 7 étapes, sur un seul écran : chaque étape
 /// affiche son contenu et une seule action principale.
@@ -40,22 +42,22 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
   Future<void> _pay(Booking b, {required bool balance}) async {
     final q = b.quote!;
     final options = balance
-        ? [PayOption('Solde', b.balance)]
+        ? [PayOption('Solde'.tr, b.balance)]
         : [
-            PayOption('Acompte 30 %', q.deposit, caption: 'Solde à J-7'),
-            PayOption('Montant total', q.total, caption: 'En une fois'),
+            PayOption('Acompte 30 %'.tr, q.deposit, caption: 'Solde à J-7'.tr),
+            PayOption('Montant total'.tr, q.total, caption: 'En une fois'.tr),
           ];
     final r = await showPaymentSheet(
       context,
       title: balance
-          ? 'Solde ${b.vendor.name}'
-          : 'Réservation ${b.vendor.name}',
+          ? 'Solde {0}'.trf([b.vendor.name])
+          : 'Réservation {0}'.trf([b.vendor.name]),
       payee: b.vendor.name,
       options: options,
       onPay: (amount, m) => _n.pay(b.id, amount, m),
     );
     if (r != null && mounted) {
-      toast(context, 'Paiement confirmé · reçu ${r.ref}');
+      toast(context, 'Paiement confirmé · reçu {0}'.trf([r.ref]));
     }
   }
 
@@ -65,7 +67,7 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
     if (b == null) {
       return Scaffold(
         appBar: AppBar(),
-        body: const Center(child: Text('Réservation introuvable')),
+        body: Center(child: Text('Réservation introuvable'.tr)),
       );
     }
     final event = ref.watch(eventProvider(b.eventId)).value;
@@ -142,7 +144,7 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
             ),
             if (b.receipts.isNotEmpty) ...[
               const SizedBox(height: 26),
-              Text('Reçus', style: context.text.titleLarge),
+              Text('Reçus'.tr, style: context.text.titleLarge),
               const SizedBox(height: 10),
               for (final r in b.receipts)
                 Padding(
@@ -158,7 +160,7 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                     ),
                     child: Row(
                       children: [
-                        const IconTile(
+                        IconTile(
                           icon: AppIcons.receipt,
                           hue: Hue.lagoon,
                           size: 36,
@@ -184,7 +186,7 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
             ],
             if (b.step.index >= BookingStep.requested.index) ...[
               const SizedBox(height: 26),
-              Text('Échanges', style: context.text.titleLarge),
+              Text('Échanges'.tr, style: context.text.titleLarge),
               const SizedBox(height: 10),
               _Thread(messages: b.messages),
               const SizedBox(height: 10),
@@ -193,8 +195,8 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                   Expanded(
                     child: TextField(
                       controller: _composer,
-                      decoration: const InputDecoration(
-                        hintText: 'Écrire au prestataire…',
+                      decoration: InputDecoration(
+                        hintText: 'Écrire au prestataire…'.tr,
                         contentPadding: EdgeInsets.symmetric(
                           horizontal: 16,
                           vertical: 13,
@@ -251,12 +253,12 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                     width: 22,
                     height: 22,
                     decoration: BoxDecoration(
-                      color: _accepted ? Confetti.ink : Colors.white,
+                      color: _accepted ? Confetti.ink : Confetti.surface,
                       borderRadius: BorderRadius.circular(7),
                       border: Border.all(
                         color: _accepted
                             ? Confetti.ink
-                            : const Color(0xFFCBC5DA),
+                            : Confetti.border,
                         width: 1.6,
                       ),
                     ),
@@ -271,7 +273,7 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      'J’accepte les conditions du devis et la politique d’annulation.',
+                      'J’accepte les conditions du devis et la politique d’annulation.'.tr,
                       style: context.text.bodySmall?.copyWith(
                         color: Confetti.ink,
                       ),
@@ -282,21 +284,27 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
             ),
             const SizedBox(height: 14),
             PillButton(
-              label: 'Accepter et réserver',
+              label: 'Accepter et réserver'.tr,
               icon: AppIcons.calendarCheck,
               onPressed: _accepted
                   ? () {
                       _n.accept(b.id);
                       toast(
                         context,
-                        'Date bloquée le ${mediumDate(b.request.date)}',
+                        'Date bloquée le {0}'.trf([mediumDate(b.request.date)]),
+                      );
+                      maybeShowPremiumNudge(
+                        context,
+                        ref,
+                        PremiumNudge.booking,
+                        delay: const Duration(milliseconds: 1600),
                       );
                     }
                   : null,
             ),
             const SizedBox(height: 10),
             PillButton(
-              label: 'Négocier avec l’agent IA',
+              label: 'Négocier avec l’agent IA'.tr,
               icon: AppIcons.sparkle,
               tone: ButtonTone.ghost,
               onPressed: () => requirePremium(
@@ -308,7 +316,7 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                   final saved = _n.negotiate(b.id);
                   toast(
                     context,
-                    'Remise obtenue : ${fcfa(saved)}',
+                    'Remise obtenue : {0}'.trf([fcfa(saved)]),
                     icon: AppIcons.sparkle,
                   );
                 },
@@ -323,16 +331,15 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
             _InfoCard(
               icon: AppIcons.calendarCheck,
               hue: Hue.violet,
-              title: 'Date bloquée',
+              title: 'Date bloquée'.tr,
               text:
-                  '${b.vendor.name} réserve le ${longDate(b.request.date)} pour vous. '
-                  'Réglez l’acompte pour confirmer définitivement.',
+                  '{0} réserve le {1} pour vous. Réglez l’acompte pour confirmer définitivement.'.trf([b.vendor.name, longDate(b.request.date)]),
             ),
             const SizedBox(height: 12),
             _QuoteCard(quote: b.quote!, compact: true),
             const SizedBox(height: 14),
             PillButton(
-              label: 'Payer en toute sécurité',
+              label: 'Payer en toute sécurité'.tr,
               icon: AppIcons.lock,
               onPressed: () => _pay(b, balance: false),
             ),
@@ -347,13 +354,12 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
             _InfoCard(
               icon: AppIcons.checkCircle,
               hue: Hue.lagoon,
-              title: 'Réservation confirmée',
+              title: 'Réservation confirmée'.tr,
               text:
-                  'Payé ${fcfa(b.paidAmount)} sur ${fcfa(b.quote!.total)}. '
-                  '${b.balance > 0 ? 'Reste ${fcfa(b.balance)} à régler avant J-7.' : 'Tout est réglé.'}',
+                  'Payé {0} sur {1}. {2}'.trf([fcfa(b.paidAmount), fcfa(b.quote!.total), b.balance > 0 ? 'Reste {0} à régler avant J-7.'.trf([fcfa(b.balance)]) : 'Tout est réglé.'.tr]),
             ),
             const SizedBox(height: 16),
-            Text('Suivi', style: context.text.titleLarge),
+            Text('Suivi'.tr, style: context.text.titleLarge),
             const SizedBox(height: 10),
             Panel(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -361,24 +367,24 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                 children: [
                   _FollowRow(
                     icon: AppIcons.reminder,
-                    title: 'Rappel solde',
+                    title: 'Rappel solde'.tr,
                     caption: days > 7
-                        ? 'Dans ${days - 7} jours (J-7)'
-                        : 'À régler maintenant',
+                        ? 'Dans {0} jours (J-7)'.trf([days - 7])
+                        : 'À régler maintenant'.tr,
                     done: b.balance <= 0,
                   ),
                   const Divider(height: 1),
                   _FollowRow(
                     icon: AppIcons.message,
-                    title: 'Brief final avec le prestataire',
-                    caption: days > 14 ? 'Programmé à J-14' : 'Cette semaine',
+                    title: 'Brief final avec le prestataire'.tr,
+                    caption: days > 14 ? 'Programmé à J-14'.tr : 'Cette semaine'.tr,
                     done: false,
                   ),
                   const Divider(height: 1),
                   _FollowRow(
                     icon: AppIcons.bell,
-                    title: 'Notifications',
-                    caption: 'Arrivée et installation le jour J',
+                    title: 'Notifications'.tr,
+                    caption: 'Arrivée et installation le jour J'.tr,
                     done: false,
                   ),
                 ],
@@ -387,20 +393,20 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
             const SizedBox(height: 14),
             if (b.balance > 0)
               PillButton(
-                label: 'Payer le solde · ${fcfa(b.balance)}',
+                label: 'Payer le solde · {0}'.trf([fcfa(b.balance)]),
                 icon: AppIcons.lock,
                 onPressed: () => _pay(b, balance: true),
               )
             else
               PillButton(
-                label: 'Valider la prestation et clôturer',
+                label: 'Valider la prestation et clôturer'.tr,
                 icon: AppIcons.checkCircle,
                 tone: ButtonTone.dark,
                 onPressed: () {
                   _n.close(b.id);
                   toast(
                     context,
-                    'Reversement envoyé à ${b.vendor.name}',
+                    'Reversement envoyé à {0}'.trf([b.vendor.name]),
                     icon: AppIcons.bank,
                   );
                 },
@@ -414,10 +420,9 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
             _InfoCard(
               icon: AppIcons.bank,
               hue: Hue.lagoon,
-              title: 'Prestataire payé',
+              title: 'Prestataire payé'.tr,
               text:
-                  'Reversement automatique de ${fcfa(b.quote!.subtotal)} effectué à ${b.vendor.name} '
-                  'après votre validation.',
+                  'Reversement automatique de {0} effectué à {1} après votre validation.'.trf([fcfa(b.quote!.subtotal), b.vendor.name]),
             ),
             const SizedBox(height: 14),
             Panel(
@@ -425,8 +430,8 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                 children: [
                   Text(
                     b.rating == null
-                        ? 'Comment s’est passée la prestation ?'
-                        : 'Merci pour votre avis !',
+                        ? 'Comment s’est passée la prestation ?'.tr
+                        : 'Merci pour votre avis !'.tr,
                     style: context.text.titleMedium,
                   ),
                   const SizedBox(height: 12),
@@ -455,7 +460,7 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
             ),
             const SizedBox(height: 14),
             PillButton(
-              label: b.archived ? 'Dossier archivé' : 'Archiver le dossier',
+              label: b.archived ? 'Dossier archivé'.tr : 'Archiver le dossier'.tr,
               icon: AppIcons.archive,
               tone: ButtonTone.ghost,
               onPressed: b.archived
@@ -464,7 +469,7 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                       _n.archive(b.id);
                       toast(
                         context,
-                        'Dossier archivé dans le coffre-fort',
+                        'Dossier archivé dans le coffre-fort'.tr,
                         icon: AppIcons.archive,
                       );
                     },
@@ -491,7 +496,7 @@ class _StepTrack extends StatelessWidget {
           Row(
             children: [
               Text(
-                'Étape ${i + 1} sur 7',
+                'Étape {0} sur 7'.trf([i + 1]),
                 style: context.text.labelSmall?.copyWith(
                   color: context.eventa.muted,
                 ),
@@ -587,17 +592,17 @@ class _WaitingState extends State<_Waiting>
         children: [
           RotationTransition(
             turns: CurvedAnimation(parent: _c, curve: Motion.easeInOut),
-            child: const IconTile(
+            child: IconTile(
               icon: AppIcons.hourglass,
               hue: Hue.violet,
               size: 56,
             ),
           ),
           const SizedBox(height: 14),
-          Text('Demande envoyée', style: context.text.titleLarge),
+          Text('Demande envoyée'.tr, style: context.text.titleLarge),
           const SizedBox(height: 4),
           Text(
-            '${widget.vendor} prépare votre devis. Réponse moyenne en ${widget.responseTime}.',
+            '{0} prépare votre devis. Réponse moyenne en {1}.'.trf([widget.vendor, widget.responseTime]),
             textAlign: TextAlign.center,
             style: context.text.bodySmall,
           ),
@@ -654,11 +659,11 @@ class _QuoteCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const IconTile(icon: AppIcons.file, hue: Hue.mango, size: 36),
+              IconTile(icon: AppIcons.file, hue: Hue.mango, size: 36),
               const SizedBox(width: 10),
-              Expanded(child: Text('Devis', style: context.text.titleLarge)),
+              Expanded(child: Text('Devis'.tr, style: context.text.titleLarge)),
               Tag(
-                label: 'Valable jusqu’au ${shortDate(q.validUntil)}',
+                label: 'Valable jusqu’au {0}'.trf([shortDate(q.validUntil)]),
                 hue: Hue.mango,
               ),
             ],
@@ -666,15 +671,15 @@ class _QuoteCard extends StatelessWidget {
           const SizedBox(height: 12),
           if (!compact) ...[
             for (final l in q.lines)
-              row(l.optional ? 'Option · ${l.label}' : l.label, l.amount),
-            row('Frais de service', q.fees, muted: true),
+              row(l.optional ? 'Option · {0}'.trf([l.label]) : l.label, l.amount),
+            row('Frais de service'.tr, q.fees, muted: true),
             const Divider(height: 18),
           ],
-          row('Total', q.total, strong: true),
-          row('Acompte (30 %)', q.deposit, muted: true),
+          row('Total'.tr, q.total, strong: true),
+          row('Acompte (30 %)'.tr, q.deposit, muted: true),
           if (!compact) ...[
             const SizedBox(height: 12),
-            Text('Conditions', style: context.text.labelMedium),
+            Text('Conditions'.tr, style: context.text.labelMedium),
             const SizedBox(height: 6),
             for (final c in q.conditions)
               Padding(
@@ -682,7 +687,7 @@ class _QuoteCard extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.only(top: 2),
                       child: Icon(
                         AppIcons.check,
@@ -782,7 +787,7 @@ class _FollowRow extends StatelessWidget {
             ),
           ),
           if (done)
-            const Icon(AppIcons.checkCircle, size: 18, color: Confetti.lagoon),
+            Icon(AppIcons.checkCircle, size: 18, color: Confetti.lagoon),
         ],
       ),
     );
@@ -806,7 +811,7 @@ class _Thread extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               constraints: const BoxConstraints(maxWidth: 290),
               decoration: BoxDecoration(
-                color: m.fromMe ? Confetti.ink : Colors.white,
+                color: m.fromMe ? Confetti.ink : Confetti.surface,
                 border: m.fromMe ? null : Border.all(color: Confetti.line),
                 borderRadius: BorderRadius.only(
                   topLeft: const Radius.circular(18),
@@ -821,7 +826,7 @@ class _Thread extends StatelessWidget {
                   Text(
                     m.text,
                     style: context.text.bodyMedium?.copyWith(
-                      color: m.fromMe ? Colors.white : Confetti.ink,
+                      color: m.fromMe ? Confetti.onInk : Confetti.ink,
                     ),
                   ),
                   const SizedBox(height: 3),

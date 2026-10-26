@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/eventa_colors.dart';
 import '../../../core/widgets/ui.dart';
@@ -16,64 +17,64 @@ class _Notifications extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final creator = ref.watch(profileProvider).isCreator;
     final items = creator
-        ? const [
+        ? [
             (
               AppIcons.inbox,
               Hue.mango,
-              'Nouvelle demande de devis',
-              'Awa Traoré · Mariage du 7 déc.',
-              'il y a 35 min',
+              'Nouvelle demande de devis'.tr,
+              'Awa Traoré · Mariage du 7 déc.'.tr,
+              'il y a 35 min'.tr,
             ),
             (
               AppIcons.checkCircle,
               Hue.lagoon,
-              'Prestation confirmée',
-              'Baby shower de Mariam · acompte reçu',
+              'Prestation confirmée'.tr,
+              'Baby shower de Mariam · acompte reçu'.tr,
               'hier',
             ),
             (
               AppIcons.star,
               Hue.violet,
-              'Nouvel avis 5 étoiles',
-              'Fondation Lumière',
-              'il y a 3 j',
+              'Nouvel avis 5 étoiles'.tr,
+              'Fondation Lumière'.tr,
+              'il y a 3 j'.tr,
             ),
           ]
-        : const [
+        : [
             (
               AppIcons.file,
               Hue.mango,
-              'Devis reçu',
-              'Studio Lumière · valable 7 jours',
-              'il y a 1 h',
+              'Devis reçu'.tr,
+              'Studio Lumière · valable 7 jours'.tr,
+              'il y a 1 h'.tr,
             ),
             (
               AppIcons.coins,
               Hue.lagoon,
-              'Paiement à venir',
-              'Solde Lagune Sound demain',
-              'il y a 3 h',
+              'Paiement à venir'.tr,
+              'Solde Lagune Sound demain'.tr,
+              'il y a 3 h'.tr,
             ),
             (
               AppIcons.guests,
               Hue.coral,
-              '+8 réponses RSVP',
-              'Mariage Awa & Kouassi',
-              'aujourd’hui',
+              '+8 réponses RSVP'.tr,
+              'Mariage Awa & Kouassi'.tr,
+              'aujourd’hui'.tr,
             ),
             (
               AppIcons.reminder,
               Hue.violet,
-              'Rappel',
-              'Valider le menu de dégustation à 11:00',
-              'aujourd’hui',
+              'Rappel'.tr,
+              'Valider le menu de dégustation à 11:00'.tr,
+              'aujourd’hui'.tr,
             ),
           ];
     return ListView(
       shrinkWrap: true,
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
       children: [
-        Text('Notifications', style: context.text.headlineSmall),
+        Text('Notifications'.tr, style: context.text.headlineSmall),
         const SizedBox(height: 12),
         for (final (i, (icon, hue, title, caption, ago)) in items.indexed) ...[
           if (i > 0) const Divider(height: 1),

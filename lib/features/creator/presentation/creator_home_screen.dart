@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/entrance.dart';
+import '../../../core/widgets/mascot.dart';
 import '../../../core/widgets/ui.dart';
 import '../../auth/presentation/session_provider.dart';
+import '../../home/presentation/greeting_hero.dart';
 import '../../home/presentation/home_screen.dart';
+import '../../pro/presentation/pro_hub.dart';
+import '../../pro/presentation/pro_providers.dart';
 import 'creator_providers.dart';
 import 'requests_screen.dart';
 
@@ -37,9 +42,17 @@ class CreatorHomeScreen extends ConsumerWidget {
           padding: const EdgeInsets.only(bottom: 120),
           physics: const BouncingScrollPhysics(),
           children: [
-            const HomeHeader(subtitle: 'Espace Creator'),
+            GreetingHero(
+              header: HomeHeader(subtitle: 'Espace Creator'.tr),
+              question: 'Prêt à faire briller de belles fêtes ?'.tr,
+              colors: const (
+                MascotColor.mango,
+                MascotColor.violet,
+                MascotColor.lagoon,
+              ),
+            ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
               child: Entrance(
                 child: Panel(
                   padding: const EdgeInsets.fromLTRB(20, 18, 20, 18),
@@ -47,7 +60,7 @@ class CreatorHomeScreen extends ConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Chiffre d’affaires confirmé',
+                        'Chiffre d’affaires confirmé'.tr,
                         style: context.text.labelMedium?.copyWith(
                           color: Confetti.inkMuted,
                         ),
@@ -65,14 +78,21 @@ class CreatorHomeScreen extends ConsumerWidget {
                       Row(
                         children: [
                           _Kpi(
-                            label: 'Nouvelles demandes',
+                            label: 'Nouvelles demandes'.tr,
                             value: '${pending.length}',
                           ),
                           _Kpi(
-                            label: 'Confirmées',
+                            label: 'Confirmées'.tr,
                             value: '${confirmed.length}',
                           ),
-                          const _Kpi(label: 'Note', value: '4,8'),
+                          _Kpi(
+                            label: 'Note'.tr,
+                            value: ref
+                                .watch(proProvider)
+                                .rating
+                                .toStringAsFixed(1)
+                                .replaceAll('.', ','),
+                          ),
                         ],
                       ),
                     ],
@@ -80,9 +100,14 @@ class CreatorHomeScreen extends ConsumerWidget {
                 ),
               ),
             ),
+            SectionTitle('Mon espace pro'.tr),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: ProHub(),
+            ),
             SectionTitle(
-              'Demandes à traiter',
-              action: 'Tout voir',
+              'Demandes à traiter'.tr,
+              action: 'Tout voir'.tr,
               onAction: () => context.go(Routes.requests),
             ),
             Padding(
@@ -90,7 +115,7 @@ class CreatorHomeScreen extends ConsumerWidget {
               child: pending.isEmpty
                   ? Panel(
                       child: Text(
-                        'Aucune demande en attente. Bravo !',
+                        'Aucune demande en attente. Bravo !'.tr,
                         style: context.text.bodyMedium,
                       ),
                     )
@@ -105,8 +130,8 @@ class CreatorHomeScreen extends ConsumerWidget {
                     ),
             ),
             SectionTitle(
-              'Prochaines prestations',
-              action: 'Agenda',
+              'Prochaines prestations'.tr,
+              action: 'Agenda'.tr,
               onAction: () => context.go(Routes.planning),
             ),
             Padding(
@@ -161,7 +186,10 @@ class CreatorHomeScreen extends ConsumerWidget {
                                     style: context.text.titleSmall,
                                   ),
                                   Text(
-                                    '${r.client} · ${r.guests} invités',
+                                    '{0} · {1} invités'.trf([
+                                      r.client,
+                                      r.guests,
+                                    ]),
                                     style: context.text.bodySmall,
                                   ),
                                 ],
@@ -181,8 +209,8 @@ class CreatorHomeScreen extends ConsumerWidget {
             ),
             if (c != null) ...[
               SectionTitle(
-                'Mon profil public',
-                action: 'Modifier',
+                'Mon profil public'.tr,
+                action: 'Modifier'.tr,
                 onAction: () => context.push(Routes.editProfile),
               ),
               Padding(
@@ -221,7 +249,7 @@ class CreatorHomeScreen extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                'à partir de',
+                                'à partir de'.tr,
                                 style: context.text.labelSmall?.copyWith(
                                   color: Confetti.inkFaint,
                                 ),
@@ -263,24 +291,21 @@ class CreatorHomeScreen extends ConsumerWidget {
                 onTap: () => context.push(Routes.business),
                 child: Row(
                   children: [
-                    const IconTile(
-                      icon: AppIcons.megaphone,
-                      hue: Hue.gold,
-                      size: 42,
-                    ),
+                    IconTile(icon: AppIcons.megaphone, hue: Hue.gold, size: 42),
                     const SizedBox(width: 14),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Gagnez en visibilité',
+                            'Gagnez en visibilité'.tr,
                             style: context.text.titleMedium?.copyWith(
                               color: Colors.white,
                             ),
                           ),
                           Text(
-                            'Publicité Premium et offre Business dès 29 900 FCFA/mois',
+                            'Publicité Premium et offre Business dès 29 900 FCFA/mois'
+                                .tr,
                             style: context.text.bodySmall?.copyWith(
                               color: Colors.white60,
                             ),

@@ -2,7 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/about/presentation/about_screen.dart';
+import '../../features/about/presentation/privacy_screen.dart';
 import '../../features/account/presentation/account_screen.dart';
+import '../../features/admin/domain/admin_models.dart';
+import '../../features/admin/presentation/admin_login_screen.dart';
+import '../../features/admin/presentation/admin_providers.dart';
+import '../../features/admin/presentation/admin_shell.dart';
 import '../../features/account/presentation/edit_profile_screen.dart';
 import '../../features/agent/presentation/agent_screen.dart';
 import '../../features/auth/domain/profile.dart';
@@ -22,9 +28,16 @@ import '../../features/marketplace/presentation/vendor_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/planning/presentation/planning_screen.dart';
 import '../../features/premium/presentation/business_screen.dart';
+import '../../features/pro/presentation/availability_screen.dart';
+import '../../features/pro/presentation/orders_screen.dart';
+import '../../features/pro/presentation/profile_catalog_screen.dart';
+import '../../features/pro/presentation/reputation_screen.dart';
+import '../../features/pro/presentation/request_detail_screen.dart';
+import '../../features/pro/presentation/revenue_screen.dart';
 import '../../features/premium/presentation/premium_screen.dart';
 import '../../features/tasks/presentation/tasks_screen.dart';
 import '../../features/vault/presentation/vault_screen.dart';
+import '../theme/eventa_colors.dart';
 
 abstract final class Routes {
   static const onboarding = '/bienvenue';
@@ -40,6 +53,9 @@ abstract final class Routes {
   static const premium = '/premium';
   static const business = '/business';
   static const vault = '/coffre-fort';
+  static const about = '/a-propos';
+  static const privacy = '/confidentialite';
+  static const admin = '/admin';
   static String event(String id) => '/evenement/$id';
   static String budget(String id) => '/evenement/$id/budget';
   static String tasks(String id) => '/evenement/$id/taches';
@@ -54,7 +70,7 @@ final _rootKey = GlobalKey<NavigatorState>();
 
 /// Pages hors navigation principale : largeur de lecture bornée sur grand écran.
 Widget _bounded(Widget child) => ColoredBox(
-  color: const Color(0xFFF7F5F2),
+  color: Confetti.cream,
   child: Center(
     child: ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 760),
@@ -67,13 +83,29 @@ final routerProvider = Provider<GoRouter>((ref) {
   final session = ValueNotifier<UserProfile?>(ref.read(sessionProvider));
   ref.listen(sessionProvider, (_, next) => session.value = next);
   ref.onDispose(session.dispose);
+  final adminSession = ValueNotifier<AdminMember?>(
+    ref.read(adminSessionProvider),
+  );
+  ref.listen(adminSessionProvider, (_, next) => adminSession.value = next);
+  ref.onDispose(adminSession.dispose);
 
   return GoRouter(
     navigatorKey: _rootKey,
     initialLocation: Routes.onboarding,
-    refreshListenable: session,
+    refreshListenable: Listenable.merge([session, adminSession]),
     redirect: (context, state) {
       final loc = state.matchedLocation;
+      // Centre de contrôle : session d'équipe distincte des comptes clients.
+      if (loc == Routes.admin || loc.startsWith('${Routes.admin}/')) {
+        final member = adminSession.value;
+        if (member == null && loc != Routes.admin) return Routes.admin;
+        if (member != null && loc == Routes.admin) {
+          return adminPath(AdminModule.overview);
+        }
+        return null;
+      }
+      // La politique de confidentialité reste lisible, connecté ou non.
+      if (loc == Routes.privacy) return null;
       final public =
           loc == Routes.onboarding ||
           loc.startsWith(Routes.signIn) ||
@@ -91,12 +123,25 @@ final routerProvider = Provider<GoRouter>((ref) {
       }
       if (user != null &&
           !user.isCreator &&
-          (loc.startsWith(Routes.requests) || loc == Routes.business)) {
+          (loc.startsWith(Routes.requests) ||
+              loc == Routes.business ||
+              loc.startsWith('/pro/'))) {
         return Routes.home;
       }
       return null;
     },
     routes: [
+      GoRoute(
+        path: Routes.admin,
+        pageBuilder: (c, s) => _fade(s, const AdminLoginScreen()),
+      ),
+      GoRoute(
+        path: '/admin/:module',
+        pageBuilder: (c, s) => _fade(
+          s,
+          AdminShell(module: AdminModule.fromSlug(s.pathParameters['module'])),
+        ),
+      ),
       GoRoute(
         path: Routes.onboarding,
         pageBuilder: (c, s) => _fade(s, const OnboardingScreen()),
@@ -208,6 +253,48 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: Routes.business,
         parentNavigatorKey: _rootKey,
         builder: (c, s) => _bounded(const BusinessScreen()),
+      ),
+      // Espace professionnel du Creator.
+      GoRoute(
+        path: '/pro/profil',
+        parentNavigatorKey: _rootKey,
+        builder: (c, s) => _bounded(const ProfileCatalogScreen()),
+      ),
+      GoRoute(
+        path: '/pro/disponibilites',
+        parentNavigatorKey: _rootKey,
+        builder: (c, s) => _bounded(const AvailabilityScreen()),
+      ),
+      GoRoute(
+        path: '/pro/devis/:id',
+        parentNavigatorKey: _rootKey,
+        builder: (c, s) =>
+            _bounded(RequestDetailScreen(id: s.pathParameters['id']!)),
+      ),
+      GoRoute(
+        path: '/pro/commandes',
+        parentNavigatorKey: _rootKey,
+        builder: (c, s) => _bounded(const OrdersScreen()),
+      ),
+      GoRoute(
+        path: '/pro/revenus',
+        parentNavigatorKey: _rootKey,
+        builder: (c, s) => _bounded(const RevenueScreen()),
+      ),
+      GoRoute(
+        path: '/pro/reputation',
+        parentNavigatorKey: _rootKey,
+        builder: (c, s) => _bounded(const ReputationScreen()),
+      ),
+      GoRoute(
+        path: Routes.about,
+        parentNavigatorKey: _rootKey,
+        builder: (c, s) => _bounded(const AboutScreen()),
+      ),
+      GoRoute(
+        path: Routes.privacy,
+        parentNavigatorKey: _rootKey,
+        builder: (c, s) => _bounded(const PrivacyScreen()),
       ),
       GoRoute(
         path: Routes.vault,

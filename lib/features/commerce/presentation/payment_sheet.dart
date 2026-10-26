@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/i18n/tr.dart';
+import '../../../core/sound/sounds.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/eventa_colors.dart';
@@ -64,6 +67,7 @@ class _PaymentSheetState extends State<_PaymentSheet> {
     await Future<void>.delayed(const Duration(milliseconds: 1400));
     if (!mounted) return;
     final r = widget.onPay(widget.options[_option].amount, _method);
+    ProviderScope.containerOf(context).read(soundProvider).play(Sfx.payment);
     setState(() {
       _paying = false;
       _receipt = r;
@@ -99,7 +103,7 @@ class _PaymentSheetState extends State<_PaymentSheet> {
         children: [
           Row(
             children: [
-              const IconTile(icon: AppIcons.shield, hue: Hue.lagoon, size: 38),
+              IconTile(icon: AppIcons.shield, hue: Hue.lagoon, size: 38),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -107,7 +111,7 @@ class _PaymentSheetState extends State<_PaymentSheet> {
                   children: [
                     Text(widget.title, style: context.text.titleMedium),
                     Text(
-                      'Bénéficiaire : ${widget.payee}',
+                      'Bénéficiaire : {0}'.trf([widget.payee]),
                       style: context.text.bodySmall,
                     ),
                   ],
@@ -128,7 +132,7 @@ class _PaymentSheetState extends State<_PaymentSheet> {
                         duration: Motion.fast,
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: i == _option ? Confetti.ink : Colors.white,
+                          color: i == _option ? Confetti.ink : Confetti.surface,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color: i == _option ? Confetti.ink : Confetti.line,
@@ -150,7 +154,7 @@ class _PaymentSheetState extends State<_PaymentSheet> {
                               fcfaCompact(widget.options[i].amount),
                               style: context.text.titleLarge?.copyWith(
                                 color: i == _option
-                                    ? Colors.white
+                                    ? Confetti.onInk
                                     : Confetti.ink,
                               ),
                             ),
@@ -177,7 +181,7 @@ class _PaymentSheetState extends State<_PaymentSheet> {
             Text(fcfa(amount), style: context.text.headlineMedium),
             const SizedBox(height: 16),
           ],
-          Text('Moyen de paiement', style: context.text.labelMedium),
+          Text('Moyen de paiement'.tr, style: context.text.labelMedium),
           const SizedBox(height: 10),
           MethodPicker(
             value: _method,
@@ -186,12 +190,11 @@ class _PaymentSheetState extends State<_PaymentSheet> {
           const SizedBox(height: 12),
           Row(
             children: [
-              const Icon(AppIcons.lock, size: 15, color: Confetti.lagoonText),
+              Icon(AppIcons.lock, size: 15, color: Confetti.lagoonText),
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  'Paiement sécurisé, conservé jusqu’à la validation de la prestation, '
-                  'puis reversé au prestataire. Démonstration : aucun débit réel.',
+                  'Paiement sécurisé, conservé jusqu’à la validation de la prestation, puis reversé au prestataire. Démonstration : aucun débit réel.'.tr,
                   style: context.text.bodySmall,
                 ),
               ),
@@ -199,7 +202,7 @@ class _PaymentSheetState extends State<_PaymentSheet> {
           ),
           const SizedBox(height: 16),
           PillButton(
-            label: 'Payer ${fcfa(amount)}',
+            label: 'Payer {0}'.trf([fcfa(amount)]),
             icon: AppIcons.lock,
             loading: _paying,
             onPressed: _pay,
@@ -276,7 +279,7 @@ class _MethodPickerState extends State<MethodPicker> {
         children: [
           row(
             icon: AppIcons.mobile,
-            label: 'Mobile Money',
+            label: 'Mobile Money'.tr,
             trailing: mm ? widget.value.label : null,
             selected: mm,
             end: Padding(
@@ -284,7 +287,7 @@ class _MethodPickerState extends State<MethodPicker> {
               child: AnimatedRotation(
                 turns: _open ? 0.5 : 0,
                 duration: Motion.fast,
-                child: const Icon(
+                child: Icon(
                   AppIcons.chevronDown,
                   size: 15,
                   color: Confetti.inkMuted,
@@ -347,7 +350,7 @@ class _MethodPickerState extends State<MethodPicker> {
                                     ),
                                   ),
                                   if (widget.value == op)
-                                    const Icon(
+                                    Icon(
                                       AppIcons.check,
                                       size: 15,
                                       color: Confetti.coral,
@@ -395,7 +398,7 @@ class _Radio extends StatelessWidget {
     decoration: BoxDecoration(
       shape: BoxShape.circle,
       border: Border.all(
-        color: selected ? Confetti.coral : const Color(0xFFCBC5DA),
+        color: selected ? Confetti.coral : Confetti.border,
         width: selected ? 6 : 1.6,
       ),
     ),
@@ -437,7 +440,7 @@ class ReceiptView extends StatelessWidget {
             child: Container(
               width: 68,
               height: 68,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: Confetti.lagoon,
                 shape: BoxShape.circle,
               ),
@@ -445,10 +448,10 @@ class ReceiptView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          Text('Paiement confirmé', style: context.text.headlineSmall),
+          Text('Paiement confirmé'.tr, style: context.text.headlineSmall),
           const SizedBox(height: 4),
           Text(
-            'Reçu enregistré dans votre coffre-fort',
+            'Reçu enregistré dans votre coffre-fort'.tr,
             style: context.text.bodySmall,
           ),
           const SizedBox(height: 18),
@@ -456,19 +459,19 @@ class ReceiptView extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(16, 10, 16, 10),
             child: Column(
               children: [
-                row('Référence', r.ref),
-                row('Objet', r.label),
-                row('Bénéficiaire', r.payee),
-                row('Moyen', r.method.label),
-                row('Date', '${mediumDate(r.date)} · ${timeOf(r.date)}'),
+                row('Référence'.tr, r.ref),
+                row('Objet'.tr, r.label),
+                row('Bénéficiaire'.tr, r.payee),
+                row('Moyen'.tr, r.method.label),
+                row('Date'.tr, '${mediumDate(r.date)} · ${timeOf(r.date)}'),
                 const Divider(height: 14),
-                row('Montant payé', fcfa(r.total), strong: true),
+                row('Montant payé'.tr, fcfa(r.total), strong: true),
               ],
             ),
           ),
           const SizedBox(height: 16),
           PillButton(
-            label: 'Terminé',
+            label: 'Terminé'.tr,
             tone: ButtonTone.dark,
             onPressed: onDone,
           ),

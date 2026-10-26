@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
+import '../../../core/widgets/mascot.dart';
 import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/ui.dart';
 import '../../events/domain/models.dart';
@@ -42,12 +44,10 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
           ),
         ),
         leadingWidth: 64,
-        title: const Text('Rétroplanning'),
+        title: Text('Rétroplanning'.tr),
       ),
       body: async.when(
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: Confetti.coral),
-        ),
+        loading: () => const Center(child: MascotLoader.party()),
         error: (e, _) =>
             ErrorState(onRetry: () => ref.invalidate(eventsProvider)),
         data: (e) => e == null ? const SizedBox() : _body(e),
@@ -66,13 +66,13 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
 
     // Regroupement par horizon.
     String bucket(EventTask t) {
-      if (t.done) return 'Terminées';
+      if (t.done) return 'Terminées'.tr;
       final d = daysUntil(t.due);
-      if (d < 0) return 'En retard';
-      if (d == 0) return "Aujourd'hui";
-      if (d < 7) return 'Cette semaine';
-      if (d < 31) return 'Ce mois-ci';
-      return 'Plus tard';
+      if (d < 0) return 'En retard'.tr;
+      if (d == 0) return 'Aujourd\'hui'.tr;
+      if (d < 7) return 'Cette semaine'.tr;
+      if (d < 31) return 'Ce mois-ci'.tr;
+      return 'Plus tard'.tr;
     }
 
     final groups = <String, List<EventTask>>{};
@@ -97,7 +97,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Text(
-                'sur ${e.tasks.length} terminées',
+                'sur {0} terminées'.trf([e.tasks.length]),
                 style: context.text.titleSmall?.copyWith(
                   color: context.eventa.muted,
                 ),
@@ -133,8 +133,8 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
             padding: const EdgeInsets.symmetric(vertical: 48),
             child: Text(
               _filter == _Filter.open
-                  ? 'Tout est coché. Bravo !'
-                  : 'Aucune tâche terminée pour l’instant.',
+                  ? 'Tout est coché. Bravo !'.tr
+                  : 'Aucune tâche terminée pour l’instant.'.tr,
               textAlign: TextAlign.center,
               style: context.text.bodyMedium?.copyWith(
                 color: context.eventa.muted,
@@ -149,7 +149,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
                 Text(
                   entry.key,
                   style: context.text.titleMedium?.copyWith(
-                    color: entry.key == 'En retard' ? Confetti.danger : null,
+                    color: entry.key == 'En retard'.tr ? Confetti.danger : null,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -215,7 +215,7 @@ class _Segmented extends StatelessWidget {
                 bottom: 0,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Confetti.surface,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
@@ -236,7 +236,7 @@ class _Segmented extends StatelessWidget {
                         onTap: () => onChanged(f),
                         child: Center(
                           child: Text(
-                            '${_labels[f]} · ${counts[f]}',
+                            '${_labels[f]?.tr} · ${counts[f]}',
                             style: context.text.labelMedium?.copyWith(
                               fontWeight: f == value
                                   ? FontWeight.w800

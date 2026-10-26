@@ -17,9 +17,11 @@ abstract final class Motion {
 abstract final class AppTheme {
   static const font = 'Inter';
 
-  static ThemeData light() {
-    const scheme = ColorScheme(
-      brightness: Brightness.light,
+  /// Thème du mode courant ([Confetti.dark]).
+  static ThemeData current() {
+    final dark = Confetti.dark;
+    final scheme = ColorScheme(
+      brightness: dark ? Brightness.dark : Brightness.light,
       primary: Confetti.coral,
       onPrimary: Colors.white,
       primaryContainer: Confetti.coralTint,
@@ -35,11 +37,11 @@ abstract final class AppTheme {
       surface: Confetti.cream,
       onSurface: Confetti.ink,
       onSurfaceVariant: Confetti.inkMuted,
-      surfaceContainerLowest: Colors.white,
-      surfaceContainerLow: Color(0xFFFBFAF8),
-      surfaceContainer: Colors.white,
+      surfaceContainerLowest: Confetti.surface,
+      surfaceContainerLow: dark ? const Color(0xFF170B2C) : const Color(0xFFFBFAF8),
+      surfaceContainer: Confetti.surface,
       surfaceContainerHigh: Confetti.lavender,
-      outline: Color(0xFFD3CEDF),
+      outline: Confetti.border,
       outlineVariant: Confetti.line,
     );
 
@@ -60,7 +62,7 @@ abstract final class AppTheme {
 
     // Inter : graisses franches, approche resserrée sur les grands corps.
     return base.copyWith(
-      extensions: const [EventaColors.light],
+      extensions: [EventaColors.current],
       textTheme: t.copyWith(
         displaySmall: t.displaySmall?.copyWith(
           fontSize: 36,
@@ -125,13 +127,15 @@ abstract final class AppTheme {
           letterSpacing: 0.05,
         ),
       ),
-      appBarTheme: const AppBarTheme(
+      appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         foregroundColor: Confetti.ink,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        systemOverlayStyle: dark
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark,
         titleTextStyle: TextStyle(
           fontFamily: font,
           fontSize: 16.5,
@@ -140,25 +144,30 @@ abstract final class AppTheme {
           color: Confetti.ink,
         ),
       ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: Confetti.cream,
+        modalBackgroundColor: Confetti.cream,
+      ),
+      dialogTheme: DialogThemeData(backgroundColor: Confetti.surface),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white,
+        fillColor: Confetti.surface,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 16,
         ),
-        hintStyle: const TextStyle(color: Confetti.inkFaint),
+        hintStyle: TextStyle(color: Confetti.inkFaint),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Confetti.line),
+          borderSide: BorderSide(color: Confetti.line),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Confetti.line),
+          borderSide: BorderSide(color: Confetti.line),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(color: Confetti.ink, width: 1.4),
+          borderSide: BorderSide(color: Confetti.ink, width: 1.4),
         ),
       ),
       textSelectionTheme: TextSelectionThemeData(
@@ -183,11 +192,11 @@ abstract final class AppTheme {
         trackColor: WidgetStateProperty.resolveWith(
           (s) => s.contains(WidgetState.selected)
               ? Confetti.lagoon
-              : const Color(0xFFD3CEDF),
+              : Confetti.border,
         ),
         trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
       ),
-      dividerTheme: const DividerThemeData(color: Confetti.line, thickness: 1),
+      dividerTheme: DividerThemeData(color: Confetti.line, thickness: 1),
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: {
           TargetPlatform.android: CupertinoPageTransitionsBuilder(),

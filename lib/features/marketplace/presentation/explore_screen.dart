@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
@@ -18,8 +19,9 @@ enum VendorSort {
   priceDesc('Prix décroissant'),
   rating('Mieux notés');
 
-  const VendorSort(this.label);
-  final String label;
+  const VendorSort(this._label);
+  final String _label;
+  String get label => _label.tr;
 }
 
 /// Marketplace des prestataires : recherche, catégories, filtres et tri.
@@ -105,7 +107,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: Text('Filtres', style: context.text.headlineSmall),
+                    child: Text('Filtres'.tr, style: context.text.headlineSmall),
                   ),
                   TextButton(
                     onPressed: () => set(() {
@@ -114,12 +116,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       _onlyVerified = false;
                       _zone = null;
                     }),
-                    child: const Text('Réinitialiser'),
+                    child: Text('Réinitialiser'.tr),
                   ),
                 ],
               ),
               const SizedBox(height: 12),
-              Text('Trier par', style: context.text.labelMedium),
+              Text('Trier par'.tr, style: context.text.labelMedium),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
@@ -134,14 +136,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 ],
               ),
               const SizedBox(height: 18),
-              Text('Localisation', style: context.text.labelMedium),
+              Text('Localisation'.tr, style: context.text.labelMedium),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
                 children: [
                   Choice(
-                    label: 'Partout',
+                    label: 'Partout'.tr,
                     on: _zone == null,
                     onTap: () => set(() => _zone = null),
                   ),
@@ -155,18 +157,18 @@ class _ExploreScreenState extends State<ExploreScreen> {
               ),
               const SizedBox(height: 10),
               _SwitchRow(
-                label: 'Disponible à ma date',
+                label: 'Disponible à ma date'.tr,
                 value: _onlyAvailable,
                 onChanged: (v) => set(() => _onlyAvailable = v),
               ),
               _SwitchRow(
-                label: 'Profils vérifiés uniquement',
+                label: 'Profils vérifiés uniquement'.tr,
                 value: _onlyVerified,
                 onChanged: (v) => set(() => _onlyVerified = v),
               ),
               const SizedBox(height: 14),
               PillButton(
-                label: 'Voir ${_results().length} prestataires',
+                label: 'Voir {0} prestataires'.trf([_results().length]),
                 tone: ButtonTone.dark,
                 onPressed: () => Navigator.of(context).pop(),
               ),
@@ -189,7 +191,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 14),
-                child: Text('Explorer', style: context.text.headlineMedium),
+                child: Text('Explorer'.tr, style: context.text.headlineMedium),
               ),
             ),
             SliverToBoxAdapter(
@@ -200,8 +202,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     Expanded(
                       child: TextField(
                         onChanged: (v) => setState(() => _query = v),
-                        decoration: const InputDecoration(
-                          hintText: 'Traiteur, salle, DJ, Assinie…',
+                        decoration: InputDecoration(
+                          hintText: 'Traiteur, salle, DJ, Assinie…'.tr,
                           prefixIcon: Icon(AppIcons.search, size: 19),
                           contentPadding: EdgeInsets.symmetric(vertical: 14),
                         ),
@@ -210,14 +212,14 @@ class _ExploreScreenState extends State<ExploreScreen> {
                     const SizedBox(width: 10),
                     Pressable(
                       onTap: _openFilters,
-                      semanticLabel: 'Filtres et tri',
+                      semanticLabel: 'Filtres et tri'.tr,
                       child: Container(
                         width: 50,
                         height: 50,
                         decoration: BoxDecoration(
                           color: _activeFilters > 0
                               ? Confetti.ink
-                              : Colors.white,
+                              : Confetti.surface,
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
                             color: _activeFilters > 0
@@ -229,7 +231,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                           AppIcons.filters,
                           size: 19,
                           color: _activeFilters > 0
-                              ? Colors.white
+                              ? Confetti.onInk
                               : Confetti.ink,
                         ),
                       ),
@@ -250,7 +252,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   itemBuilder: (context, i) {
                     final c = i == 0 ? null : VendorCategory.values[i - 1];
                     return Choice(
-                      label: c?.label ?? 'Tous',
+                      label: c?.label ?? 'Tous'.tr,
                       icon: c?.icon,
                       on: c == _category,
                       onTap: () => setState(() => _category = c),
@@ -265,7 +267,9 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 child: Row(
                   children: [
                     Text(
-                      '${results.length} prestataire${results.length > 1 ? 's' : ''}',
+                      (results.length > 1 ? '{0} prestataires' : '{0} prestataire').trf([
+                        results.length,
+                      ]),
                       style: context.text.labelMedium?.copyWith(
                         color: Confetti.inkMuted,
                       ),
@@ -275,7 +279,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                       onTap: _openFilters,
                       child: Row(
                         children: [
-                          const Icon(
+                          Icon(
                             AppIcons.sort,
                             size: 15,
                             color: Confetti.inkMuted,
@@ -299,12 +303,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
                   child: Column(
                     children: [
                       Text(
-                        'Aucun prestataire ne correspond',
+                        'Aucun prestataire ne correspond'.tr,
                         style: context.text.titleMedium,
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Élargissez la zone ou retirez un filtre.',
+                        'Élargissez la zone ou retirez un filtre.'.tr,
                         style: context.text.bodySmall,
                       ),
                     ],
@@ -371,7 +375,7 @@ class Choice extends StatelessWidget {
         duration: Motion.fast,
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: on ? Confetti.ink : Colors.white,
+          color: on ? Confetti.ink : Confetti.surface,
           borderRadius: BorderRadius.circular(99),
           border: Border.all(color: on ? Confetti.ink : Confetti.line),
         ),
@@ -382,14 +386,14 @@ class Choice extends StatelessWidget {
               Icon(
                 icon,
                 size: 15,
-                color: on ? Colors.white : Confetti.inkMuted,
+                color: on ? Confetti.onInk : Confetti.inkMuted,
               ),
               const SizedBox(width: 6),
             ],
             Text(
               label,
               style: context.text.labelMedium?.copyWith(
-                color: on ? Colors.white : Confetti.ink,
+                color: on ? Confetti.onInk : Confetti.ink,
               ),
             ),
           ],

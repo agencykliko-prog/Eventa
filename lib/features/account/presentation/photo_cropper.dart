@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/eventa_colors.dart';
 import '../../../core/widgets/ui.dart';
@@ -93,14 +94,14 @@ class _CropScreenState extends State<_CropScreen> {
                     icon: _preview ? AppIcons.back : AppIcons.close,
                     background: Confetti.night,
                     foreground: Colors.white,
-                    tooltip: _preview ? 'Retour au recadrage' : 'Annuler',
+                    tooltip: _preview ? 'Retour au recadrage'.tr : 'Annuler'.tr,
                     onTap: () => _preview
                         ? setState(() => _preview = false)
                         : Navigator.of(context).pop(),
                   ),
                   const Spacer(),
                   Text(
-                    _preview ? 'Aperçu' : 'Recadrer',
+                    _preview ? 'Aperçu'.tr : 'Recadrer'.tr,
                     style: context.text.titleMedium?.copyWith(
                       color: Colors.white,
                     ),
@@ -130,7 +131,7 @@ class _CropScreenState extends State<_CropScreen> {
                             ),
                             const SizedBox(height: 10),
                             Text(
-                              'Voici comment votre photo apparaîtra.',
+                              'Voici comment votre photo apparaîtra.'.tr,
                               style: context.text.bodySmall?.copyWith(
                                 color: Colors.white60,
                               ),
@@ -186,7 +187,7 @@ class _CropScreenState extends State<_CropScreen> {
                 children: [
                   if (!_preview) ...[
                     Text(
-                      'Glissez pour cadrer, pincez ou utilisez le curseur pour zoomer.',
+                      'Glissez pour cadrer, pincez ou utilisez le curseur pour zoomer.'.tr,
                       textAlign: TextAlign.center,
                       style: context.text.bodySmall?.copyWith(
                         color: Colors.white60,
@@ -218,14 +219,14 @@ class _CropScreenState extends State<_CropScreen> {
                     ),
                     const SizedBox(height: 8),
                     PillButton(
-                      label: 'Aperçu',
+                      label: 'Aperçu'.tr,
                       tone: ButtonTone.light,
                       loading: _busy,
                       onPressed: _capture,
                     ),
                   ] else
                     PillButton(
-                      label: 'Utiliser cette photo',
+                      label: 'Utiliser cette photo'.tr,
                       icon: AppIcons.check,
                       onPressed: () => Navigator.of(context).pop(_result),
                     ),

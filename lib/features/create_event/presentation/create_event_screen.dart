@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/i18n/tr.dart';
+import '../../../core/sound/sounds.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
@@ -15,6 +17,7 @@ import '../../events/data/event_templates.dart';
 import '../../events/domain/models.dart';
 import '../../events/presentation/events_providers.dart';
 import '../../events/presentation/widgets/task_timeline.dart';
+import '../../premium/presentation/premium_nudge.dart';
 
 class CreateEventScreen extends ConsumerStatefulWidget {
   const CreateEventScreen({super.key});
@@ -30,7 +33,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
   EventCategory? _category;
   final _subs = <String>{};
   final _name = TextEditingController();
-  final _city = TextEditingController(text: 'Abidjan');
+  final _city = TextEditingController(text: 'Abidjan'.tr);
   DateTime _date = DateTime.now().add(const Duration(days: 60));
   double _guests = 80;
   int _budget = 2000000;
@@ -64,13 +67,13 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           _name.text.startsWith('Mon ') ||
           _name.text.startsWith('Ma ')) {
         _name.text = switch (c) {
-          EventCategory.wedding => 'Mon mariage',
-          EventCategory.birthday => 'Mon anniversaire',
-          EventCategory.baby => 'Ma baby shower',
-          EventCategory.friends => 'Mon EVJF',
-          EventCategory.outing => 'Ma sortie',
-          EventCategory.pro => 'Mon séminaire',
-          _ => 'Mon événement',
+          EventCategory.wedding => 'Mon mariage'.tr,
+          EventCategory.birthday => 'Mon anniversaire'.tr,
+          EventCategory.baby => 'Ma baby shower'.tr,
+          EventCategory.friends => 'Mon EVJF'.tr,
+          EventCategory.outing => 'Ma sortie'.tr,
+          EventCategory.pro => 'Mon séminaire'.tr,
+          _ => 'Mon événement'.tr,
         };
       }
     });
@@ -80,14 +83,21 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     setState(() => _generating = true);
     await Future<void>.delayed(const Duration(milliseconds: 900));
     if (!mounted) return;
+    ref.read(soundProvider).play(Sfx.success);
+    maybeShowPremiumNudge(
+      context,
+      ref,
+      PremiumNudge.newEvent,
+      delay: const Duration(milliseconds: 1800),
+    );
     setState(() {
       _generating = false;
       _draft = EventTemplates.create(
         category: _category!,
         subcategories: _subs.toList(),
-        name: _name.text.trim().isEmpty ? 'Mon événement' : _name.text.trim(),
+        name: _name.text.trim().isEmpty ? 'Mon événement'.tr : _name.text.trim(),
         date: DateTime(_date.year, _date.month, _date.day, 16),
-        city: _city.text.trim().isEmpty ? 'Abidjan' : _city.text.trim(),
+        city: _city.text.trim().isEmpty ? 'Abidjan'.tr : _city.text.trim(),
         guests: _guests.round(),
         budget: _budget,
       );
@@ -114,7 +124,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                 children: [
                   RoundIconButton(
                     icon: _step == 0 ? AppIcons.close : AppIcons.back,
-                    tooltip: _step == 0 ? 'Fermer' : 'Retour',
+                    tooltip: _step == 0 ? 'Fermer'.tr : 'Retour'.tr,
                     onTap: () => _step == 0 ? context.pop() : _go(_step - 1),
                   ),
                   const SizedBox(width: 16),
@@ -185,10 +195,10 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
       key: const ValueKey('grid'),
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
       children: [
-        Text('Que célébrez-vous ?', style: context.text.headlineMedium),
+        Text('Que célébrez-vous ?'.tr, style: context.text.headlineMedium),
         const SizedBox(height: 6),
         Text(
-          'On prépare la checklist et la répartition du budget selon le type.',
+          'On prépare la checklist et la répartition du budget selon le type.'.tr,
           style: context.text.bodyMedium?.copyWith(color: context.eventa.muted),
         ),
         const SizedBox(height: 20),
@@ -235,7 +245,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                   Pressable(
                     onTap: () => setState(() => _category = null),
                     child: Text(
-                      'Changer de type',
+                      'Changer de type'.tr,
                       style: context.text.labelMedium?.copyWith(
                         color: Confetti.coralDeep,
                       ),
@@ -248,7 +258,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         ),
         const SizedBox(height: 22),
         Text(
-          'Précisez (plusieurs choix possibles)',
+          'Précisez (plusieurs choix possibles)'.tr,
           style: context.text.labelMedium,
         ),
         const SizedBox(height: 12),
@@ -305,7 +315,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                           border: Border.all(
                             color: _subs.contains(c.subcategories[i])
                                 ? h.base
-                                : const Color(0xFFCBC5DA),
+                                : Confetti.border,
                             width: 1.6,
                           ),
                         ),
@@ -321,7 +331,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           ),
         const SizedBox(height: 16),
         PillButton(
-          label: _subs.isEmpty ? 'Continuer sans préciser' : 'Continuer',
+          label: _subs.isEmpty ? 'Continuer sans préciser'.tr : 'Continuer'.tr,
           trailingIcon: AppIcons.forward,
           tone: _subs.isEmpty ? ButtonTone.ghost : ButtonTone.primary,
           onPressed: () => _go(1),
@@ -335,14 +345,14 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     return ListView(
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
       children: [
-        Text('Les essentiels', style: context.text.headlineMedium),
+        Text('Les essentiels'.tr, style: context.text.headlineMedium),
         const SizedBox(height: 6),
         Text(
-          'Tout reste modifiable ensuite.',
+          'Tout reste modifiable ensuite.'.tr,
           style: context.text.bodyMedium?.copyWith(color: context.eventa.muted),
         ),
         const SizedBox(height: 22),
-        _Label('Nom de l’événement'),
+        _Label('Nom de l’événement'.tr),
         TextField(
           controller: _name,
           textCapitalization: TextCapitalization.sentences,
@@ -354,7 +364,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _Label('Date'),
+                  _Label('Date'.tr),
                   Pressable(
                     onTap: () async {
                       final d = await showDatePicker(
@@ -369,7 +379,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
                       height: 58,
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Confetti.surface,
                         borderRadius: BorderRadius.circular(18),
                         border: Border.all(color: Confetti.line),
                       ),
@@ -393,7 +403,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _Label('Ville'),
+                  _Label('Ville'.tr),
                   TextField(controller: _city),
                 ],
               ),
@@ -403,7 +413,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         const SizedBox(height: 18),
         Row(
           children: [
-            _Label('Invités'),
+            _Label('Invités'.tr),
             const Spacer(),
             Text('${_guests.round()}', style: context.text.titleMedium),
           ],
@@ -427,7 +437,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         const SizedBox(height: 8),
         Row(
           children: [
-            _Label('Budget cible'),
+            _Label('Budget cible'.tr),
             const Spacer(),
             Text(
               fcfa(_budget),
@@ -470,12 +480,12 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         ),
         const SizedBox(height: 8),
         Text(
-          'Soit ${fcfa((_budget / _guests).round())} par invité.',
+          'Soit {0} par invité.'.trf([fcfa((_budget / _guests).round())]),
           style: context.text.bodySmall,
         ),
         const SizedBox(height: 28),
         PillButton(
-          label: 'Générer mon plan',
+          label: 'Générer mon plan'.tr,
           icon: AppIcons.sparkle,
           loading: _generating,
           onPressed: _generate,
@@ -508,7 +518,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         Entrance(
           index: 1,
           child: Text(
-            'Votre plan est prêt',
+            'Votre plan est prêt'.tr,
             style: context.text.headlineMedium,
           ),
         ),
@@ -516,8 +526,7 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         Entrance(
           index: 2,
           child: Text(
-            '${e.tasks.length} tâches planifiées à rebours jusqu’au ${mediumDate(e.date)} '
-            'et ${e.budget.length} postes de budget répartis sur ${fcfa(e.targetBudget)}.',
+            '{0} tâches planifiées à rebours jusqu’au {1} et {2} postes de budget répartis sur {3}.'.trf([e.tasks.length, mediumDate(e.date), e.budget.length, fcfa(e.targetBudget)]),
             style: context.text.bodyMedium?.copyWith(
               color: context.eventa.muted,
             ),
@@ -553,14 +562,14 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
           Padding(
             padding: const EdgeInsets.only(left: 112, bottom: 16),
             child: Text(
-              '+ ${tasks.length - 5} autres étapes',
+              '+ {0} autres étapes'.trf([tasks.length - 5]),
               style: context.text.labelMedium?.copyWith(
                 color: context.eventa.muted,
               ),
             ),
           ),
         PillButton(
-          label: 'Ouvrir le dashboard',
+          label: 'Ouvrir le dashboard'.tr,
           icon: AppIcons.forward,
           onPressed: _open,
         ),

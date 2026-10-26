@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/i18n/tr.dart';
 import '../theme/app_icons.dart';
 import '../theme/app_theme.dart';
 import '../theme/eventa_colors.dart';
@@ -35,10 +36,10 @@ class PillButton extends StatelessWidget {
     final enabled = onPressed != null && !loading;
     final (bg, fg, border) = switch (tone) {
       ButtonTone.primary => (Confetti.coral, Colors.white, Colors.transparent),
-      ButtonTone.dark => (Confetti.ink, Colors.white, Colors.transparent),
-      ButtonTone.ghost => (Colors.white, Confetti.ink, Confetti.line),
-      ButtonTone.light => (Colors.white, Confetti.ink, Colors.transparent),
-      ButtonTone.gold => (Confetti.gold, Confetti.ink, Colors.transparent),
+      ButtonTone.dark => (Confetti.ink, Confetti.onInk, Colors.transparent),
+      ButtonTone.ghost => (Confetti.surface, Confetti.ink, Confetti.line),
+      ButtonTone.light => (Confetti.surface, Confetti.ink, Colors.transparent),
+      ButtonTone.gold => (Confetti.gold, Confetti.inkFixed, Colors.transparent),
     };
 
     final content = Row(
@@ -114,8 +115,8 @@ class RoundIconButton extends StatelessWidget {
     super.key,
     required this.icon,
     required this.onTap,
-    this.background = Colors.white,
-    this.foreground = Confetti.ink,
+    this.background,
+    this.foreground,
     this.size = 42,
     this.tooltip,
     this.badge = false,
@@ -124,8 +125,8 @@ class RoundIconButton extends StatelessWidget {
 
   final IconData icon;
   final VoidCallback? onTap;
-  final Color background;
-  final Color foreground;
+  final Color? background;
+  final Color? foreground;
   final double size;
   final String? tooltip;
   final bool badge;
@@ -133,17 +134,19 @@ class RoundIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final background = this.background ?? Confetti.surface;
+    final foreground = this.foreground ?? Confetti.ink;
     return Pressable(
       onTap: onTap,
       scale: 0.92,
-      semanticLabel: tooltip,
+      semanticLabel: tooltip?.tr,
       child: Container(
         width: size,
         height: size,
         decoration: BoxDecoration(
           color: background,
           shape: BoxShape.circle,
-          border: background == Colors.white
+          border: background == Confetti.surface
               ? Border.all(color: Confetti.line)
               : null,
         ),
@@ -228,7 +231,14 @@ class Tag extends StatelessWidget {
             Icon(icon, size: 13, color: fg),
             const SizedBox(width: 4),
           ],
-          Text(label, style: context.text.labelSmall?.copyWith(color: fg)),
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: context.text.labelSmall?.copyWith(color: fg),
+            ),
+          ),
         ],
       ),
     );
@@ -349,7 +359,7 @@ class Panel extends StatelessWidget {
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(18),
-    this.color = Colors.white,
+    this.color,
     this.radius = 22,
     this.onTap,
     this.border = true,
@@ -357,14 +367,15 @@ class Panel extends StatelessWidget {
 
   final Widget child;
   final EdgeInsets padding;
-  final Color color;
+  final Color? color;
   final double radius;
   final VoidCallback? onTap;
   final bool border;
 
   @override
   Widget build(BuildContext context) {
-    final white = color == Colors.white;
+    final color = this.color ?? Confetti.surface;
+    final white = color == Confetti.surface;
     final box = Container(
       padding: padding,
       decoration: BoxDecoration(
@@ -374,7 +385,9 @@ class Panel extends StatelessWidget {
         boxShadow: white
             ? [
                 BoxShadow(
-                  color: Confetti.ink.withValues(alpha: 0.04),
+                  color: Confetti.inkFixed.withValues(
+                    alpha: Confetti.dark ? 0.3 : 0.04,
+                  ),
                   blurRadius: 18,
                   offset: const Offset(0, 6),
                 ),
@@ -483,11 +496,11 @@ class ErrorState extends StatelessWidget {
             Container(
               width: 60,
               height: 60,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: Confetti.coralTint,
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 AppIcons.warning,
                 color: Confetti.coralDeep,
                 size: 26,
@@ -495,19 +508,19 @@ class ErrorState extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              'Impossible de charger vos événements',
+              'Impossible de charger vos événements'.tr,
               style: context.text.titleMedium,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 6),
             Text(
-              message ?? 'Vérifiez votre connexion puis réessayez.',
+              message ?? 'Vérifiez votre connexion puis réessayez.'.tr,
               style: context.text.bodySmall,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
             PillButton(
-              label: 'Réessayer',
+              label: 'Réessayer'.tr,
               icon: AppIcons.refresh,
               onPressed: onRetry,
               tone: ButtonTone.dark,
@@ -527,13 +540,13 @@ class Meter extends StatelessWidget {
     super.key,
     required this.value,
     required this.color,
-    this.track = Confetti.lavender,
+    this.track,
     this.height = 8,
   });
 
   final double value;
   final Color color;
-  final Color track;
+  final Color? track;
   final double height;
 
   @override
@@ -545,7 +558,7 @@ class Meter extends StatelessWidget {
       builder: (context, v, _) => Container(
         height: height,
         decoration: BoxDecoration(
-          color: track,
+          color: track ?? Confetti.lavender,
           borderRadius: BorderRadius.circular(height),
         ),
         alignment: Alignment.centerLeft,
@@ -604,7 +617,7 @@ Future<T?> showEventaSheet<T>(
     useRootNavigator: true,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    barrierColor: Confetti.ink.withValues(alpha: 0.45),
+    barrierColor: Confetti.inkFixed.withValues(alpha: 0.5),
     sheetAnimationStyle: const AnimationStyle(
       duration: Duration(milliseconds: 420),
       curve: Motion.drawer,
@@ -632,7 +645,7 @@ Future<T?> showEventaSheet<T>(
                   width: 38,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: dark ? Confetti.nightLine : const Color(0xFFD3CEDF),
+                    color: dark ? Confetti.nightLine : Confetti.border,
                     borderRadius: BorderRadius.circular(3),
                   ),
                 ),
@@ -688,7 +701,7 @@ class Stars extends StatelessWidget {
         if (reviews != null) ...[
           const SizedBox(width: 3),
           Text(
-            '($reviews avis)',
+            '({0} avis)'.trf([reviews]),
             style: context.text.labelSmall?.copyWith(
               color: context.eventa.muted,
               fontWeight: FontWeight.w500,

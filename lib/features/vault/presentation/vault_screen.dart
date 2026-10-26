@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/eventa_colors.dart';
@@ -24,8 +25,8 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
   VaultFolder? _folder;
 
   String _size(int kb) => kb >= 1024
-      ? '${(kb / 1024).toStringAsFixed(1).replaceAll('.', ',')} Mo'
-      : '$kb Ko';
+      ? '{0} Mo'.trf([(kb / 1024).toStringAsFixed(1).replaceAll('.', ',')])
+      : '{0} Ko'.trf([kb]);
 
   void _docActions(BuildContext context, VaultDoc d) {
     showEventaSheet<void>(
@@ -39,41 +40,41 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
             Text(d.name, style: ctx.text.titleMedium, maxLines: 2),
             const SizedBox(height: 16),
             PillButton(
-              label: 'Télécharger',
+              label: 'Télécharger'.tr,
               icon: AppIcons.download,
               tone: ButtonTone.dark,
               onPressed: () {
                 Navigator.of(ctx).pop();
                 toast(
                   context,
-                  'Téléchargement de « ${d.name} »',
+                  'Téléchargement de « {0} »'.trf([d.name]),
                   icon: AppIcons.download,
                 );
               },
             ),
             const SizedBox(height: 8),
             PillButton(
-              label: 'Partager avec un collaborateur',
+              label: 'Partager avec un collaborateur'.tr,
               icon: AppIcons.share,
               tone: ButtonTone.ghost,
               onPressed: () {
                 Navigator.of(ctx).pop();
                 toast(
                   context,
-                  'Lien sécurisé copié (valable 24 h)',
+                  'Lien sécurisé copié (valable 24 h)'.tr,
                   icon: AppIcons.lock,
                 );
               },
             ),
             const SizedBox(height: 8),
             PillButton(
-              label: 'Supprimer',
+              label: 'Supprimer'.tr,
               icon: AppIcons.trash,
               tone: ButtonTone.ghost,
               onPressed: () {
                 ref.read(vaultProvider.notifier).remove(d);
                 Navigator.of(ctx).pop();
-                toast(context, 'Document supprimé', icon: AppIcons.trash);
+                toast(context, 'Document supprimé'.tr, icon: AppIcons.trash);
               },
             ),
           ],
@@ -112,7 +113,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                         .read(vaultProvider.notifier)
                         .add(
                           VaultDoc(
-                            name: 'Scan ${shortDate(DateTime.now())}.pdf',
+                            name: 'Scan {0}.pdf'.trf([shortDate(DateTime.now())]),
                             folder: _folder ?? VaultFolder.documents,
                             sizeKb: 310,
                             date: DateTime.now(),
@@ -120,7 +121,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                         );
                     toast(
                       context,
-                      'Document chiffré et ajouté',
+                      'Document chiffré et ajouté'.tr,
                       icon: AppIcons.lock,
                     );
                   },
@@ -134,7 +135,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                 children: [
                   Row(
                     children: [
-                      const IconTile(
+                      IconTile(
                         icon: AppIcons.lock,
                         hue: Hue.gold,
                         size: 44,
@@ -145,13 +146,13 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Coffre-fort',
+                              'Coffre-fort'.tr,
                               style: context.text.headlineSmall?.copyWith(
                                 color: Colors.white,
                               ),
                             ),
                             Text(
-                              'Chiffré de bout en bout',
+                              'Chiffré de bout en bout'.tr,
                               style: context.text.bodySmall?.copyWith(
                                 color: Colors.white60,
                               ),
@@ -159,21 +160,21 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                           ],
                         ),
                       ),
-                      const PremiumBadge(label: 'Signature', onDark: true),
+                      PremiumBadge(label: 'Signature'.tr, onDark: true),
                     ],
                   ),
                   const SizedBox(height: 18),
                   Row(
                     children: [
                       Text(
-                        '${docs.length} documents',
+                        '{0} documents'.trf([docs.length]),
                         style: context.text.labelMedium?.copyWith(
                           color: Colors.white,
                         ),
                       ),
                       const Spacer(),
                       Text(
-                        '${_size(usedKb)} sur 5 Go',
+                        '{0} sur 5 Go'.trf([_size(usedKb)]),
                         style: context.text.labelMedium?.copyWith(
                           color: Colors.white60,
                         ),
@@ -210,7 +211,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                         duration: Motion.fast,
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: _folder == f ? Confetti.ink : Colors.white,
+                          color: _folder == f ? Confetti.ink : Confetti.surface,
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
                             color: _folder == f ? Confetti.ink : Confetti.line,
@@ -232,7 +233,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                               maxLines: 2,
                               style: context.text.labelMedium?.copyWith(
                                 color: _folder == f
-                                    ? Colors.white
+                                    ? Confetti.onInk
                                     : Confetti.ink,
                               ),
                             ),
@@ -251,7 +252,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                   ),
               ],
             ),
-            SectionTitle(_folder?.label ?? 'Récents'),
+            SectionTitle(_folder?.label ?? 'Récents'.tr),
             Panel(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
               child: Column(
@@ -260,7 +261,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 24),
                       child: Text(
-                        'Aucun document ici pour l’instant.',
+                        'Aucun document ici pour l’instant.'.tr,
                         style: context.text.bodySmall,
                       ),
                     ),

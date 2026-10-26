@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/entrance.dart';
+import '../../../core/widgets/mascot.dart';
 import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/ui.dart';
 import '../../commerce/domain/commerce_models.dart';
@@ -17,6 +19,7 @@ import '../../events/presentation/events_providers.dart';
 import '../../events/presentation/widgets/task_timeline.dart';
 import '../../export/export_sheet.dart';
 import '../../premium/presentation/paywall.dart';
+import '../../premium/presentation/premium_nudge.dart';
 import 'collaborators_sheet.dart';
 import 'widgets/budget_overview.dart';
 import 'widgets/guests_panel.dart';
@@ -32,18 +35,14 @@ class EventDashboardScreen extends ConsumerWidget {
     return ref
         .watch(eventProvider(id))
         .when(
-          loading: () => const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(color: Confetti.coral),
-            ),
-          ),
+          loading: () => const Scaffold(body: Center(child: MascotLoader.party())),
           error: (e, _) => Scaffold(
             body: ErrorState(onRetry: () => ref.invalidate(eventsProvider)),
           ),
           data: (event) => event == null
               ? Scaffold(
                   appBar: AppBar(),
-                  body: const Center(child: Text('Événement introuvable')),
+                  body: Center(child: Text('Événement introuvable'.tr)),
                 )
               : _Dashboard(event: event),
         );
@@ -111,7 +110,7 @@ class _DashboardState extends ConsumerState<_Dashboard> {
         .where((b) => b.eventId == e.id)
         .toList();
     final btnBg = _collapsed
-        ? Colors.white
+        ? Confetti.surface
         : Colors.white.withValues(alpha: 0.9);
 
     return Scaffold(
@@ -168,13 +167,13 @@ class _DashboardState extends ConsumerState<_Dashboard> {
                       children: [
                         _Action(
                           icon: AppIcons.sparkle,
-                          label: 'Agent IA',
+                          label: 'Agent IA'.tr,
                           hue: e.category.hue,
                           onTap: () => _openAgent(e),
                         ),
                         _Action(
                           icon: AppIcons.lock,
-                          label: 'Coffre-fort',
+                          label: 'Coffre-fort'.tr,
                           hue: Hue.violet,
                           onTap: () => requirePremium(
                             context,
@@ -186,7 +185,7 @@ class _DashboardState extends ConsumerState<_Dashboard> {
                         ),
                         _Action(
                           icon: AppIcons.download,
-                          label: 'Exporter',
+                          label: 'Exporter'.tr,
                           hue: Hue.lagoon,
                           onTap: () => showExportSheet(context, e.id),
                         ),
@@ -210,8 +209,8 @@ class _DashboardState extends ConsumerState<_Dashboard> {
           ),
           SliverToBoxAdapter(
             child: SectionTitle(
-              'Budget',
-              action: 'Gérer',
+              'Budget'.tr,
+              action: 'Gérer'.tr,
               onAction: () => context.push(Routes.budget(e.id)),
             ),
           ),
@@ -226,8 +225,8 @@ class _DashboardState extends ConsumerState<_Dashboard> {
           ),
           SliverToBoxAdapter(
             child: SectionTitle(
-              'Prochaines étapes',
-              action: 'Rétroplanning',
+              'Prochaines étapes'.tr,
+              action: 'Rétroplanning'.tr,
               onAction: () => context.push(Routes.tasks(e.id)),
             ),
           ),
@@ -236,7 +235,7 @@ class _DashboardState extends ConsumerState<_Dashboard> {
             sliver: SliverToBoxAdapter(
               child: open.isEmpty
                   ? Text(
-                      'Tout est prêt. Profitez de la fête !',
+                      'Tout est prêt. Profitez de la fête !'.tr,
                       style: context.text.bodyMedium,
                     )
                   : TaskTimeline(
@@ -254,7 +253,7 @@ class _DashboardState extends ConsumerState<_Dashboard> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverToBoxAdapter(
               child: PillButton(
-                label: 'Voir les ${e.tasks.length} tâches',
+                label: 'Voir les {0} tâches'.trf([e.tasks.length]),
                 tone: ButtonTone.ghost,
                 height: 48,
                 onPressed: () => context.push(Routes.tasks(e.id)),
@@ -262,7 +261,7 @@ class _DashboardState extends ConsumerState<_Dashboard> {
             ),
           ),
           if (bookings.isNotEmpty) ...[
-            const SliverToBoxAdapter(child: SectionTitle('Réservations')),
+            SliverToBoxAdapter(child: SectionTitle('Réservations'.tr)),
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               sliver: SliverList.separated(
@@ -294,13 +293,13 @@ class _DashboardState extends ConsumerState<_Dashboard> {
                                 style: context.text.titleSmall,
                               ),
                               Text(
-                                'Étape ${b.step.index + 1}/7 · ${b.step.status}',
+                                'Étape {0}/7 · {1}'.trf([b.step.index + 1, b.step.status]),
                                 style: context.text.bodySmall,
                               ),
                             ],
                           ),
                         ),
-                        const Icon(
+                        Icon(
                           AppIcons.chevron,
                           size: 16,
                           color: Confetti.inkFaint,
@@ -315,8 +314,8 @@ class _DashboardState extends ConsumerState<_Dashboard> {
           SliverToBoxAdapter(
             key: _vendorsKey,
             child: SectionTitle(
-              'Prestataires',
-              action: 'Exporter',
+              'Prestataires'.tr,
+              action: 'Exporter'.tr,
               onAction: () =>
                   showExportSheet(context, e.id, only: ExportKind.vendors),
             ),
@@ -338,15 +337,15 @@ class _DashboardState extends ConsumerState<_Dashboard> {
                         width: 130,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: const Color(0xFFD3CEDF)),
+                          border: Border.all(color: Confetti.border),
                         ),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(AppIcons.add, color: Confetti.inkMuted),
+                            Icon(AppIcons.add, color: Confetti.inkMuted),
                             const SizedBox(height: 6),
                             Text(
-                              'Ajouter un\nprestataire',
+                              'Ajouter un\nprestataire'.tr,
                               textAlign: TextAlign.center,
                               style: context.text.labelMedium?.copyWith(
                                 color: Confetti.inkMuted,
@@ -362,25 +361,30 @@ class _DashboardState extends ConsumerState<_Dashboard> {
               ),
             ),
           ),
-          const SliverToBoxAdapter(child: SectionTitle('Invités & RSVP')),
+          SliverToBoxAdapter(child: SectionTitle('Invités & RSVP'.tr)),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverToBoxAdapter(
               child: GuestsPanel(
                 guests: e.guests,
-                onRemind: () => toast(
-                  context,
-                  'Relance WhatsApp préparée pour ${e.guests.pending} invités',
-                  icon: AppIcons.whatsapp,
-                ),
+                onRemind: () {
+                  toast(
+                    context,
+                    'Relance WhatsApp préparée pour {0} invités'.trf([
+                      e.guests.pending,
+                    ]),
+                    icon: AppIcons.whatsapp,
+                  );
+                  maybeShowPremiumNudge(context, ref, PremiumNudge.guests);
+                },
               ),
             ),
           ),
           SliverToBoxAdapter(
             key: _teamKey,
             child: SectionTitle(
-              'Équipe',
-              action: 'Gérer les accès',
+              'Équipe'.tr,
+              action: 'Gérer les accès'.tr,
               onAction: () => showCollaboratorsSheet(context, e.id),
             ),
           ),
@@ -514,7 +518,7 @@ class _CountdownPanel extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(bottom: 6),
                 child: Text(
-                  'avant la fête',
+                  'avant la fête'.tr,
                   style: context.text.titleSmall?.copyWith(
                     color: context.eventa.muted,
                   ),
@@ -526,7 +530,7 @@ class _CountdownPanel extends StatelessWidget {
           const SizedBox(height: 14),
           Row(
             children: [
-              Text('Avancement global', style: context.text.labelMedium),
+              Text('Avancement global'.tr, style: context.text.labelMedium),
               const Spacer(),
               Text(
                 '${(progress * 100).round()} %',
@@ -565,7 +569,7 @@ class _Action extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 3),
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: Confetti.surface,
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: Confetti.line),
           ),
@@ -610,33 +614,33 @@ class _ModuleGrid extends StatelessWidget {
       (
         c.budget,
         AppIcons.wallet,
-        'Budget',
+        'Budget'.tr,
         '${(event.committedRatio * 100).round()} %',
-        'engagé',
+        'engagé'.tr,
         onBudget,
       ),
       (
         c.tasks,
         AppIcons.tasks,
-        'Tâches',
+        'Tâches'.tr,
         '${event.tasksDone} / ${event.tasks.length}',
-        'terminées',
+        'terminées'.tr,
         onTasks,
       ),
       (
         c.vendors,
         AppIcons.vendors,
-        'Prestataires',
-        '${event.vendorsConfirmed} confirmés',
-        'sur ${event.vendors.length}',
+        'Prestataires'.tr,
+        '{0} confirmés'.trf([event.vendorsConfirmed]),
+        'sur {0}'.trf([event.vendors.length]),
         onVendors,
       ),
       (
         c.team,
         AppIcons.team,
-        'Équipe',
-        '${event.onlineCount} en ligne',
-        '${event.team.length} membres',
+        'Équipe'.tr,
+        '{0} en ligne'.trf([event.onlineCount]),
+        '{0} membres'.trf([event.team.length]),
         onTeam,
       ),
     ];

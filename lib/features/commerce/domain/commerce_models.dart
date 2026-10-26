@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/eventa_colors.dart';
 import '../../events/domain/models.dart';
@@ -11,12 +12,13 @@ enum PayMethod {
   mtn('MTN Money', AppIcons.mobile, Color(0xFFFFCB05), true),
   wave('Wave', AppIcons.mobile, Color(0xFF1DC4FF), true),
   moov('Moov Money', AppIcons.mobile, Color(0xFF0066B3), true),
-  card('Carte bancaire', AppIcons.card, Confetti.ink, false),
-  applePay('Apple Pay', AppIcons.apple, Confetti.ink, false),
-  googlePay('Google Pay', AppIcons.google, Confetti.ink, false);
+  card('Carte bancaire', AppIcons.card, Color(0xFF6B5E8A), false),
+  applePay('Apple Pay', AppIcons.apple, Color(0xFF6B5E8A), false),
+  googlePay('Google Pay', AppIcons.google, Color(0xFF6B5E8A), false);
 
-  const PayMethod(this.label, this.icon, this.dot, this.mobileMoney);
-  final String label;
+  const PayMethod(this._label, this.icon, this.dot, this.mobileMoney);
+  final String _label;
+  String get label => _label.tr;
   final IconData icon;
 
   /// Pastille d'identification (pas de logo de marque).
@@ -58,9 +60,11 @@ enum BookingStep {
   executing('Exécution', 'Préparation en cours'),
   closed('Clôture', 'Dossier clôturé');
 
-  const BookingStep(this.label, this.status);
-  final String label;
-  final String status;
+  const BookingStep(this._label, this._status);
+  final String _label;
+  String get label => _label.tr;
+  final String _status;
+  String get status => _status.tr;
 }
 
 @immutable
@@ -187,15 +191,17 @@ class Booking {
 // ─── Abonnements ────────────────────────────────────────────────────────
 
 enum Plan {
-  free('Découverte', 0, Hue.ink),
-  azur('Azur', 2900, Hue.lagoon),
-  signature('Signature', 5900, Hue.violet),
-  privilege('Privilège', 9900, Hue.gold);
+  free('Découverte', 0, Hues.ink),
+  azur('Azur', 2900, Hues.lagoon),
+  signature('Signature', 5900, Hues.violet),
+  privilege('Privilège', 9900, Hues.gold);
 
-  const Plan(this.label, this.price, this.hue);
-  final String label;
+  const Plan(this._label, this.price, this._hue);
+  final String _label;
+  String get label => _label.tr;
   final int price;
-  final Hue hue;
+  final Hues _hue;
+  Hue get hue => _hue.hue;
 
   bool includes(Plan other) => index >= other.index;
 }
@@ -207,8 +213,9 @@ enum PremiumFeature {
   agent('Agent IA de votre événement', Plan.signature, AppIcons.sparkle),
   vault('Coffre-fort numérique', Plan.signature, AppIcons.lock);
 
-  const PremiumFeature(this.label, this.minPlan, this.icon);
-  final String label;
+  const PremiumFeature(this._label, this.minPlan, this.icon);
+  final String _label;
+  String get label => _label.tr;
   final Plan minPlan;
   final IconData icon;
 }
@@ -223,8 +230,9 @@ enum VaultFolder {
   certificates('Certificats', AppIcons.certificate),
   documents('Documents', AppIcons.folder);
 
-  const VaultFolder(this.label, this.icon);
-  final String label;
+  const VaultFolder(this._label, this.icon);
+  final String _label;
+  String get label => _label.tr;
   final IconData icon;
 }
 

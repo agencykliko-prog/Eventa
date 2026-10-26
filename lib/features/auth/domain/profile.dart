@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../events/domain/models.dart';
 
 /// Deux profils, deux interfaces : chacun ne voit que ce qui le concerne.
@@ -7,17 +8,20 @@ enum UserRole {
   organizer('Organisateur', 'Je prépare une fête'),
   creator('Creator', 'Prestataire, agence');
 
-  const UserRole(this.label, this.pitch);
-  final String label;
-  final String pitch;
+  const UserRole(this._label, this._pitch);
+  final String _label;
+  String get label => _label.tr;
+  final String _pitch;
+  String get pitch => _pitch.tr;
 }
 
 enum CreatorKind {
   freelancer('Prestataire indépendant'),
   agency('Agence événementielle');
 
-  const CreatorKind(this.label);
-  final String label;
+  const CreatorKind(this._label);
+  final String _label;
+  String get label => _label.tr;
 }
 
 /// Informations professionnelles d'un Creator.

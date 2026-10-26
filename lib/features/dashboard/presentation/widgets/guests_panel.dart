@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/i18n/tr.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/eventa_colors.dart';
@@ -29,7 +30,7 @@ class GuestsPanel extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(bottom: 4),
                 child: Text(
-                  'confirmés sur ${g.invited}',
+                  'confirmés sur {0}'.trf([g.invited]),
                   style: context.text.titleSmall?.copyWith(
                     color: context.eventa.muted,
                   ),
@@ -38,7 +39,7 @@ class GuestsPanel extends StatelessWidget {
               const Spacer(),
               if (g.todayNew > 0)
                 Tag(
-                  label: "+${g.todayNew} aujourd'hui",
+                  label: '+{0} aujourd\'hui'.trf([g.todayNew]),
                   hue: Hue.coral,
                   icon: AppIcons.trendUp,
                 ),
@@ -58,12 +59,12 @@ class GuestsPanel extends StatelessWidget {
                   children: [
                     Expanded(
                       flex: (g.confirmed * t * 1000 / total).round() + 1,
-                      child: const ColoredBox(color: Confetti.coral),
+                      child: ColoredBox(color: Confetti.coral),
                     ),
                     const SizedBox(width: 2),
                     Expanded(
                       flex: (g.declined * t * 1000 / total).round() + 1,
-                      child: const ColoredBox(color: Confetti.inkMuted),
+                      child: ColoredBox(color: Confetti.inkMuted),
                     ),
                     const SizedBox(width: 2),
                     Expanded(
@@ -73,7 +74,7 @@ class GuestsPanel extends StatelessWidget {
                                   total)
                               .round() +
                           1,
-                      child: const ColoredBox(color: Confetti.lavender),
+                      child: ColoredBox(color: Confetti.lavender),
                     ),
                   ],
                 ),
@@ -85,24 +86,24 @@ class GuestsPanel extends StatelessWidget {
             children: [
               _Legend(
                 color: Confetti.coral,
-                label: 'Présents',
+                label: 'Présents'.tr,
                 value: g.confirmed,
               ),
               _Legend(
                 color: Confetti.inkMuted,
-                label: 'Absents',
+                label: 'Absents'.tr,
                 value: g.declined,
               ),
               _Legend(
-                color: const Color(0xFFCFC9DF),
-                label: 'En attente',
+                color: Confetti.border,
+                label: 'En attente'.tr,
                 value: g.pending,
               ),
             ],
           ),
           const SizedBox(height: 16),
           PillButton(
-            label: 'Relancer les ${g.pending} en attente',
+            label: 'Relancer les {0} en attente'.trf([g.pending]),
             icon: AppIcons.send,
             tone: ButtonTone.ghost,
             height: 48,

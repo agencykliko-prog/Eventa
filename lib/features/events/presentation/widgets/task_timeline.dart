@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../../../core/i18n/tr.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/eventa_colors.dart';
@@ -18,11 +19,11 @@ Hue moduleHue(Module m) => switch (m) {
 };
 
 String moduleLabel(Module m) => switch (m) {
-  Module.budget => 'Budget',
-  Module.tasks => 'Tâche',
-  Module.vendors => 'Prestataire',
-  Module.team => 'Équipe',
-  Module.guests => 'Invités',
+  Module.budget => 'Budget'.tr,
+  Module.tasks => 'Tâche'.tr,
+  Module.vendors => 'Prestataire'.tr,
+  Module.team => 'Équipe'.tr,
+  Module.guests => 'Invités'.tr,
 };
 
 /// Une entrée du rétroplanning, tâche + événement d'origine.
@@ -161,8 +162,7 @@ class _TimelineRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${timeOf(t.due)} – ${timeOf(end)}'
-                    '${overdue ? ' · en retard' : ''}',
+                    '${timeOf(t.due)} – ${timeOf(end)}${overdue ? ' · en retard'.tr : ''}',
                     style: context.text.labelSmall?.copyWith(
                       color: overdue ? Confetti.danger : context.eventa.muted,
                       fontWeight: FontWeight.w600,
@@ -240,7 +240,7 @@ class _Check extends StatelessWidget {
   Widget build(BuildContext context) {
     return Pressable(
       scale: 0.88,
-      semanticLabel: done ? 'Marquer à faire' : 'Marquer comme terminée',
+      semanticLabel: done ? 'Marquer à faire'.tr : 'Marquer comme terminée'.tr,
       onTap: () {
         HapticFeedback.lightImpact();
         onTap();
@@ -254,7 +254,7 @@ class _Check extends StatelessWidget {
           shape: BoxShape.circle,
           color: done ? hue.text : Colors.transparent,
           border: Border.all(
-            color: done ? hue.text : const Color(0xFFCBC5DA),
+            color: done ? hue.text : Confetti.border,
             width: 2,
           ),
         ),
@@ -279,7 +279,7 @@ class _DashPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final p = Paint()
-      ..color = const Color(0xFFD5CFE3)
+      ..color = Confetti.border
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round;
     final x = size.width / 2;

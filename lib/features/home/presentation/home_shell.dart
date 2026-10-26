@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
@@ -24,11 +25,12 @@ abstract final class Branch {
 }
 
 class _Tab {
-  const _Tab(this.branch, this.icon, this.iconOn, this.label);
+  const _Tab(this.branch, this.icon, this.iconOn, this._label);
   final int branch;
   final IconData icon;
   final IconData iconOn;
-  final String label;
+  final String _label;
+  String get label => _label.tr;
 }
 
 const _organizerTabs = [
@@ -114,12 +116,12 @@ class HomeShell extends ConsumerWidget {
               height: 64,
               padding: const EdgeInsets.symmetric(horizontal: 6),
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.88),
+                color: Confetti.surface.withValues(alpha: 0.88),
                 borderRadius: BorderRadius.circular(26),
-                border: Border.all(color: Colors.white),
+                border: Border.all(color: Confetti.surface),
                 boxShadow: [
                   BoxShadow(
-                    color: Confetti.ink.withValues(alpha: 0.1),
+                    color: Confetti.inkFixed.withValues(alpha: 0.1),
                     blurRadius: 30,
                     offset: const Offset(0, 10),
                   ),
@@ -134,7 +136,7 @@ class HomeShell extends ConsumerWidget {
                       child: Center(
                         child: Pressable(
                           scale: 0.9,
-                          semanticLabel: 'Nouvel événement',
+                          semanticLabel: 'Nouvel événement'.tr,
                           onTap: () {
                             HapticFeedback.mediumImpact();
                             context.push(Routes.newEvent);
@@ -146,9 +148,9 @@ class HomeShell extends ConsumerWidget {
                               color: Confetti.ink,
                               borderRadius: BorderRadius.circular(15),
                             ),
-                            child: const Icon(
+                            child: Icon(
                               AppIcons.add,
-                              color: Colors.white,
+                              color: Confetti.onInk,
                               size: 23,
                             ),
                           ),
@@ -239,7 +241,7 @@ class _Rail extends StatelessWidget {
     final extended = MediaQuery.sizeOf(context).width >= 1100;
     return Container(
       width: extended ? 220 : 84,
-      color: Colors.white,
+      color: Confetti.surface,
       child: SafeArea(
         child: Column(
           crossAxisAlignment: extended
@@ -260,7 +262,7 @@ class _Rail extends StatelessWidget {
                 ),
                 child: Pressable(
                   onTap: () => context.push(Routes.newEvent),
-                  semanticLabel: 'Nouvel événement',
+                  semanticLabel: 'Nouvel événement'.tr,
                   child: Container(
                     height: 46,
                     width: extended ? double.infinity : 46,
@@ -271,13 +273,13 @@ class _Rail extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(AppIcons.add, color: Colors.white, size: 21),
+                        Icon(AppIcons.add, color: Confetti.onInk, size: 21),
                         if (extended) ...[
                           const SizedBox(width: 8),
                           Text(
-                            'Nouvel événement',
+                            'Nouvel événement'.tr,
                             style: context.text.labelMedium?.copyWith(
-                              color: Colors.white,
+                              color: Confetti.onInk,
                             ),
                           ),
                         ],
@@ -340,7 +342,7 @@ class _Rail extends StatelessWidget {
                               const SizedBox(height: 3),
                               Text(
                                 t.label,
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 10.5,
                                   fontWeight: FontWeight.w600,
                                   color: Confetti.ink,

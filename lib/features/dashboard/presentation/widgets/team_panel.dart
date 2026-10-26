@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/i18n/tr.dart';
 import '../../../../core/theme/eventa_colors.dart';
 import '../../../../core/widgets/avatars.dart';
 import '../../../../core/widgets/ui.dart';
@@ -45,10 +46,10 @@ class TeamPanel extends StatelessWidget {
                                 event.category == EventCategory.wedding)
                               event.team[i].side!,
                             event.team[i].pending
-                                ? 'invitation envoyée'
+                                ? 'invitation envoyée'.tr
                                 : (event.team[i].online
-                                      ? 'en ligne'
-                                      : 'hors ligne'),
+                                      ? 'en ligne'.tr
+                                      : 'hors ligne'.tr),
                           ].join(' · '),
                           style: context.text.bodySmall,
                         ),
@@ -74,7 +75,7 @@ class TeamPanel extends StatelessWidget {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'En direct',
+                  'En direct'.tr,
                   style: context.text.labelMedium?.copyWith(color: c.text),
                 ),
               ),

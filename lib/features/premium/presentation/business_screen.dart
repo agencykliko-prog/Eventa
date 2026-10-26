@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/eventa_colors.dart';
 import '../../../core/widgets/entrance.dart';
@@ -35,22 +36,21 @@ class BusinessScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Tag(
-                    label: 'Business / Creator',
+                  Tag(
+                    label: 'Business / Creator'.tr,
                     hue: Hue.gold,
                     solid: true,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Votre agence événementielle, dans une seule app.',
+                    'Votre agence événementielle, dans une seule app.'.tr,
                     style: context.text.headlineMedium?.copyWith(
                       color: Colors.white,
                     ),
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Clients, devis, contrats, facturation et équipe. En marque blanche, '
-                    'avec API et automatisations.',
+                    'Clients, devis, contrats, facturation et équipe. En marque blanche, avec API et automatisations.'.tr,
                     style: context.text.bodyMedium?.copyWith(
                       color: Colors.white70,
                     ),
@@ -58,13 +58,13 @@ class BusinessScreen extends StatelessWidget {
                   const SizedBox(height: 18),
                   Text.rich(
                     TextSpan(
-                      text: 'À partir de ',
+                      text: 'À partir de '.tr,
                       style: context.text.bodySmall?.copyWith(
                         color: Colors.white60,
                       ),
                       children: [
                         TextSpan(
-                          text: '29 900 FCFA',
+                          text: '29 900 FCFA'.tr,
                           style: context.text.headlineSmall?.copyWith(
                             color: Confetti.gold,
                           ),
@@ -75,18 +75,18 @@ class BusinessScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 18),
                   PillButton(
-                    label: 'Demander une démo',
+                    label: 'Demander une démo'.tr,
                     tone: ButtonTone.gold,
                     trailingIcon: AppIcons.forward,
                     onPressed: () => toast(
                       context,
-                      'Demande envoyée, un conseiller vous rappelle sous 24 h',
+                      'Demande envoyée, un conseiller vous rappelle sous 24 h'.tr,
                     ),
                   ),
                 ],
               ),
             ),
-            const SectionTitle('Pour qui'),
+            SectionTitle('Pour qui'.tr),
             Wrap(
               spacing: 8,
               runSpacing: 8,
@@ -106,7 +106,7 @@ class BusinessScreen extends StatelessWidget {
                   ),
               ],
             ),
-            const SectionTitle('Tout est inclus'),
+            SectionTitle('Tout est inclus'.tr),
             GridView.count(
               crossAxisCount: 2,
               shrinkWrap: true,
@@ -140,10 +140,9 @@ class BusinessScreen extends StatelessWidget {
                   ),
               ],
             ),
-            const SectionTitle('Publicité Premium'),
+            SectionTitle('Publicité Premium'.tr),
             Text(
-              'Réservée aux professionnels : gagnez en visibilité auprès des '
-              'organisateurs qui préparent leur événement.',
+              'Réservée aux professionnels : gagnez en visibilité auprès des organisateurs qui préparent leur événement.'.tr,
               style: context.text.bodyMedium?.copyWith(
                 color: context.eventa.muted,
               ),
@@ -156,7 +155,7 @@ class BusinessScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   child: Row(
                     children: [
-                      const IconTile(
+                      IconTile(
                         icon: AppIcons.megaphone,
                         hue: Hue.mango,
                         size: 40,
@@ -178,12 +177,12 @@ class BusinessScreen extends StatelessWidget {
               ),
             const SizedBox(height: 6),
             PillButton(
-              label: 'Booster ma visibilité',
+              label: 'Booster ma visibilité'.tr,
               icon: AppIcons.rocket,
               tone: ButtonTone.dark,
               onPressed: () => toast(
                 context,
-                'Un conseiller Publicité vous contacte bientôt',
+                'Un conseiller Publicité vous contacte bientôt'.tr,
               ),
             ),
           ],

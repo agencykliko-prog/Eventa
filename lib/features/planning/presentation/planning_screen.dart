@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../core/i18n/tr.dart';
+import '../../../core/sound/sounds.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/forms.dart';
+import '../../../core/widgets/mascot.dart';
 import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/ui.dart';
 import '../../auth/presentation/session_provider.dart';
@@ -72,7 +75,7 @@ final agendaProvider = Provider<List<AgendaItem>>((ref) {
       AgendaItem(
         id: 'jj-${e.id}',
         title: e.name,
-        subtitle: 'Jour J · ${e.venue}',
+        subtitle: 'Jour J · {0}'.trf([e.venue]),
         start: e.date,
         durationMin: 360,
         hue: e.category.hue,
@@ -106,6 +109,7 @@ class PlanningScreen extends ConsumerStatefulWidget {
 class _PlanningScreenState extends ConsumerState<PlanningScreen> {
   AgendaView _view = AgendaView.week;
   DateTime _day = dateOnly(DateTime.now());
+  final _mascot = GlobalKey<MascotState>();
 
   DateTime get _today => dateOnly(DateTime.now());
 
@@ -120,7 +124,7 @@ class _PlanningScreenState extends ConsumerState<PlanningScreen> {
   }
 
   String get _title {
-    final m = DateFormat('MMMM y', 'fr_FR').format(_day);
+    final m = DateFormat('MMMM y', L10n.intl).format(_day);
     return m[0].toUpperCase() + m.substring(1);
   }
 
@@ -149,14 +153,29 @@ class _PlanningScreenState extends ConsumerState<PlanningScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 16, 16, 0),
                 child: Row(
                   children: [
-                    Expanded(
-                      child: Text('Agenda', style: context.text.headlineMedium),
+                    Text('Agenda'.tr, style: context.text.headlineMedium),
+                    // La mascotte somnole les jours libres et fête chaque
+                    // tâche cochée.
+                    Padding(
+                      padding: const EdgeInsets.only(left: 6),
+                      child: Mascot(
+                        key: _mascot,
+                        size: 46,
+                        legs: false,
+                        arms: false,
+                        mood: dayItems.isEmpty
+                            ? MascotMood.sleepy
+                            : MascotMood.happy,
+                        onTap: () =>
+                            ref.read(soundProvider).play(Sfx.notification),
+                      ),
                     ),
+                    const Spacer(),
                     if (_day != _today)
                       Padding(
                         padding: const EdgeInsets.only(right: 8),
                         child: PillButton(
-                          label: "Aujourd'hui",
+                          label: 'Aujourd\'hui'.tr,
                           tone: ButtonTone.ghost,
                           expand: false,
                           height: 38,
@@ -168,7 +187,7 @@ class _PlanningScreenState extends ConsumerState<PlanningScreen> {
                         icon: AppIcons.add,
                         tooltip: 'Ajouter une activité',
                         background: Confetti.ink,
-                        foreground: Colors.white,
+                        foreground: Confetti.onInk,
                         onTap: () => showActivitySheet(context, ref, day: _day),
                       ),
                   ],
@@ -234,8 +253,8 @@ class _PlanningScreenState extends ConsumerState<PlanningScreen> {
                     const Spacer(),
                     Text(
                       dayItems.isEmpty
-                          ? 'Libre'
-                          : '${dayItems.length} activité${dayItems.length > 1 ? 's' : ''}',
+                          ? 'Libre'.tr
+                          : (dayItems.length > 1 ? '{0} activités' : '{0} activité').trf([dayItems.length]),
                       style: context.text.labelMedium?.copyWith(
                         color: Confetti.inkMuted,
                       ),
@@ -264,9 +283,20 @@ class _PlanningScreenState extends ConsumerState<PlanningScreen> {
                                 expanded: _view == AgendaView.day,
                                 onToggle: it.task == null
                                     ? null
-                                    : () => ref
-                                          .read(eventsProvider.notifier)
-                                          .toggleTask(it.eventId!, it.task!.id),
+                                    : () {
+                                        if (!it.task!.done) {
+                                          _mascot.currentState?.jump();
+                                          ref
+                                              .read(soundProvider)
+                                              .play(Sfx.success);
+                                        }
+                                        ref
+                                            .read(eventsProvider.notifier)
+                                            .toggleTask(
+                                              it.eventId!,
+                                              it.task!.id,
+                                            );
+                                      },
                                 onTap: it.task == null
                                     ? null
                                     : () => showActivitySheet(
@@ -289,9 +319,9 @@ class _PlanningScreenState extends ConsumerState<PlanningScreen> {
   DateTime _weekStart(DateTime d) => d.subtract(Duration(days: d.weekday - 1));
 
   String _dayTitle(DateTime d) {
-    if (d == _today) return "Aujourd'hui";
-    if (d == _today.add(const Duration(days: 1))) return 'Demain';
-    final s = DateFormat('EEEE d MMMM', 'fr_FR').format(d);
+    if (d == _today) return 'Aujourd\'hui'.tr;
+    if (d == _today.add(const Duration(days: 1))) return 'Demain'.tr;
+    final s = DateFormat('EEEE d MMMM', L10n.intl).format(d);
     return s[0].toUpperCase() + s.substring(1);
   }
 }
@@ -330,7 +360,7 @@ class _ViewSwitch extends StatelessWidget {
                 bottom: 0,
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: Confetti.surface,
                     borderRadius: BorderRadius.circular(9),
                   ),
                 ),
@@ -547,7 +577,7 @@ class _DayCell extends StatelessWidget {
                 '${day.day}',
                 style: context.text.titleSmall?.copyWith(
                   color: on
-                      ? Colors.white
+                      ? Confetti.onInk
                       : (isToday ? Confetti.coralDeep : Confetti.ink),
                   fontFeatures: const [FontFeature.tabularFigures()],
                 ),
@@ -608,7 +638,7 @@ class _AgendaRow extends StatelessWidget {
           vertical: expanded ? 16 : 12,
         ),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Confetti.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: Confetti.line),
         ),
@@ -684,7 +714,7 @@ class _AgendaRow extends StatelessWidget {
                     shape: BoxShape.circle,
                     color: done ? Confetti.ink : Colors.transparent,
                     border: Border.all(
-                      color: done ? Confetti.ink : const Color(0xFFC9C2D8),
+                      color: done ? Confetti.ink : Confetti.border,
                       width: 1.6,
                     ),
                   ),
@@ -715,16 +745,22 @@ class _EmptyDay extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 30),
       child: Column(
         children: [
-          Text('Rien de prévu', style: context.text.titleSmall),
+          const Mascot(
+            size: 88,
+            color: MascotColor.lagoon,
+            mood: MascotMood.sleepy,
+          ),
+          const SizedBox(height: 10),
+          Text('Rien de prévu'.tr, style: context.text.titleSmall),
           const SizedBox(height: 4),
           Text(
-            'Profitez-en, ou planifiez une activité.',
+            'Profitez-en, ou planifiez une activité.'.tr,
             style: context.text.bodySmall,
           ),
           if (onAdd != null) ...[
             const SizedBox(height: 14),
             PillButton(
-              label: 'Ajouter',
+              label: 'Ajouter'.tr,
               icon: AppIcons.add,
               tone: ButtonTone.ghost,
               expand: false,
@@ -784,7 +820,7 @@ class _ActivitySheetState extends ConsumerState<_ActivitySheet> {
     final events = ref.read(eventsProvider).value ?? const <Event>[];
     final eventId = _eventId ?? (events.isEmpty ? null : events.first.id);
     if (_title.text.trim().isEmpty || eventId == null) {
-      toast(context, 'Ajoutez un titre', icon: AppIcons.info);
+      toast(context, 'Ajoutez un titre'.tr, icon: AppIcons.info);
       return;
     }
     final due = DateTime(
@@ -834,7 +870,7 @@ class _ActivitySheetState extends ConsumerState<_ActivitySheet> {
     Navigator.of(context).pop();
     toast(
       context,
-      _editing ? 'Activité modifiée' : 'Activité ajoutée à ${timeOf(due)}',
+      _editing ? 'Activité modifiée'.tr : 'Activité ajoutée à {0}'.trf([timeOf(due)]),
     );
   }
 
@@ -848,19 +884,19 @@ class _ActivitySheetState extends ConsumerState<_ActivitySheet> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            _editing ? 'Modifier l’activité' : 'Nouvelle activité',
+            _editing ? 'Modifier l’activité'.tr : 'Nouvelle activité'.tr,
             style: context.text.headlineSmall,
           ),
           const SizedBox(height: 16),
           AppField(
-            label: 'Titre',
+            label: 'Titre'.tr,
             controller: _title,
-            hint: 'Ex. Dégustation chez le traiteur',
+            hint: 'Ex. Dégustation chez le traiteur'.tr,
             autofocus: !_editing,
           ),
           const SizedBox(height: 14),
           AppSelect<String>(
-            label: 'Événement',
+            label: 'Événement'.tr,
             value: _eventId,
             options: [for (final e in events) e.id],
             labelOf: (id) => events.firstWhere((e) => e.id == id).name,
@@ -871,7 +907,7 @@ class _ActivitySheetState extends ConsumerState<_ActivitySheet> {
             children: [
               Expanded(
                 child: _PickerField(
-                  label: 'Date',
+                  label: 'Date'.tr,
                   value: mediumDate(_date),
                   icon: AppIcons.agenda,
                   onTap: () async {
@@ -890,7 +926,7 @@ class _ActivitySheetState extends ConsumerState<_ActivitySheet> {
               const SizedBox(width: 10),
               Expanded(
                 child: _PickerField(
-                  label: 'Heure',
+                  label: 'Heure'.tr,
                   value: _time.format(context),
                   icon: AppIcons.clock,
                   onTap: () async {
@@ -906,7 +942,7 @@ class _ActivitySheetState extends ConsumerState<_ActivitySheet> {
           ),
           const SizedBox(height: 14),
           AppSelect<int>(
-            label: 'Durée',
+            label: 'Durée'.tr,
             value: _duration,
             options: const [15, 30, 45, 60, 90, 120, 180, 240],
             labelOf: (m) => m < 60
@@ -916,14 +952,14 @@ class _ActivitySheetState extends ConsumerState<_ActivitySheet> {
           ),
           const SizedBox(height: 20),
           PillButton(
-            label: _editing ? 'Enregistrer' : 'Ajouter',
+            label: _editing ? 'Enregistrer'.tr : 'Ajouter'.tr,
             tone: ButtonTone.dark,
             onPressed: _save,
           ),
           if (_editing) ...[
             const SizedBox(height: 8),
             PillButton(
-              label: 'Supprimer',
+              label: 'Supprimer'.tr,
               icon: AppIcons.trash,
               tone: ButtonTone.ghost,
               onPressed: () {
@@ -931,7 +967,7 @@ class _ActivitySheetState extends ConsumerState<_ActivitySheet> {
                     .read(eventsProvider.notifier)
                     .removeTask(widget.item!.eventId!, widget.item!.task!.id);
                 Navigator.of(context).pop();
-                toast(context, 'Activité supprimée', icon: AppIcons.trash);
+                toast(context, 'Activité supprimée'.tr, icon: AppIcons.trash);
               },
             ),
           ],
@@ -967,7 +1003,7 @@ class _PickerField extends StatelessWidget {
             height: 54,
             padding: const EdgeInsets.symmetric(horizontal: 14),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Confetti.surface,
               borderRadius: BorderRadius.circular(14),
               border: Border.all(color: Confetti.line),
             ),

@@ -1,13 +1,20 @@
+import 'dart:async';
+
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/router/app_router.dart';
+import '../../../core/sound/sounds.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/avatars.dart';
 import '../../../core/widgets/entrance.dart';
+import '../../../core/widgets/mascot.dart';
 import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/ui.dart';
 import '../../auth/presentation/session_provider.dart';
@@ -18,6 +25,8 @@ import '../../dashboard/presentation/widgets/budget_overview.dart';
 import '../../events/domain/models.dart';
 import '../../events/presentation/events_providers.dart';
 import '../../events/presentation/widgets/event_card.dart';
+import '../../premium/presentation/premium_nudge.dart';
+import 'greeting_hero.dart';
 import 'notifications_sheet.dart';
 
 /// Accueil Organisateur. Ordre de lecture : l'événement qui arrive, son
@@ -40,7 +49,11 @@ class HomeScreen extends ConsumerWidget {
               parent: BouncingScrollPhysics(),
             ),
             slivers: [
-              const SliverToBoxAdapter(child: HomeHeader()),
+              SliverToBoxAdapter(
+                child: GreetingHero(
+                  header: HomeHeader(subtitle: _today()),
+                ),
+              ),
               ...events.when(
                 skipLoadingOnRefresh: true,
                 loading: () => const [SliverToBoxAdapter(child: _Loading())],
@@ -97,7 +110,7 @@ class HomeScreen extends ConsumerWidget {
 
     return [
       SliverPadding(
-        padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
         sliver: SliverToBoxAdapter(
           child: Entrance(
             child: SizedBox(
@@ -112,7 +125,7 @@ class HomeScreen extends ConsumerWidget {
       ),
       SliverToBoxAdapter(
         child: SectionTitle(
-          'Budget',
+          'Budget'.tr,
           action: next.name,
           onAction: () => context.push(Routes.budget(next.id)),
         ),
@@ -131,8 +144,8 @@ class HomeScreen extends ConsumerWidget {
       ),
       SliverToBoxAdapter(
         child: SectionTitle(
-          'Prochaines échéances',
-          action: 'Agenda',
+          'Prochaines échéances'.tr,
+          action: 'Agenda'.tr,
           onAction: () => context.go(Routes.planning),
         ),
       ),
@@ -159,7 +172,7 @@ class HomeScreen extends ConsumerWidget {
           ),
         ),
       ),
-      const SliverToBoxAdapter(child: SectionTitle('À faire en priorité')),
+      SliverToBoxAdapter(child: SectionTitle('À faire en priorité'.tr)),
       SliverPadding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         sliver: SliverList.list(
@@ -171,8 +184,8 @@ class HomeScreen extends ConsumerWidget {
                   icon: AppIcons.file,
                   hue: Hue.mango,
                   title: b.step == BookingStep.quoted
-                      ? 'Devis reçu · ${b.vendor.name}'
-                      : 'Acompte à régler · ${b.vendor.name}',
+                      ? 'Devis reçu · {0}'.trf([b.vendor.name])
+                      : 'Acompte à régler · {0}'.trf([b.vendor.name]),
                   caption: b.quote == null
                       ? ''
                       : fcfa(
@@ -180,7 +193,7 @@ class HomeScreen extends ConsumerWidget {
                               ? b.quote!.total
                               : b.quote!.deposit,
                         ),
-                  action: b.step == BookingStep.quoted ? 'Voir' : 'Payer',
+                  action: b.step == BookingStep.quoted ? 'Voir'.tr : 'Payer'.tr,
                   onTap: () => context.push(Routes.booking(b.id)),
                 ),
               ),
@@ -193,7 +206,7 @@ class HomeScreen extends ConsumerWidget {
                   title: payments.first.$2.label,
                   caption:
                       '${fcfa(payments.first.$2.amount)} · ${relativeDue(payments.first.$2.due).toLowerCase()}',
-                  action: 'Payer',
+                  action: 'Payer'.tr,
                   onTap: () =>
                       _pay(context, ref, payments.first.$1, payments.first.$2),
                 ),
@@ -202,14 +215,17 @@ class HomeScreen extends ConsumerWidget {
               _ActionRow(
                 icon: AppIcons.guests,
                 hue: Hue.coral,
-                title: '$pendingRsvp invités sans réponse',
+                title: '{0} invités sans réponse'.trf([pendingRsvp]),
                 caption: next.name,
-                action: 'Relancer',
-                onTap: () => toast(
-                  context,
-                  'Relance WhatsApp envoyée à $pendingRsvp invités',
-                  icon: AppIcons.whatsapp,
-                ),
+                action: 'Relancer'.tr,
+                onTap: () {
+                  toast(
+                    context,
+                    'Relance WhatsApp envoyée à {0} invités'.trf([pendingRsvp]),
+                    icon: AppIcons.whatsapp,
+                  );
+                  maybeShowPremiumNudge(context, ref, PremiumNudge.guests);
+                },
               ),
           ],
         ),
@@ -217,8 +233,8 @@ class HomeScreen extends ConsumerWidget {
       if (others.isNotEmpty) ...[
         SliverToBoxAdapter(
           child: SectionTitle(
-            'Mes événements',
-            action: 'Nouveau',
+            'Mes événements'.tr,
+            action: 'Nouveau'.tr,
             onAction: () => context.push(Routes.newEvent),
           ),
         ),
@@ -247,7 +263,7 @@ class HomeScreen extends ConsumerWidget {
       context,
       title: p.label,
       payee: p.label.replaceFirst('Solde ', ''),
-      options: [PayOption('Solde', p.amount)],
+      options: [PayOption('Solde'.tr, p.amount)],
       onPay: (amount, m) {
         final r = Receipt(
           ref: receiptRef(),
@@ -274,6 +290,12 @@ class HomeScreen extends ConsumerWidget {
       },
     );
   }
+}
+
+/// Date du jour, capitalisée (« Lundi 26 octobre »).
+String _today() {
+  final s = longDate(DateTime.now()).replaceAll(RegExp(r' \d{4}$'), '');
+  return s.isEmpty ? s : s[0].toUpperCase() + s.substring(1);
 }
 
 /// En-tête commun aux deux profils : photo, salutation, notifications.
@@ -332,12 +354,7 @@ class HomeHeader extends ConsumerWidget {
               ],
             ),
           ),
-          RoundIconButton(
-            icon: AppIcons.bell,
-            tooltip: 'Notifications',
-            badge: true,
-            onTap: () => showNotificationsSheet(context),
-          ),
+          const _Bell(),
         ],
       ),
     );
@@ -419,14 +436,14 @@ class _DeadlineRow extends StatelessWidget {
             Pressable(
               scale: 0.85,
               onTap: onToggle,
-              semanticLabel: 'Marquer comme terminée',
+              semanticLabel: 'Marquer comme terminée'.tr,
               child: Container(
                 width: 24,
                 height: 24,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: const Color(0xFFC9C2D8),
+                    color: Confetti.border,
                     width: 1.6,
                   ),
                 ),
@@ -541,7 +558,7 @@ class _EventRow extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 6),
-            const Icon(AppIcons.chevron, size: 14, color: Confetti.inkFaint),
+            Icon(AppIcons.chevron, size: 14, color: Confetti.inkFaint),
           ],
         ),
       ),
@@ -554,16 +571,8 @@ class _Loading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const Padding(
-    padding: EdgeInsets.fromLTRB(16, 24, 16, 0),
-    child: Column(
-      children: [
-        Skeleton(height: 300, radius: 28),
-        SizedBox(height: 24),
-        Skeleton(height: 150, radius: 22),
-        SizedBox(height: 24),
-        Skeleton(height: 180, radius: 22),
-      ],
-    ),
+    padding: EdgeInsets.fromLTRB(16, 40, 16, 0),
+    child: Center(child: MascotLoader.party()),
   );
 }
 
@@ -577,19 +586,19 @@ class _Empty extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          'Votre première fête commence ici',
+          'Votre première fête commence ici'.tr,
           style: context.text.titleLarge,
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 8),
         Text(
-          'Créez un événement : on prépare la checklist et le budget selon son type.',
+          'Créez un événement : on prépare la checklist et le budget selon son type.'.tr,
           textAlign: TextAlign.center,
           style: context.text.bodyMedium?.copyWith(color: Confetti.inkMuted),
         ),
         const SizedBox(height: 20),
         PillButton(
-          label: 'Créer un événement',
+          label: 'Créer un événement'.tr,
           icon: AppIcons.add,
           expand: false,
           onPressed: () => context.push(Routes.newEvent),
@@ -597,4 +606,72 @@ class _Empty extends StatelessWidget {
       ],
     ),
   );
+}
+
+/// Cloche des notifications. Une fois par session, une notification
+/// « arrive » peu après l'ouverture : petit son et balancement.
+class _Bell extends ConsumerStatefulWidget {
+  const _Bell();
+
+  static bool _rang = false;
+
+  @override
+  ConsumerState<_Bell> createState() => _BellState();
+}
+
+class _BellState extends ConsumerState<_Bell>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _swing = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  );
+  bool _fresh = false;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_Bell._rang) return;
+    _Bell._rang = true;
+    _timer = Timer(const Duration(milliseconds: 2600), () {
+      if (!mounted) return;
+      ref.read(soundProvider).play(Sfx.notification);
+      setState(() => _fresh = true);
+      _swing.forward(from: 0);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _swing.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _swing,
+      builder: (context, child) {
+        final t = _swing.value;
+        // Oscillation amortie autour de l'attache de la cloche.
+        final angle = math.sin(t * math.pi * 6) * 0.35 * (1 - t);
+        return Transform.rotate(
+          angle: angle,
+          alignment: Alignment.topCenter,
+          child: child,
+        );
+      },
+      child: RoundIconButton(
+        icon: AppIcons.bell,
+        tooltip: 'Notifications',
+        badge: !_fresh,
+        badgeCount: _fresh ? 3 : null,
+        onTap: () {
+          setState(() => _fresh = false);
+          showNotificationsSheet(context);
+        },
+      ),
+    );
+  }
 }

@@ -1,13 +1,15 @@
 import 'package:intl/intl.dart';
 
-final _fcfa = NumberFormat.decimalPattern('fr_FR');
+import '../../core/i18n/tr.dart';
+
+NumberFormat get _fcfa => NumberFormat.decimalPattern(L10n.intl);
 
 /// Espace insécable : un montant ne se coupe jamais en fin de ligne.
 const _nbsp = '\u00a0';
 
 /// 12 500 000 FCFA
 String fcfa(num amount) =>
-    '${_fcfa.format(amount).replaceAll('\u202f', _nbsp).replaceAll(' ', _nbsp)}${_nbsp}FCFA';
+    '{0}{1}FCFA'.trf([_fcfa.format(amount).replaceAll('\u202f', _nbsp).replaceAll(' ', _nbsp), _nbsp]);
 
 /// 12,5 M — pour les chiffres compacts des cartes.
 String fcfaCompact(num amount) {
@@ -16,7 +18,7 @@ String fcfaCompact(num amount) {
     final s = m == m.roundToDouble()
         ? m.toStringAsFixed(0)
         : m.toStringAsFixed(1).replaceAll('.', ',');
-    return '$s${_nbsp}M';
+    return '{0}{1}M'.trf([s, _nbsp]);
   }
   if (amount >= 1000) return '${(amount / 1000).round()}${_nbsp}k';
   return amount.toString();
@@ -30,29 +32,29 @@ int daysUntil(DateTime date, {DateTime? from}) =>
 /// J-42, Jour J, J+3
 String countdownLabel(DateTime date) {
   final d = daysUntil(date);
-  if (d == 0) return 'Jour J';
-  return d > 0 ? 'J-$d' : 'J+${-d}';
+  if (d == 0) return 'Jour J'.tr;
+  return d > 0 ? 'J-{0}'.trf([d]) : 'J+{0}'.trf([-d]);
 }
 
-String longDate(DateTime d) => DateFormat('EEEE d MMMM y', 'fr_FR').format(d);
-String mediumDate(DateTime d) => DateFormat('d MMM y', 'fr_FR').format(d);
-String shortDate(DateTime d) => DateFormat('d MMM', 'fr_FR').format(d);
+String longDate(DateTime d) => DateFormat('EEEE d MMMM y', L10n.intl).format(d);
+String mediumDate(DateTime d) => DateFormat('d MMM y', L10n.intl).format(d);
+String shortDate(DateTime d) => DateFormat('d MMM', L10n.intl).format(d);
 String weekdayShort(DateTime d) =>
-    DateFormat('EEE', 'fr_FR').format(d).replaceAll('.', '');
-String timeOf(DateTime d) => DateFormat('HH:mm', 'fr_FR').format(d);
+    DateFormat('EEE', L10n.intl).format(d).replaceAll('.', '');
+String timeOf(DateTime d) => DateFormat('HH:mm', L10n.intl).format(d);
 
 String relativeDue(DateTime due) {
   final d = daysUntil(due);
-  if (d < -1) return 'En retard de ${-d} j';
-  if (d == -1) return 'Hier';
-  if (d == 0) return "Aujourd'hui";
-  if (d == 1) return 'Demain';
-  if (d < 7) return 'Dans $d jours';
+  if (d < -1) return 'En retard de {0} j'.trf([-d]);
+  if (d == -1) return 'Hier'.tr;
+  if (d == 0) return 'Aujourd\'hui'.tr;
+  if (d == 1) return 'Demain'.tr;
+  if (d < 7) return 'Dans {0} jours'.trf([d]);
   return shortDate(due);
 }
 
 String greeting([DateTime? now]) {
   final h = (now ?? DateTime.now()).hour;
-  if (h < 5 || h >= 18) return 'Bonsoir';
-  return 'Bonjour';
+  if (h < 5 || h >= 18) return 'Bonsoir'.tr;
+  return 'Bonjour'.tr;
 }

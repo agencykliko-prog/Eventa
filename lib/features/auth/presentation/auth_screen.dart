@@ -1,15 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/avatars.dart';
+import '../../../core/sound/sounds.dart';
 import '../../../core/widgets/forms.dart';
+import '../../../core/widgets/mascot.dart';
 import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/ui.dart';
 import '../../account/presentation/photo_cropper.dart';
@@ -60,24 +65,44 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        _signUp ? 'Créer un compte' : 'Bon retour',
-                        style: context.text.headlineMedium,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _signUp
+                                      ? 'Créer un compte'.tr
+                                      : 'Bon retour'.tr,
+                                  style: context.text.headlineMedium,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  _signUp
+                                      ? 'Choisissez votre profil pour commencer.'
+                                            .tr
+                                      : 'Connectez-vous à votre espace.'.tr,
+                                  style: context.text.bodyMedium?.copyWith(
+                                    color: context.eventa.muted,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          AuthMascot(
+                            color: _role == UserRole.creator
+                                ? MascotColor.violet
+                                : MascotColor.orange,
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _signUp
-                            ? 'Choisissez votre profil pour commencer.'
-                            : 'Connectez-vous à votre espace.',
-                        style: context.text.bodyMedium?.copyWith(
-                          color: context.eventa.muted,
-                        ),
-                      ),
-                      const SizedBox(height: 18),
+                      const SizedBox(height: 14),
                       RolePicker(
                         value: _role,
                         onChanged: (r) => setState(() => _role = r),
@@ -143,13 +168,13 @@ class RolePicker extends StatelessWidget {
             curve: Motion.easeOut,
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: on ? Confetti.ink : Colors.white,
+              color: on ? Confetti.ink : Confetti.surface,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: on ? Confetti.ink : Confetti.line),
             ),
             child: Row(
               children: [
-                Icon(icon, size: 20, color: on ? Colors.white : Confetti.ink),
+                Icon(icon, size: 20, color: on ? Confetti.onInk : Confetti.ink),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
@@ -158,7 +183,7 @@ class RolePicker extends StatelessWidget {
                       Text(
                         r.label,
                         style: context.text.titleSmall?.copyWith(
-                          color: on ? Colors.white : Confetti.ink,
+                          color: on ? Confetti.onInk : Confetti.ink,
                         ),
                       ),
                       Text(
@@ -220,6 +245,9 @@ class _SignInFormState extends ConsumerState<_SignInForm> {
     setState(() => _busy = true);
     await Future<void>.delayed(const Duration(milliseconds: 700));
     if (!mounted) return;
+    authMascotKey.currentState?.jump();
+    await Future<void>.delayed(const Duration(milliseconds: 420));
+    if (!mounted) return;
     ref.read(sessionProvider.notifier).signIn(widget.role);
     context.go(Routes.home);
   }
@@ -233,8 +261,8 @@ class _SignInFormState extends ConsumerState<_SignInForm> {
         children: [
           AppField(
             label: widget.role == UserRole.creator
-                ? 'E-mail professionnel ou téléphone'
-                : 'E-mail ou téléphone',
+                ? 'E-mail professionnel ou téléphone'.tr
+                : 'E-mail ou téléphone'.tr,
             controller: _id,
             hint: 'nom@exemple.ci',
             keyboard: TextInputType.emailAddress,
@@ -242,7 +270,7 @@ class _SignInFormState extends ConsumerState<_SignInForm> {
           ),
           const SizedBox(height: 14),
           AppField(
-            label: 'Mot de passe',
+            label: 'Mot de passe'.tr,
             controller: _pwd,
             password: true,
             validator: Validators.required,
@@ -253,11 +281,11 @@ class _SignInFormState extends ConsumerState<_SignInForm> {
             child: TextButton(
               onPressed: () => toast(
                 context,
-                'Lien de réinitialisation envoyé',
+                'Lien de réinitialisation envoyé'.tr,
                 icon: AppIcons.mail,
               ),
               child: Text(
-                'Mot de passe oublié ?',
+                'Mot de passe oublié ?'.tr,
                 style: context.text.labelMedium?.copyWith(
                   color: Confetti.coralDeep,
                 ),
@@ -265,17 +293,17 @@ class _SignInFormState extends ConsumerState<_SignInForm> {
             ),
           ),
           const SizedBox(height: 6),
-          PillButton(label: 'Se connecter', loading: _busy, onPressed: _submit),
+          PillButton(label: 'Se connecter'.tr, loading: _busy, onPressed: _submit),
           const SizedBox(height: 10),
           Text(
-            'Démonstration : saisissez n’importe quel identifiant et mot de passe.',
+            'Démonstration : saisissez n’importe quel identifiant et mot de passe.'.tr,
             textAlign: TextAlign.center,
             style: context.text.bodySmall,
           ),
           const SizedBox(height: 24),
           _SwitchLine(
-            text: 'Pas encore de compte ?',
-            action: 'Créer un compte',
+            text: 'Pas encore de compte ?'.tr,
+            action: 'Créer un compte'.tr,
             onTap: widget.onSwitch,
           ),
         ],
@@ -336,7 +364,7 @@ class _OrganizerSignUpState extends ConsumerState<_OrganizerSignUp> {
   final _phone = TextEditingController();
   final _pwd = TextEditingController();
   final _pwd2 = TextEditingController();
-  String? _city = 'Abidjan';
+  String? _city = 'Abidjan'.tr;
   Uint8List? _photo;
   bool _busy = false;
 
@@ -353,6 +381,10 @@ class _OrganizerSignUpState extends ConsumerState<_OrganizerSignUp> {
     setState(() => _busy = true);
     await Future<void>.delayed(const Duration(milliseconds: 800));
     if (!mounted) return;
+    authMascotKey.currentState?.jump();
+    ref.read(soundProvider).play(Sfx.success);
+    await Future<void>.delayed(const Duration(milliseconds: 420));
+    if (!mounted) return;
     ref
         .read(sessionProvider.notifier)
         .signUp(
@@ -361,7 +393,7 @@ class _OrganizerSignUpState extends ConsumerState<_OrganizerSignUp> {
             name: _name.text.trim(),
             email: _email.text.trim(),
             phone: '+225 ${_phone.text.trim()}',
-            city: _city ?? 'Abidjan',
+            city: _city ?? 'Abidjan'.tr,
             photoBytes: _photo,
           ),
         );
@@ -384,15 +416,15 @@ class _OrganizerSignUpState extends ConsumerState<_OrganizerSignUp> {
           ),
           const SizedBox(height: 20),
           AppField(
-            label: 'Nom et prénom',
+            label: 'Nom et prénom'.tr,
             controller: _name,
-            hint: 'Awa Traoré',
+            hint: 'Awa Traoré'.tr,
             validator: Validators.required,
             onChanged: (_) => setState(() {}),
           ),
           const SizedBox(height: 14),
           AppField(
-            label: 'Adresse e-mail',
+            label: 'Adresse e-mail'.tr,
             controller: _email,
             hint: 'awa@exemple.ci',
             keyboard: TextInputType.emailAddress,
@@ -400,7 +432,7 @@ class _OrganizerSignUpState extends ConsumerState<_OrganizerSignUp> {
           ),
           const SizedBox(height: 14),
           AppField(
-            label: 'Téléphone',
+            label: 'Téléphone'.tr,
             controller: _phone,
             hint: '07 08 12 34 56',
             keyboard: TextInputType.phone,
@@ -413,7 +445,7 @@ class _OrganizerSignUpState extends ConsumerState<_OrganizerSignUp> {
           ),
           const SizedBox(height: 14),
           AppSelect<String>(
-            label: 'Ville de résidence',
+            label: 'Ville de résidence'.tr,
             value: _city,
             options: ivoryCities,
             labelOf: (c) => c,
@@ -421,38 +453,49 @@ class _OrganizerSignUpState extends ConsumerState<_OrganizerSignUp> {
           ),
           const SizedBox(height: 14),
           AppField(
-            label: 'Mot de passe',
+            label: 'Mot de passe'.tr,
             controller: _pwd,
             password: true,
-            hint: '8 caractères minimum',
+            hint: '8 caractères minimum'.tr,
             validator: Validators.password,
           ),
           const SizedBox(height: 14),
           AppField(
-            label: 'Confirmation du mot de passe',
+            label: 'Confirmation du mot de passe'.tr,
             controller: _pwd2,
             password: true,
             textInputAction: TextInputAction.done,
             validator: (v) => v == _pwd.text
                 ? null
-                : 'Les mots de passe ne correspondent pas',
+                : 'Les mots de passe ne correspondent pas'.tr,
           ),
           const SizedBox(height: 22),
           PillButton(
-            label: 'Créer mon compte',
+            label: 'Créer mon compte'.tr,
             loading: _busy,
             onPressed: _submit,
           ),
           const SizedBox(height: 10),
           Text(
-            'En créant un compte, vous acceptez les conditions d’utilisation et la politique de confidentialité.',
+            'En créant un compte, vous acceptez les conditions d’utilisation et la politique de confidentialité.'.tr,
             textAlign: TextAlign.center,
             style: context.text.bodySmall,
           ),
-          const SizedBox(height: 20),
+          Center(
+            child: TextButton(
+              onPressed: () => context.push(Routes.privacy),
+              child: Text(
+                'Lire la politique de confidentialité'.tr,
+                style: context.text.labelMedium?.copyWith(
+                  color: Confetti.coralDeep,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
           _SwitchLine(
-            text: 'Déjà inscrit ?',
-            action: 'Se connecter',
+            text: 'Déjà inscrit ?'.tr,
+            action: 'Se connecter'.tr,
             onTap: widget.onSwitch,
           ),
         ],
@@ -481,7 +524,7 @@ class PhotoPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Pressable(
-      semanticLabel: 'Choisir une photo de profil',
+      semanticLabel: 'Choisir une photo de profil'.tr,
       onTap: () async {
         final b = await pickAndCropPhoto(context);
         if (b != null) onPicked(b);
@@ -498,7 +541,7 @@ class PhotoPicker extends StatelessWidget {
                     width: size,
                     height: size,
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: Confetti.surface,
                       shape: BoxShape.circle,
                       border: Border.all(color: Confetti.line, width: 1.5),
                     ),
@@ -543,8 +586,8 @@ class PhotoPicker extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             bytes == null && asset == null
-                ? 'Ajouter une photo'
-                : 'Modifier la photo',
+                ? 'Ajouter une photo'.tr
+                : 'Modifier la photo'.tr,
             style: context.text.labelMedium?.copyWith(
               color: Confetti.coralDeep,
             ),
@@ -585,7 +628,7 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
   // Activité
   final _business = TextEditingController();
   VendorCategory? _category;
-  String? _zone = 'Abidjan';
+  String? _zone = 'Abidjan'.tr;
   final _rccm = TextEditingController();
   final _desc = TextEditingController();
 
@@ -628,7 +671,7 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
     if (_step == 1 && _category == null) {
       toast(
         context,
-        'Choisissez une catégorie commerciale',
+        'Choisissez une catégorie commerciale'.tr,
         icon: AppIcons.info,
       );
       return;
@@ -645,6 +688,10 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
     setState(() => _busy = true);
     await Future<void>.delayed(const Duration(milliseconds: 900));
     if (!mounted) return;
+    authMascotKey.currentState?.jump();
+    ref.read(soundProvider).play(Sfx.success);
+    await Future<void>.delayed(const Duration(milliseconds: 420));
+    if (!mounted) return;
     String? opt(TextEditingController c) =>
         c.text.trim().isEmpty ? null : c.text.trim();
     ref
@@ -655,12 +702,12 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
             name: _name.text.trim(),
             email: _email.text.trim(),
             phone: '+225 ${_phone.text.trim()}',
-            city: _zone ?? 'Abidjan',
+            city: _zone ?? 'Abidjan'.tr,
             creator: CreatorInfo(
               kind: _kind,
               businessName: _business.text.trim(),
               category: _category!,
-              zone: _zone ?? 'Abidjan',
+              zone: _zone ?? 'Abidjan'.tr,
               rccm: opt(_rccm),
               description: _desc.text.trim(),
               displayName: _display.text.trim(),
@@ -703,7 +750,7 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
               Row(
                 children: [
                   Text(
-                    'Étape ${_step + 1}/3',
+                    'Étape {0}/3'.trf([_step + 1]),
                     style: context.text.labelSmall?.copyWith(
                       color: Confetti.inkMuted,
                     ),
@@ -711,7 +758,7 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      _titles[_step],
+                      _titles[_step].tr,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: context.text.titleSmall,
@@ -753,7 +800,7 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
                       if (_step > 0) ...[
                         Expanded(
                           child: PillButton(
-                            label: 'Retour',
+                            label: 'Retour'.tr,
                             tone: ButtonTone.ghost,
                             onPressed: () => setState(() => _step--),
                           ),
@@ -764,8 +811,8 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
                         flex: 2,
                         child: PillButton(
                           label: _step < 2
-                              ? 'Continuer'
-                              : 'Créer mon espace Creator',
+                              ? 'Continuer'.tr
+                              : 'Créer mon espace Creator'.tr,
                           loading: _busy,
                           onPressed: _next,
                         ),
@@ -775,8 +822,8 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
                   if (_step == 0) ...[
                     const SizedBox(height: 20),
                     _SwitchLine(
-                      text: 'Déjà inscrit ?',
-                      action: 'Se connecter',
+                      text: 'Déjà inscrit ?'.tr,
+                      action: 'Se connecter'.tr,
                       onTap: widget.onSwitch,
                     ),
                   ],
@@ -790,7 +837,7 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
   }
 
   List<Widget> _proInfo(BuildContext context) => [
-    const FieldLabel('Type de compte'),
+    FieldLabel('Type de compte'.tr),
     Row(
       children: [
         for (final k in CreatorKind.values) ...[
@@ -803,7 +850,7 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
                 height: 64,
                 padding: const EdgeInsets.symmetric(horizontal: 12),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Confetti.surface,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(
                     color: _kind == k ? Confetti.ink : Confetti.line,
@@ -832,13 +879,13 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
     ),
     const SizedBox(height: 14),
     AppField(
-      label: 'Nom et prénom',
+      label: 'Nom et prénom'.tr,
       controller: _name,
       validator: Validators.required,
     ),
     const SizedBox(height: 14),
     AppField(
-      label: 'Adresse e-mail professionnelle',
+      label: 'Adresse e-mail professionnelle'.tr,
       controller: _email,
       keyboard: TextInputType.emailAddress,
       hint: 'contact@monentreprise.ci',
@@ -846,7 +893,7 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
     ),
     const SizedBox(height: 14),
     AppField(
-      label: 'Numéro de téléphone',
+      label: 'Numéro de téléphone'.tr,
       controller: _phone,
       keyboard: TextInputType.phone,
       prefix: const PhonePrefix(),
@@ -859,23 +906,23 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
     ),
     const SizedBox(height: 14),
     AppField(
-      label: 'Mot de passe',
+      label: 'Mot de passe'.tr,
       controller: _pwd,
       password: true,
-      hint: '8 caractères minimum',
+      hint: '8 caractères minimum'.tr,
       validator: Validators.password,
     ),
   ];
 
   List<Widget> _activity(BuildContext context) => [
     AppField(
-      label: _kind == CreatorKind.agency ? 'Nom de l’agence' : 'Nom commercial',
+      label: _kind == CreatorKind.agency ? 'Nom de l’agence'.tr : 'Nom commercial'.tr,
       controller: _business,
       validator: Validators.required,
     ),
     const SizedBox(height: 14),
     AppSelect<VendorCategory>(
-      label: 'Catégorie commerciale',
+      label: 'Catégorie commerciale'.tr,
       value: _category,
       options: VendorCategory.values,
       labelOf: (c) => c.label,
@@ -884,64 +931,64 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
     ),
     const SizedBox(height: 14),
     AppSelect<String>(
-      label: 'Ville / zone d’intervention',
+      label: 'Ville / zone d’intervention'.tr,
       value: _zone,
-      options: const [
-        'Abidjan',
-        'Abidjan et périphérie',
-        'Grand-Bassam & Assinie',
-        'Yamoussoukro',
-        'Bouaké',
-        'San-Pédro',
-        'Toute la Côte d’Ivoire',
+      options: [
+        'Abidjan'.tr,
+        'Abidjan et périphérie'.tr,
+        'Grand-Bassam & Assinie'.tr,
+        'Yamoussoukro'.tr,
+        'Bouaké'.tr,
+        'San-Pédro'.tr,
+        'Toute la Côte d’Ivoire'.tr,
       ],
       labelOf: (c) => c,
       onChanged: (c) => setState(() => _zone = c),
     ),
     const SizedBox(height: 14),
     AppField(
-      label: 'Numéro RCCM',
+      label: 'Numéro RCCM'.tr,
       controller: _rccm,
       optional: true,
-      hint: 'CI-ABJ-2024-B-12345',
+      hint: 'CI-ABJ-2024-B-12345'.tr,
     ),
     const SizedBox(height: 14),
     AppField(
-      label: 'Description de votre activité',
+      label: 'Description de votre activité'.tr,
       controller: _desc,
       maxLines: 4,
-      hint: 'Vos prestations, votre style, votre expérience…',
+      hint: 'Vos prestations, votre style, votre expérience…'.tr,
       validator: Validators.required,
     ),
   ];
 
   List<Widget> _publicProfile(BuildContext context) => [
     AppField(
-      label: 'Nom affiché sur la plateforme',
+      label: 'Nom affiché sur la plateforme'.tr,
       controller: _display,
       validator: Validators.required,
       onChanged: (_) => setState(() {}),
     ),
     const SizedBox(height: 14),
     AppField(
-      label: 'Tarif de départ',
+      label: 'Tarif de départ'.tr,
       controller: _price,
       keyboard: TextInputType.number,
-      suffixText: 'FCFA',
+      suffixText: 'FCFA'.tr,
       formatters: [FilteringTextInputFormatter.digitsOnly],
       validator: Validators.required,
       onChanged: (_) => setState(() {}),
     ),
     const SizedBox(height: 14),
     AppField(
-      label: 'Adresse professionnelle',
+      label: 'Adresse professionnelle'.tr,
       controller: _address,
-      hint: 'Rue, quartier, commune',
+      hint: 'Rue, quartier, commune'.tr,
       validator: Validators.required,
     ),
     const SizedBox(height: 14),
     AppField(
-      label: 'Site web',
+      label: 'Site web'.tr,
       controller: _website,
       optional: true,
       hint: 'monentreprise.ci',
@@ -950,15 +997,15 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
     ),
     const SizedBox(height: 14),
     AppField(
-      label: 'Portfolio ou réseau social',
+      label: 'Portfolio ou réseau social'.tr,
       controller: _portfolio,
       optional: true,
-      hint: 'instagram.com/…',
+      hint: 'instagram.com/…'.tr,
       keyboard: TextInputType.url,
       prefix: const Icon(AppIcons.link, size: 18),
     ),
     const SizedBox(height: 18),
-    const FieldLabel('Aperçu dans Explorer'),
+    FieldLabel('Aperçu dans Explorer'.tr),
     Panel(
       padding: const EdgeInsets.all(14),
       child: Row(
@@ -974,11 +1021,11 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _display.text.isEmpty ? 'Votre nom' : _display.text,
+                  _display.text.isEmpty ? 'Votre nom'.tr : _display.text,
                   style: context.text.titleMedium,
                 ),
                 Text(
-                  _category?.label ?? 'Catégorie',
+                  _category?.label ?? 'Catégorie'.tr,
                   style: context.text.bodySmall,
                 ),
               ],
@@ -987,11 +1034,96 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
           Text(
             _price.text.isEmpty
                 ? '—'
-                : 'dès ${fcfaCompact(int.tryParse(_price.text) ?? 0)}',
+                : 'dès {0}'.trf([fcfaCompact(int.tryParse(_price.text) ?? 0)]),
             style: context.text.titleSmall,
           ),
         ],
       ),
     ),
   ];
+}
+
+// ─── Mascotte de connexion ──────────────────────────────────────────────
+
+/// Clé de la mascotte de connexion, pour la faire sauter de joie.
+final authMascotKey = GlobalKey<MascotState>();
+
+/// La mascotte suit la saisie du regard, se cache les yeux pendant la
+/// saisie d'un mot de passe masqué, et salue à l'arrivée.
+class AuthMascot extends ConsumerStatefulWidget {
+  const AuthMascot({super.key, this.color = MascotColor.orange});
+
+  final MascotColor color;
+
+  @override
+  ConsumerState<AuthMascot> createState() => _AuthMascotState();
+}
+
+class _AuthMascotState extends ConsumerState<AuthMascot> {
+  TextEditingController? _watched;
+  Offset? _look;
+  bool _cover = false;
+  bool _waving = true;
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    FocusManager.instance.addListener(_onFocus);
+    _timer = Timer(const Duration(milliseconds: 1700), () {
+      if (mounted) setState(() => _waving = false);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    FocusManager.instance.removeListener(_onFocus);
+    _watched?.removeListener(_onText);
+    super.dispose();
+  }
+
+  EditableText? get _field => FocusManager.instance.primaryFocus?.context
+      ?.findAncestorWidgetOfExactType<EditableText>();
+
+  void _onFocus() {
+    final field = _field;
+    if (field?.controller != _watched) {
+      _watched?.removeListener(_onText);
+      _watched = field?.controller?..addListener(_onText);
+    }
+    _onText();
+  }
+
+  void _onText() {
+    if (!mounted) return;
+    final field = _field;
+    setState(() {
+      if (field == null) {
+        _look = null;
+        _cover = false;
+        return;
+      }
+      // Le regard glisse le long du texte saisi, vers le formulaire.
+      final n = field.controller.text.length.clamp(0, 28);
+      _look = Offset(-0.8 + n / 28 * 1.6, 0.9);
+      _cover = field.obscureText;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8, bottom: 2),
+      child: Mascot(
+        key: authMascotKey,
+        size: 104,
+        color: widget.color,
+        look: _look,
+        cover: _cover,
+        waving: _waving,
+        onTap: () => ref.read(soundProvider).play(Sfx.success),
+      ),
+    );
+  }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
@@ -48,7 +49,7 @@ class VendorScreen extends ConsumerWidget {
                 RoundIconButton(
                   icon: AppIcons.share,
                   tooltip: 'Partager',
-                  onTap: () => toast(context, 'Lien de la fiche copié'),
+                  onTap: () => toast(context, 'Lien de la fiche copié'.tr),
                 ),
               ],
             ),
@@ -76,8 +77,8 @@ class VendorScreen extends ConsumerWidget {
                         icon: v.category.icon,
                       ),
                       if (v.verified)
-                        const Tag(
-                          label: 'Vérifié',
+                        Tag(
+                          label: 'Vérifié'.tr,
                           hue: Hue.violet,
                           icon: AppIcons.verified,
                         ),
@@ -98,7 +99,7 @@ class VendorScreen extends ConsumerWidget {
                     children: [
                       Stars(rating: v.rating, reviews: v.reviews, size: 14),
                       const SizedBox(width: 12),
-                      const Icon(
+                      Icon(
                         AppIcons.place,
                         size: 15,
                         color: Confetti.inkMuted,
@@ -111,14 +112,14 @@ class VendorScreen extends ConsumerWidget {
                         ),
                       ),
                       const SizedBox(width: 12),
-                      const Icon(
+                      Icon(
                         AppIcons.clock,
                         size: 15,
                         color: Confetti.inkMuted,
                       ),
                       const SizedBox(width: 3),
                       Text(
-                        'Répond en ${v.responseTime}',
+                        'Répond en {0}'.trf([v.responseTime]),
                         style: context.text.labelMedium?.copyWith(
                           color: context.eventa.muted,
                         ),
@@ -135,7 +136,7 @@ class VendorScreen extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Tarif',
+                                'Tarif'.tr,
                                 style: context.text.labelSmall?.copyWith(
                                   color: context.eventa.muted,
                                 ),
@@ -154,15 +155,15 @@ class VendorScreen extends ConsumerWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Disponibilité',
+                                'Disponibilité'.tr,
                                 style: context.text.labelSmall?.copyWith(
                                   color: context.eventa.muted,
                                 ),
                               ),
                               Text(
                                 v.available
-                                    ? 'Disponible'
-                                    : (v.nextAvailable ?? 'Complet'),
+                                    ? 'Disponible'.tr
+                                    : (v.nextAvailable ?? 'Complet'.tr),
                                 style: context.text.titleSmall?.copyWith(
                                   color: v.available
                                       ? Confetti.success
@@ -176,23 +177,23 @@ class VendorScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 26),
-                  Text('À propos', style: context.text.titleLarge),
+                  Text('À propos'.tr, style: context.text.titleLarge),
                   const SizedBox(height: 8),
                   Text(v.description, style: context.text.bodyLarge),
                   const SizedBox(height: 26),
-                  Text('Coordonnées', style: context.text.titleLarge),
+                  Text('Coordonnées'.tr, style: context.text.titleLarge),
                   const SizedBox(height: 10),
                   _InfoList(
                     rows: [
                       (AppIcons.phone, v.phoneNumber),
                       (AppIcons.mail, v.email),
                       (AppIcons.globe, v.website),
-                      (AppIcons.place, '${v.zone}, Abidjan'),
+                      (AppIcons.place, '{0}, Abidjan'.trf([v.zone])),
                     ],
                   ),
                   if (v.packages.isNotEmpty) ...[
                     const SizedBox(height: 26),
-                    Text('Formules', style: context.text.titleLarge),
+                    Text('Formules'.tr, style: context.text.titleLarge),
                     const SizedBox(height: 10),
                     _InfoList(
                       rows: [for (final p in v.packages) (null, p.name)],
@@ -257,38 +258,38 @@ class _ActionBar extends ConsumerWidget {
         16,
         12 + MediaQuery.paddingOf(context).bottom,
       ),
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: Confetti.surface,
         border: Border(top: BorderSide(color: Confetti.line)),
       ),
       child: Row(
         children: [
           contact(
             AppIcons.phone,
-            'Appeler',
+            'Appeler'.tr,
             Confetti.ink,
-            () => toast(context, 'Appel vers ${v.phone}', icon: AppIcons.phone),
+            () => toast(context, 'Appel vers {0}'.trf([v.phone]), icon: AppIcons.phone),
           ),
           contact(
             AppIcons.message,
-            'Message',
+            'Message'.tr,
             Confetti.violet,
             () => _messageSheet(context, v),
           ),
           contact(
             AppIcons.whatsapp,
-            'WhatsApp',
+            'WhatsApp'.tr,
             Confetti.success,
             () => toast(
               context,
-              'Ouverture de WhatsApp avec ${v.name}',
+              'Ouverture de WhatsApp avec {0}'.trf([v.name]),
               icon: AppIcons.whatsapp,
             ),
           ),
           const SizedBox(width: 8),
           Expanded(
             child: PillButton(
-              label: 'Demander un devis',
+              label: 'Demander un devis'.tr,
               height: 50,
               onPressed: () => showQuoteRequestSheet(context, ref, v),
             ),
@@ -300,7 +301,7 @@ class _ActionBar extends ConsumerWidget {
 
   void _messageSheet(BuildContext context, Vendor v) {
     final c = TextEditingController(
-      text: 'Bonjour, êtes-vous disponible à ma date ?',
+      text: 'Bonjour, êtes-vous disponible à ma date ?'.tr,
     );
     showEventaSheet<void>(
       context,
@@ -310,24 +311,24 @@ class _ActionBar extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Message à ${v.name}', style: ctx.text.titleLarge),
+            Text('Message à {0}'.trf([v.name]), style: ctx.text.titleLarge),
             const SizedBox(height: 4),
             Text(
-              'Répond généralement en ${v.responseTime}.',
+              'Répond généralement en {0}.'.trf([v.responseTime]),
               style: ctx.text.bodySmall,
             ),
             const SizedBox(height: 14),
             TextField(controller: c, maxLines: 4, minLines: 3, autofocus: true),
             const SizedBox(height: 14),
             PillButton(
-              label: 'Envoyer',
+              label: 'Envoyer'.tr,
               icon: AppIcons.send,
               tone: ButtonTone.dark,
               onPressed: () {
                 Navigator.of(ctx).pop();
                 toast(
                   context,
-                  'Message envoyé à ${v.name}',
+                  'Message envoyé à {0}'.trf([v.name]),
                   icon: AppIcons.send,
                 );
               },
@@ -347,7 +348,7 @@ Future<void> showQuoteRequestSheet(
 ) async {
   final events = ref.read(eventsProvider).value ?? const <Event>[];
   if (events.isEmpty) {
-    toast(context, 'Créez d’abord un événement', icon: AppIcons.info);
+    toast(context, 'Créez d’abord un événement'.tr, icon: AppIcons.info);
     return;
   }
   final bookingId = await showEventaSheet<String>(
@@ -382,7 +383,7 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
   bool _staff = false;
   int _staffCount = 2;
   bool _tasting = false;
-  String _tastingWhen = 'En semaine';
+  String _tastingWhen = 'En semaine'.tr;
   bool _overtime = false;
   int _hours = 2;
   late final _message = TextEditingController();
@@ -410,14 +411,14 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
   }
 
   List<String> get _options => [
-    if (_package != null) 'Formule : ${_package!.name}',
-    'Début : ${_start.hour.toString().padLeft(2, '0')}:${_start.minute.toString().padLeft(2, '0')}',
-    if (_budget != null) 'Budget : $_budget',
+    if (_package != null) 'Formule : {0}'.trf([_package!.name]),
+    'Début : {0}:{1}'.trf([_start.hour.toString().padLeft(2, '0'), _start.minute.toString().padLeft(2, '0')]),
+    if (_budget != null) 'Budget : {0}'.trf([_budget]),
     if (_delivery)
-      'Livraison & installation (${_address.text.trim().isEmpty ? 'adresse à préciser' : _address.text.trim()})',
-    if (_staff) 'Personnel supplémentaire × $_staffCount',
-    if (_tasting) 'Dégustation ou essai ($_tastingWhen)',
-    if (_overtime) 'Heures supplémentaires × $_hours h',
+      'Livraison & installation ({0})'.trf([_address.text.trim().isEmpty ? 'adresse à préciser'.tr : _address.text.trim()]),
+    if (_staff) 'Personnel supplémentaire × {0}'.trf([_staffCount]),
+    if (_tasting) 'Dégustation ou essai ({0})'.trf([_tastingWhen]),
+    if (_overtime) 'Heures supplémentaires × {0} h'.trf([_hours]),
   ];
 
   Future<void> _send() async {
@@ -469,7 +470,7 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
         width: 32,
         height: 32,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Confetti.surface,
           shape: BoxShape.circle,
           border: Border.all(color: Confetti.line),
         ),
@@ -504,14 +505,14 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Demande de devis', style: context.text.headlineSmall),
+          Text('Demande de devis'.tr, style: context.text.headlineSmall),
           Text(
-            '${v.name} · gratuit et sans engagement',
+            '{0} · gratuit et sans engagement'.trf([v.name]),
             style: context.text.bodySmall,
           ),
           const SizedBox(height: 18),
           AppSelect<Event>(
-            label: 'Événement',
+            label: 'Événement'.tr,
             value: _event,
             options: widget.events,
             labelOf: (e) => '${e.name} · ${shortDate(e.date)}',
@@ -525,7 +526,7 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
           if (v.packages.isNotEmpty) ...[
             const SizedBox(height: 14),
             AppSelect<VendorPackage>(
-              label: 'Formule souhaitée',
+              label: 'Formule souhaitée'.tr,
               value: _package,
               options: v.packages,
               labelOf: (p) => '${p.name} · ${fcfa(p.price)}',
@@ -539,7 +540,7 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const FieldLabel('Heure de début'),
+                    FieldLabel('Heure de début'.tr),
                     Pressable(
                       scale: 0.98,
                       onTap: () async {
@@ -553,13 +554,13 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
                         height: 54,
                         padding: const EdgeInsets.symmetric(horizontal: 14),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: Confetti.surface,
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(color: Confetti.line),
                         ),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               AppIcons.clock,
                               size: 18,
                               color: Confetti.inkMuted,
@@ -581,12 +582,12 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const FieldLabel('Invités'),
+                    FieldLabel('Invités'.tr),
                     Container(
                       height: 54,
                       padding: const EdgeInsets.symmetric(horizontal: 8),
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: Confetti.surface,
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(color: Confetti.line),
                       ),
@@ -606,38 +607,38 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
           ),
           const SizedBox(height: 14),
           AppSelect<String>(
-            label: 'Budget indicatif',
+            label: 'Budget indicatif'.tr,
             value: _budget,
             options: _budgets,
-            labelOf: (b) => b,
+            labelOf: (b) => b.tr,
             optional: true,
             onChanged: (b) => setState(() => _budget = b),
           ),
           const SizedBox(height: 18),
-          const FieldLabel('Options'),
+          FieldLabel('Options'.tr),
           CheckRow(
-            label: 'Livraison & installation',
-            caption: 'Le prestataire s’installe sur place',
+            label: 'Livraison & installation'.tr,
+            caption: 'Le prestataire s’installe sur place'.tr,
             value: _delivery,
             onChanged: (x) => setState(() => _delivery = x),
             revealed: TextField(
               controller: _address,
-              decoration: const InputDecoration(
-                hintText: 'Adresse du lieu',
+              decoration: InputDecoration(
+                hintText: 'Adresse du lieu'.tr,
                 prefixIcon: Icon(AppIcons.place, size: 18),
               ),
             ),
           ),
           const SizedBox(height: 8),
           CheckRow(
-            label: 'Personnel supplémentaire',
+            label: 'Personnel supplémentaire'.tr,
             value: _staff,
             onChanged: (x) => setState(() => _staff = x),
             revealed: Row(
               children: [
                 Expanded(
                   child: Text(
-                    'Nombre de personnes',
+                    'Nombre de personnes'.tr,
                     style: context.text.bodyMedium,
                   ),
                 ),
@@ -647,16 +648,16 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
           ),
           const SizedBox(height: 8),
           CheckRow(
-            label: 'Dégustation ou essai',
+            label: 'Dégustation ou essai'.tr,
             value: _tasting,
             onChanged: (x) => setState(() => _tasting = x),
             revealed: Wrap(
               spacing: 8,
               children: [
-                for (final w in const [
-                  'En semaine',
-                  'Le week-end',
-                  'Peu importe',
+                for (final w in [
+                  'En semaine'.tr,
+                  'Le week-end'.tr,
+                  'Peu importe'.tr,
                 ])
                   ChoiceChip(
                     label: Text(w),
@@ -664,9 +665,9 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
                     showCheckmark: false,
                     selectedColor: Confetti.ink,
                     labelStyle: context.text.labelMedium?.copyWith(
-                      color: _tastingWhen == w ? Colors.white : Confetti.ink,
+                      color: _tastingWhen == w ? Confetti.onInk : Confetti.ink,
                     ),
-                    backgroundColor: Colors.white,
+                    backgroundColor: Confetti.surface,
                     side: BorderSide(
                       color: _tastingWhen == w ? Confetti.ink : Confetti.line,
                     ),
@@ -677,13 +678,13 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
           ),
           const SizedBox(height: 8),
           CheckRow(
-            label: 'Heures supplémentaires',
+            label: 'Heures supplémentaires'.tr,
             value: _overtime,
             onChanged: (x) => setState(() => _overtime = x),
             revealed: Row(
               children: [
                 Expanded(
-                  child: Text('Durée en plus', style: context.text.bodyMedium),
+                  child: Text('Durée en plus'.tr, style: context.text.bodyMedium),
                 ),
                 _stepper(
                   _hours,
@@ -696,15 +697,15 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
           ),
           const SizedBox(height: 18),
           AppField(
-            label: 'Message au prestataire',
+            label: 'Message au prestataire'.tr,
             controller: _message,
             optional: true,
             maxLines: 3,
-            hint: 'Votre thème, vos contraintes, vos questions…',
+            hint: 'Votre thème, vos contraintes, vos questions…'.tr,
           ),
           const SizedBox(height: 20),
           PillButton(
-            label: 'Envoyer la demande',
+            label: 'Envoyer la demande'.tr,
             icon: AppIcons.send,
             loading: _sending,
             onPressed: _send,
@@ -782,7 +783,7 @@ class _ReviewsSectionState extends State<ReviewsSection> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Avis vérifiés', style: context.text.titleLarge),
+        Text('Avis vérifiés'.tr, style: context.text.titleLarge),
         const SizedBox(height: 12),
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
@@ -803,7 +804,7 @@ class _ReviewsSectionState extends State<ReviewsSection> {
                   _StarRow(rating: v.rating.round(), size: 15),
                   const SizedBox(height: 3),
                   Text(
-                    '${v.reviews} avis de clients ayant réservé',
+                    '{0} avis de clients ayant réservé'.trf([v.reviews]),
                     style: context.text.bodySmall,
                   ),
                 ],
@@ -848,14 +849,14 @@ class _ReviewsSectionState extends State<ReviewsSection> {
                           children: [
                             Text(r.author, style: context.text.labelMedium),
                             const SizedBox(width: 8),
-                            const Icon(
+                            Icon(
                               AppIcons.verified,
                               size: 13,
                               color: Confetti.lagoonText,
                             ),
                             const SizedBox(width: 3),
                             Text(
-                              'Réservation vérifiée',
+                              'Réservation vérifiée'.tr,
                               style: context.text.labelSmall?.copyWith(
                                 color: Confetti.lagoonText,
                               ),
@@ -874,7 +875,7 @@ class _ReviewsSectionState extends State<ReviewsSection> {
           TextButton(
             onPressed: () => setState(() => _all = !_all),
             child: Text(
-              _all ? 'Voir moins' : 'Voir les ${Catalog.reviews.length} avis',
+              _all ? 'Voir moins'.tr : 'Voir les {0} avis'.trf([Catalog.reviews.length]),
               style: context.text.labelMedium?.copyWith(
                 color: Confetti.coralDeep,
               ),

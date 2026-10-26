@@ -1,14 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/i18n/tr.dart';
+import '../../../core/prefs/prefs_provider.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/eventa_colors.dart';
+import '../../../core/sound/sounds.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/avatars.dart';
 import '../../../core/widgets/brand.dart';
 import '../../../core/widgets/forms.dart';
+import '../../../core/widgets/mascot.dart';
 import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/ui.dart';
 import '../../auth/presentation/session_provider.dart';
@@ -36,11 +42,25 @@ class AccountScreen extends ConsumerWidget {
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 120),
           physics: const BouncingScrollPhysics(),
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: Text('Compte', style: context.text.headlineMedium),
+            // La mascotte salue depuis le bord de la carte de profil.
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 4, bottom: 18),
+                    child: Text(
+                      'Compte'.tr,
+                      style: context.text.headlineMedium,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child: _AccountMascot(creator: p.isCreator),
+                ),
+              ],
             ),
-            const SizedBox(height: 18),
             Panel(
               onTap: () => context.push(Routes.editProfile),
               child: Row(
@@ -85,7 +105,7 @@ class AccountScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const Icon(AppIcons.edit, size: 18, color: Confetti.inkMuted),
+                  Icon(AppIcons.edit, size: 18, color: Confetti.inkMuted),
                 ],
               ),
             ),
@@ -95,7 +115,7 @@ class AccountScreen extends ConsumerWidget {
                 onTap: () => context.push(Routes.business),
                 child: Row(
                   children: [
-                    const IconTile(
+                    IconTile(
                       icon: AppIcons.briefcase,
                       hue: Hue.gold,
                       size: 44,
@@ -106,13 +126,13 @@ class AccountScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Business / Creator',
+                            'Business / Creator'.tr,
                             style: context.text.titleMedium?.copyWith(
                               color: Colors.white,
                             ),
                           ),
                           Text(
-                            'CRM, devis, facturation · dès 29 900 FCFA/mois',
+                            'CRM, devis, facturation · dès 29 900 FCFA/mois'.tr,
                             style: context.text.bodySmall?.copyWith(
                               color: Colors.white60,
                             ),
@@ -133,7 +153,7 @@ class AccountScreen extends ConsumerWidget {
                 onTap: () => context.push(Routes.premium),
                 child: Row(
                   children: [
-                    const IconTile(
+                    IconTile(
                       icon: AppIcons.crown,
                       hue: Hue.gold,
                       size: 44,
@@ -145,16 +165,16 @@ class AccountScreen extends ConsumerWidget {
                         children: [
                           Text(
                             plan == Plan.free
-                                ? 'Passer à Premium'
-                                : 'Abonnement ${plan.label}',
+                                ? 'Passer à Premium'.tr
+                                : 'Abonnement {0}'.trf([plan.label]),
                             style: context.text.titleMedium?.copyWith(
                               color: Colors.white,
                             ),
                           ),
                           Text(
                             plan == Plan.free
-                                ? 'IA, coffre-fort, collaboration · dès 2 900 FCFA/mois'
-                                : '${fcfa(plan.price)} / mois · gérer',
+                                ? 'IA, coffre-fort, collaboration · dès 2 900 FCFA/mois'.tr
+                                : '{0} / mois · gérer'.trf([fcfa(plan.price)]),
                             style: context.text.bodySmall?.copyWith(
                               color: Colors.white60,
                             ),
@@ -171,33 +191,33 @@ class AccountScreen extends ConsumerWidget {
                 ),
               ),
             if (p.isCreator) ...[
-              const SectionTitle('Visibilité'),
+              SectionTitle('Visibilité'.tr),
               _Group(
                 rows: [
                   _Row(
                     AppIcons.megaphone,
-                    'Publicité Premium',
-                    'Sponsor du mois, mise en avant, résultat sponsorisé',
+                    'Publicité Premium'.tr,
+                    'Sponsor du mois, mise en avant, résultat sponsorisé'.tr,
                     () => context.push(Routes.business),
                   ),
                   _Row(
                     AppIcons.vendors,
-                    'Voir ma fiche',
-                    'Telle qu’elle apparaît dans Explorer',
+                    'Voir ma fiche'.tr,
+                    'Telle qu’elle apparaît dans Explorer'.tr,
                     () => context.push(Routes.editProfile),
                   ),
                 ],
               ),
             ] else ...[
-              const SectionTitle('Mon activité'),
+              SectionTitle('Mon activité'.tr),
               _Group(
                 rows: [
                   _Row(
                     AppIcons.calendarCheck,
-                    'Mes réservations',
+                    'Mes réservations'.tr,
                     bookings.isEmpty
-                        ? 'Aucune réservation en cours'
-                        : '${bookings.length} en cours',
+                        ? 'Aucune réservation en cours'.tr
+                        : '{0} en cours'.trf([bookings.length]),
                     () {
                       bookings.isEmpty
                           ? context.go(Routes.explore)
@@ -206,8 +226,8 @@ class AccountScreen extends ConsumerWidget {
                   ),
                   _Row(
                     AppIcons.lock,
-                    'Coffre-fort',
-                    'Contrats, devis, factures, photos',
+                    'Coffre-fort'.tr,
+                    'Contrats, devis, factures, photos'.tr,
                     () => requirePremium(
                       context,
                       ref,
@@ -217,46 +237,65 @@ class AccountScreen extends ConsumerWidget {
                   ),
                   _Row(
                     AppIcons.download,
-                    'Exporter mes données',
-                    'Dépenses, prestataires, paiements (CSV)',
+                    'Exporter mes données'.tr,
+                    'Dépenses, prestataires, paiements (CSV)'.tr,
                     () => _pickEventToExport(context, ref),
                   ),
                 ],
               ),
             ],
-            const SectionTitle('Réglages'),
+            SectionTitle('Préférences'.tr),
+            const _PrefsGroup(),
+            SectionTitle('Réglages'.tr),
             _Group(
               rows: [
                 _Row(
                   AppIcons.bell,
-                  'Notifications',
-                  'Push, e-mail, WhatsApp',
+                  'Notifications'.tr,
+                  'Push, e-mail, WhatsApp'.tr,
                   () => _notificationsSheet(context),
                 ),
                 if (!p.isCreator)
                   _Row(
                     AppIcons.card,
-                    'Moyen de paiement par défaut',
-                    'Mobile Money, carte, Apple Pay',
+                    'Moyen de paiement par défaut'.tr,
+                    'Mobile Money, carte, Apple Pay'.tr,
                     () => _paymentSheet(context),
                   ),
                 _Row(
                   AppIcons.shield,
-                  'Confidentialité',
-                  'Visibilité du profil et des données',
+                  'Confidentialité'.tr,
+                  'Visibilité du profil et des données'.tr,
                   () => _privacySheet(context),
                 ),
                 _Row(
                   AppIcons.help,
-                  'Aide & support',
-                  'Questions fréquentes, nous contacter',
+                  'Aide & support'.tr,
+                  'Questions fréquentes, nous contacter'.tr,
                   () => _helpSheet(context),
+                ),
+              ],
+            ),
+            const SectionTitle('Eventa'),
+            _Group(
+              rows: [
+                _Row(
+                  AppIcons.heart,
+                  'À propos d’Eventa'.tr,
+                  'Vision, mission, valeurs, contact'.tr,
+                  () => context.push(Routes.about),
+                ),
+                _Row(
+                  AppIcons.scroll,
+                  'Politique de confidentialité'.tr,
+                  'Vos données et vos droits'.tr,
+                  () => context.push(Routes.privacy),
                 ),
               ],
             ),
             const SizedBox(height: 20),
             PillButton(
-              label: 'Se déconnecter',
+              label: 'Se déconnecter'.tr,
               tone: ButtonTone.ghost,
               icon: AppIcons.signOut,
               onPressed: () {
@@ -269,7 +308,7 @@ class AccountScreen extends ConsumerWidget {
             const SizedBox(height: 6),
             Center(
               child: Text(
-                'Le budget parfait pour célébrer · démo',
+                'Le budget parfait pour célébrer · démo'.tr,
                 style: context.text.bodySmall,
               ),
             ),
@@ -288,7 +327,7 @@ class AccountScreen extends ConsumerWidget {
         shrinkWrap: true,
         padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
         children: [
-          Text('Quel événement ?', style: ctx.text.headlineSmall),
+          Text('Quel événement ?'.tr, style: ctx.text.headlineSmall),
           const SizedBox(height: 10),
           for (final e in events)
             ListTile(
@@ -315,27 +354,27 @@ class AccountScreen extends ConsumerWidget {
 
   void _notificationsSheet(BuildContext context) => showEventaSheet<void>(
     context,
-    builder: (_) => const _ToggleSheet(
-      title: 'Notifications',
+    builder: (_) => _ToggleSheet(
+      title: 'Notifications'.tr,
       items: [
-        ('Notifications push', 'Rappels, devis, paiements', true),
-        ('E-mail', 'Récapitulatif hebdomadaire', true),
-        ('WhatsApp', 'Rappels importants uniquement', false),
-        ('SMS', 'Codes et confirmations', true),
+        ('Notifications push'.tr, 'Rappels, devis, paiements'.tr, true),
+        ('E-mail'.tr, 'Récapitulatif hebdomadaire'.tr, true),
+        ('WhatsApp'.tr, 'Rappels importants uniquement'.tr, false),
+        ('SMS'.tr, 'Codes et confirmations'.tr, true),
       ],
     ),
   );
 
   void _privacySheet(BuildContext context) => showEventaSheet<void>(
     context,
-    builder: (_) => const _ToggleSheet(
-      title: 'Confidentialité',
+    builder: (_) => _ToggleSheet(
+      title: 'Confidentialité'.tr,
       items: [
-        ('Profil visible des collaborateurs', 'Nom et photo', true),
-        ('Partager mes statistiques anonymes', 'Pour améliorer Eventa', false),
+        ('Profil visible des collaborateurs'.tr, 'Nom et photo'.tr, true),
+        ('Partager mes statistiques anonymes'.tr, 'Pour améliorer Eventa'.tr, false),
         (
-          'Afficher mon numéro aux prestataires',
-          'Après une demande de devis',
+          'Afficher mon numéro aux prestataires'.tr,
+          'Après une demande de devis'.tr,
           true,
         ),
       ],
@@ -354,7 +393,7 @@ class AccountScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Moyen de paiement par défaut',
+                'Moyen de paiement par défaut'.tr,
                 style: ctx.text.headlineSmall,
               ),
               const SizedBox(height: 14),
@@ -364,11 +403,11 @@ class AccountScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               PillButton(
-                label: 'Enregistrer',
+                label: 'Enregistrer'.tr,
                 tone: ButtonTone.dark,
                 onPressed: () {
                   Navigator.of(ctx).pop();
-                  toast(context, '${method.label} défini par défaut');
+                  toast(context, '{0} défini par défaut'.trf([method.label]));
                 },
               ),
             ],
@@ -384,20 +423,20 @@ class AccountScreen extends ConsumerWidget {
       shrinkWrap: true,
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
       children: [
-        Text('Aide & support', style: ctx.text.headlineSmall),
+        Text('Aide & support'.tr, style: ctx.text.headlineSmall),
         const SizedBox(height: 8),
-        for (final (q, a) in const [
+        for (final (q, a) in [
           (
-            'Mes paiements sont-ils sécurisés ?',
-            'Les fonds sont conservés jusqu’à la validation de la prestation, puis reversés au prestataire.',
+            'Mes paiements sont-ils sécurisés ?'.tr,
+            'Les fonds sont conservés jusqu’à la validation de la prestation, puis reversés au prestataire.'.tr,
           ),
           (
-            'Puis-je annuler une réservation ?',
-            'Oui, selon les conditions du devis. L’annulation est gratuite jusqu’à J-30 en général.',
+            'Puis-je annuler une réservation ?'.tr,
+            'Oui, selon les conditions du devis. L’annulation est gratuite jusqu’à J-30 en général.'.tr,
           ),
           (
-            'Comment inviter un co-organisateur ?',
-            'Depuis l’événement, touchez l’icône Partager. Deux collaborateurs sont offerts.',
+            'Comment inviter un co-organisateur ?'.tr,
+            'Depuis l’événement, touchez l’icône Partager. Deux collaborateurs sont offerts.'.tr,
           ),
         ])
           ExpansionTile(
@@ -413,14 +452,14 @@ class AccountScreen extends ConsumerWidget {
           ),
         const SizedBox(height: 10),
         PillButton(
-          label: 'Écrire au support',
+          label: 'Écrire au support'.tr,
           icon: AppIcons.message,
           tone: ButtonTone.dark,
           onPressed: () {
             Navigator.of(ctx).pop();
             toast(
               context,
-              'Message envoyé, réponse sous 24 h',
+              'Message envoyé, réponse sous 24 h'.tr,
               icon: AppIcons.send,
             );
           },
@@ -469,7 +508,7 @@ class _Group extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       AppIcons.chevron,
                       size: 15,
                       color: Confetti.inkFaint,
@@ -533,9 +572,173 @@ class _ToggleSheetState extends State<_ToggleSheet> {
               ),
             ),
           const SizedBox(height: 8),
-          const FieldLabel(
-            'Les préférences sont enregistrées automatiquement.',
+          FieldLabel(
+            'Les préférences sont enregistrées automatiquement.'.tr,
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Mascotte du compte : salue à l'arrivée, saute de joie au toucher.
+class _AccountMascot extends ConsumerStatefulWidget {
+  const _AccountMascot({required this.creator});
+
+  final bool creator;
+
+  @override
+  ConsumerState<_AccountMascot> createState() => _AccountMascotState();
+}
+
+class _AccountMascotState extends ConsumerState<_AccountMascot> {
+  bool _waving = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _stopWaving(1800);
+  }
+
+  Timer? _timer;
+
+  void _stopWaving(int ms) {
+    _timer?.cancel();
+    _timer = Timer(Duration(milliseconds: ms), () {
+      if (mounted) setState(() => _waving = false);
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Transform.translate(
+      offset: const Offset(0, 14),
+      child: Mascot(
+        size: 78,
+        color: widget.creator ? MascotColor.violet : MascotColor.orange,
+        waving: _waving,
+        legs: false,
+        onTap: () {
+          ref.read(soundProvider).play(Sfx.success);
+          setState(() => _waving = true);
+          _stopWaving(1400);
+        },
+      ),
+    );
+  }
+}
+
+/// Préférences d'affichage : mode sombre, langue, sons.
+class _PrefsGroup extends ConsumerWidget {
+  const _PrefsGroup();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final prefs = ref.watch(prefsProvider);
+    final n = ref.read(prefsProvider.notifier);
+
+    Widget row(IconData icon, String title, String caption, Widget trailing) =>
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10),
+          child: Row(
+            children: [
+              Icon(icon, size: 21, color: Confetti.ink),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: context.text.titleSmall),
+                    Text(caption, style: context.text.bodySmall),
+                  ],
+                ),
+              ),
+              trailing,
+            ],
+          ),
+        );
+
+    return Panel(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+      child: Column(
+        children: [
+          row(
+            AppIcons.moon,
+            'Mode sombre'.tr,
+            'Plus doux pour les yeux le soir'.tr,
+            Switch(value: prefs.dark, onChanged: n.setDark),
+          ),
+          const Divider(height: 1),
+          row(
+            AppIcons.translate,
+            'Langue'.tr,
+            prefs.language.label,
+            _LanguageToggle(value: prefs.language, onChanged: n.setLanguage),
+          ),
+          const Divider(height: 1),
+          row(
+            prefs.sounds ? AppIcons.speaker : AppIcons.speakerOff,
+            'Sons'.tr,
+            'Réservation, paiement, notifications'.tr,
+            Switch(
+              value: prefs.sounds,
+              onChanged: (v) {
+                n.setSounds(v);
+                if (v) ref.read(soundProvider).play(Sfx.notification);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LanguageToggle extends StatelessWidget {
+  const _LanguageToggle({required this.value, required this.onChanged});
+
+  final AppLanguage value;
+  final ValueChanged<AppLanguage> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: Confetti.lavender,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          for (final l in AppLanguage.values)
+            Pressable(
+              onTap: () => onChanged(l),
+              semanticLabel: l.label,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: l == value ? Confetti.surface : Colors.transparent,
+                  borderRadius: BorderRadius.circular(9),
+                ),
+                child: Text(
+                  l.code.toUpperCase(),
+                  style: context.text.labelMedium?.copyWith(
+                    color: l == value ? Confetti.ink : Confetti.inkMuted,
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );

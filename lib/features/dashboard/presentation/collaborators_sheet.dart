@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/eventa_colors.dart';
@@ -39,13 +40,12 @@ class _Collaborators extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Partager l’événement', style: context.text.headlineSmall),
+          Text('Partager l’événement'.tr, style: context.text.headlineSmall),
           const SizedBox(height: 4),
           Text(
             unlocked
-                ? 'Collaborateurs selon votre offre. Chacun a ses propres droits.'
-                : '$freeCollaborators collaborateurs offerts, Premium à partir du 3ᵉ. '
-                      'Chacun a ses propres droits.',
+                ? 'Collaborateurs selon votre offre. Chacun a ses propres droits.'.tr
+                : '{0} collaborateurs offerts, Premium à partir du 3ᵉ. Chacun a ses propres droits.'.trf([freeCollaborators]),
             style: context.text.bodySmall,
           ),
           const SizedBox(height: 14),
@@ -63,15 +63,15 @@ class _Collaborators extends ConsumerWidget {
               const SizedBox(width: 10),
               Text(
                 unlocked
-                    ? '$used invités'
-                    : '$used / $freeCollaborators gratuits',
+                    ? '{0} invités'.trf([used])
+                    : '{0} / {1} gratuits'.trf([used, freeCollaborators]),
                 style: context.text.labelMedium,
               ),
             ],
           ),
           const SizedBox(height: 16),
           PillButton(
-            label: 'Inviter un collaborateur',
+            label: 'Inviter un collaborateur'.tr,
             icon: AppIcons.userPlus,
             tone: ButtonTone.dark,
             onPressed: () {
@@ -92,17 +92,17 @@ class _Collaborators extends ConsumerWidget {
           const SizedBox(height: 10),
           Pressable(
             onTap: () =>
-                toast(context, 'Lien d’invitation copié', icon: AppIcons.share),
+                toast(context, 'Lien d’invitation copié'.tr, icon: AppIcons.share),
             child: Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Confetti.surface,
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: Confetti.line),
               ),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     AppIcons.share,
                     size: 18,
                     color: Confetti.inkMuted,
@@ -117,7 +117,7 @@ class _Collaborators extends ConsumerWidget {
                     ),
                   ),
                   Text(
-                    'Copier',
+                    'Copier'.tr,
                     style: context.text.labelMedium?.copyWith(
                       color: Confetti.coralDeep,
                     ),
@@ -151,7 +151,7 @@ class _Collaborators extends ConsumerWidget {
                           Text(m.name, style: context.text.titleSmall),
                           Text(
                             m.pending
-                                ? 'Invitation envoyée'
+                                ? 'Invitation envoyée'.tr
                                 : _rightsSummary(m),
                             style: context.text.bodySmall,
                           ),
@@ -166,7 +166,7 @@ class _Collaborators extends ConsumerWidget {
                     ),
                     if (m.role != TeamRole.owner) ...[
                       const SizedBox(width: 6),
-                      const Icon(
+                      Icon(
                         AppIcons.chevron,
                         size: 14,
                         color: Confetti.inkFaint,
@@ -185,12 +185,12 @@ class _Collaborators extends ConsumerWidget {
     final p = m.permissions;
     final on = [
       if (p.budget) 'budget',
-      if (p.tasks) 'tâches',
+      if (p.tasks) 'tâches'.tr,
       if (p.vendors) 'prestataires',
-      if (p.guests) 'invités',
+      if (p.guests) 'invités'.tr,
       if (p.payments) 'paiements',
     ];
-    return on.isEmpty ? 'Lecture seule' : 'Modifie : ${on.join(', ')}';
+    return on.isEmpty ? 'Lecture seule'.tr : 'Modifie : {0}'.trf([on.join(', ')]);
   }
 
   void _invite(BuildContext context, WidgetRef ref, Event e) {
@@ -205,17 +205,17 @@ class _Collaborators extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Nouveau collaborateur', style: ctx.text.headlineSmall),
+              Text('Nouveau collaborateur'.tr, style: ctx.text.headlineSmall),
               const SizedBox(height: 14),
               TextField(
                 controller: name,
                 autofocus: true,
-                decoration: const InputDecoration(
-                  hintText: 'Nom ou numéro WhatsApp',
+                decoration: InputDecoration(
+                  hintText: 'Nom ou numéro WhatsApp'.tr,
                 ),
               ),
               const SizedBox(height: 14),
-              Text('Rôle', style: ctx.text.labelMedium),
+              Text('Rôle'.tr, style: ctx.text.labelMedium),
               const SizedBox(height: 8),
               Row(
                 children: [
@@ -233,7 +233,7 @@ class _Collaborators extends ConsumerWidget {
                           height: 44,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: role == r ? Confetti.ink : Colors.white,
+                            color: role == r ? Confetti.ink : Confetti.surface,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                               color: role == r ? Confetti.ink : Confetti.line,
@@ -242,7 +242,7 @@ class _Collaborators extends ConsumerWidget {
                           child: Text(
                             r.label,
                             style: ctx.text.labelMedium?.copyWith(
-                              color: role == r ? Colors.white : Confetti.ink,
+                              color: role == r ? Confetti.onInk : Confetti.ink,
                             ),
                           ),
                         ),
@@ -253,17 +253,17 @@ class _Collaborators extends ConsumerWidget {
               ),
               const SizedBox(height: 6),
               Text(switch (role) {
-                TeamRole.admin => 'Tous les droits, y compris les paiements.',
-                TeamRole.editor => 'Modifie budget, tâches, prestataires et invités. Pas de paiement.',
-                _ => 'Consulte sans rien modifier.',
+                TeamRole.admin => 'Tous les droits, y compris les paiements.'.tr,
+                TeamRole.editor => 'Modifie budget, tâches, prestataires et invités. Pas de paiement.'.tr,
+                _ => 'Consulte sans rien modifier.'.tr,
               }, style: ctx.text.bodySmall),
               const SizedBox(height: 16),
               PillButton(
-                label: 'Envoyer l’invitation',
+                label: 'Envoyer l’invitation'.tr,
                 icon: AppIcons.send,
                 onPressed: () {
                   final n = name.text.trim().isEmpty
-                      ? 'Invité'
+                      ? 'Invité'.tr
                       : name.text.trim();
                   ref
                       .read(eventsProvider.notifier)
@@ -284,7 +284,7 @@ class _Collaborators extends ConsumerWidget {
                   Navigator.of(ctx).pop();
                   toast(
                     context,
-                    'Invitation envoyée à $n',
+                    'Invitation envoyée à {0}'.trf([n]),
                     icon: AppIcons.send,
                   );
                 },
@@ -357,14 +357,14 @@ class _Collaborators extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 14),
-                row('Budget', p.budget, (x) => p.copyWith(budget: x)),
-                row('Tâches', p.tasks, (x) => p.copyWith(tasks: x)),
-                row('Prestataires', p.vendors, (x) => p.copyWith(vendors: x)),
-                row('Invités', p.guests, (x) => p.copyWith(guests: x)),
-                row('Paiements', p.payments, (x) => p.copyWith(payments: x)),
+                row('Budget'.tr, p.budget, (x) => p.copyWith(budget: x)),
+                row('Tâches'.tr, p.tasks, (x) => p.copyWith(tasks: x)),
+                row('Prestataires'.tr, p.vendors, (x) => p.copyWith(vendors: x)),
+                row('Invités'.tr, p.guests, (x) => p.copyWith(guests: x)),
+                row('Paiements'.tr, p.payments, (x) => p.copyWith(payments: x)),
                 const SizedBox(height: 12),
                 PillButton(
-                  label: 'Retirer de l’événement',
+                  label: 'Retirer de l’événement'.tr,
                   tone: ButtonTone.ghost,
                   icon: AppIcons.trash,
                   onPressed: () {

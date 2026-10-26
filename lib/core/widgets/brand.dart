@@ -54,10 +54,10 @@ class EventaMark extends StatelessWidget {
 }
 
 class EventaWordmark extends StatelessWidget {
-  const EventaWordmark({super.key, this.size = 22, this.color = Confetti.ink});
+  const EventaWordmark({super.key, this.size = 22, this.color});
 
   final double size;
-  final Color color;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +73,7 @@ class EventaWordmark extends StatelessWidget {
             fontSize: size,
             fontWeight: FontWeight.w700,
             letterSpacing: -size * 0.05,
-            color: color,
+            color: color ?? Confetti.ink,
             height: 1,
           ),
         ),

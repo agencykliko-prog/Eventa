@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/i18n/tr.dart';
 import '../../core/theme/app_icons.dart';
 import '../../core/theme/eventa_colors.dart';
 import '../../core/utils/download_stub.dart'
@@ -16,9 +17,11 @@ enum ExportKind {
   vendors('Prestataires', 'Nom, catégorie, statut, montant, contacts'),
   payments('Paiements', 'Référence, bénéficiaire, moyen, montant');
 
-  const ExportKind(this.label, this.caption);
-  final String label;
-  final String caption;
+  const ExportKind(this._label, this._caption);
+  final String _label;
+  String get label => _label.tr;
+  final String _caption;
+  String get caption => _caption.tr;
 }
 
 /// Construit les fichiers CSV (séparateur « ; », lisible par Excel FR).
@@ -31,7 +34,7 @@ abstract final class Exporter {
       '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
 
   static String expenses(Event e) => [
-    _row(['Événement', 'Poste', 'Libellé', 'Montant (FCFA)', 'Date', 'Moyen']),
+    _row(['Événement'.tr, 'Poste'.tr, 'Libellé'.tr, 'Montant (FCFA)'.tr, 'Date'.tr, 'Moyen'.tr]),
     for (final x in e.expenses)
       _row([
         e.name,
@@ -45,14 +48,14 @@ abstract final class Exporter {
 
   static String vendors(Event e) => [
     _row([
-      'Événement',
-      'Prestataire',
-      'Catégorie',
-      'Statut',
-      'Montant (FCFA)',
-      'Téléphone',
-      'E-mail',
-      'Site web',
+      'Événement'.tr,
+      'Prestataire'.tr,
+      'Catégorie'.tr,
+      'Statut'.tr,
+      'Montant (FCFA)'.tr,
+      'Téléphone'.tr,
+      'E-mail'.tr,
+      'Site web'.tr,
     ]),
     for (final v in e.vendors)
       _row([
@@ -75,13 +78,13 @@ abstract final class Exporter {
     final fromBookings = {for (final r in receipts) r.ref};
     return [
       _row([
-        'Événement',
-        'Référence',
-        'Objet',
-        'Bénéficiaire',
-        'Moyen',
-        'Montant (FCFA)',
-        'Date',
+        'Événement'.tr,
+        'Référence'.tr,
+        'Objet'.tr,
+        'Bénéficiaire'.tr,
+        'Moyen'.tr,
+        'Montant (FCFA)'.tr,
+        'Date'.tr,
       ]),
       for (final r in receipts)
         _row([
@@ -151,8 +154,8 @@ class _ExportSheetState extends ConsumerState<_ExportSheet> {
     toast(
       context,
       downloaded
-          ? '${_kinds.length} fichier${_kinds.length > 1 ? 's' : ''} CSV téléchargé${_kinds.length > 1 ? 's' : ''}'
-          : 'Données copiées dans le presse-papiers',
+          ? (_kinds.length > 1 ? '{0} fichiers CSV téléchargés' : '{0} fichier CSV téléchargé').trf([_kinds.length])
+          : 'Données copiées dans le presse-papiers'.tr,
       icon: AppIcons.download,
     );
   }
@@ -171,9 +174,9 @@ class _ExportSheetState extends ConsumerState<_ExportSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Exporter', style: context.text.headlineSmall),
+          Text('Exporter'.tr, style: context.text.headlineSmall),
           Text(
-            '${e.name} · format CSV (Excel, Numbers, Sheets)',
+            '{0} · format CSV (Excel, Numbers, Sheets)'.trf([e.name]),
             style: context.text.bodySmall,
           ),
           const SizedBox(height: 16),
@@ -190,7 +193,7 @@ class _ExportSheetState extends ConsumerState<_ExportSheet> {
             ),
           const SizedBox(height: 12),
           PillButton(
-            label: 'Télécharger',
+            label: 'Télécharger'.tr,
             icon: AppIcons.download,
             tone: ButtonTone.dark,
             loading: _busy,
@@ -199,7 +202,7 @@ class _ExportSheetState extends ConsumerState<_ExportSheet> {
           const SizedBox(height: 8),
           Center(
             child: Text(
-              'Montants en FCFA, séparateur point-virgule',
+              'Montants en FCFA, séparateur point-virgule'.tr,
               style: context.text.bodySmall,
             ),
           ),

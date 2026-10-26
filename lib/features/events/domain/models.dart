@@ -1,12 +1,13 @@
 import 'package:flutter/widgets.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/eventa_colors.dart';
 
 /// Les 10 familles d'événements. Chaque famille a ses sous-catégories,
 /// sa couleur, et son agent IA (Premium).
 enum EventCategory {
-  wedding('Mariages & unions', 'Mariage', AppIcons.wedding, Hue.coral, [
+  wedding('Mariages & unions', 'Mariage', AppIcons.wedding, Hues.coral, [
     'Mariage civil',
     'Mariage religieux',
     'Mariage traditionnel',
@@ -18,7 +19,7 @@ enum EventCategory {
     'Anniversaires & fêtes',
     'Anniversaire',
     AppIcons.birthday,
-    Hue.violet,
+    Hues.violet,
     [
       'Anniversaire adulte',
       'Anniversaire enfant',
@@ -27,7 +28,7 @@ enum EventCategory {
       'Anniversaire de mariage',
     ],
   ),
-  baby('Bébé & famille', 'Bébé', AppIcons.baby, Hue.lagoon, [
+  baby('Bébé & famille', 'Bébé', AppIcons.baby, Hues.lagoon, [
     'Baby shower',
     'Gender reveal',
     'Baptême',
@@ -35,7 +36,7 @@ enum EventCategory {
     'Première communion',
     'Fête de naissance',
   ]),
-  friends('EVJF, EVG & amis', 'Entre amis', AppIcons.friends, Hue.candy, [
+  friends('EVJF, EVG & amis', 'Entre amis', AppIcons.friends, Hues.candy, [
     'EVJF',
     'EVG',
     'Brunch',
@@ -43,7 +44,7 @@ enum EventCategory {
     'Beach party',
     'Soirée privée',
   ]),
-  outing('Sorties & loisirs', 'Sortie', AppIcons.outing, Hue.mango, [
+  outing('Sorties & loisirs', 'Sortie', AppIcons.outing, Hues.mango, [
     'Pique-nique',
     'Camping',
     'Excursion',
@@ -51,7 +52,7 @@ enum EventCategory {
     'Barbecue',
     'Sortie en bateau',
   ]),
-  pro('Événements professionnels', 'Pro', AppIcons.pro, Hue.ink, [
+  pro('Événements professionnels', 'Pro', AppIcons.pro, Hues.ink, [
     'Team building',
     'Séminaire',
     'Conférence',
@@ -63,10 +64,10 @@ enum EventCategory {
     'Célébrations personnelles',
     'Célébration',
     AppIcons.milestone,
-    Hue.violet,
+    Hues.violet,
     ['Remise de diplôme', 'Réussite à un examen', 'Promotion', 'Pot de départ'],
   ),
-  family('Familiaux & communautaires', 'Famille', AppIcons.family, Hue.lagoon, [
+  family('Familiaux & communautaires', 'Famille', AppIcons.family, Hues.lagoon, [
     'Réunion familiale',
     'Fête communautaire',
     'Retrouvailles',
@@ -77,7 +78,7 @@ enum EventCategory {
     'Associatifs & solidaires',
     'Associatif',
     AppIcons.charity,
-    Hue.candy,
+    Hues.candy,
     [
       'Gala',
       'Collecte de fonds',
@@ -85,7 +86,7 @@ enum EventCategory {
       'Campagne de sensibilisation',
     ],
   ),
-  seasonal('Fêtes saisonnières', 'Saison', AppIcons.seasonal, Hue.mango, [
+  seasonal('Fêtes saisonnières', 'Saison', AppIcons.seasonal, Hues.mango, [
     'Noël',
     'Nouvel An',
     'Saint-Valentin',
@@ -96,18 +97,22 @@ enum EventCategory {
   ]);
 
   const EventCategory(
-    this.label,
-    this.short,
+    this._label,
+    this._short,
     this.icon,
-    this.hue,
-    this.subcategories,
+    this._hue,
+    this._subcategories,
   );
 
-  final String label;
-  final String short;
+  final String _label;
+  String get label => _label.tr;
+  final String _short;
+  String get short => _short.tr;
   final IconData icon;
-  final Hue hue;
-  final List<String> subcategories;
+  final Hues _hue;
+  Hue get hue => _hue.hue;
+  final List<String> _subcategories;
+  List<String> get subcategories => [for (final s in _subcategories) s.tr];
 }
 
 enum BudgetCategory {
@@ -127,8 +132,9 @@ enum BudgetCategory {
   activities('Activités', AppIcons.boat),
   contingency('Imprévus', AppIcons.shield);
 
-  const BudgetCategory(this.label, this.icon);
-  final String label;
+  const BudgetCategory(this._label, this.icon);
+  final String _label;
+  String get label => _label.tr;
   final IconData icon;
 }
 
@@ -252,8 +258,9 @@ enum VendorCategory {
   planner('Organisation', AppIcons.planner, BudgetCategory.contingency),
   activity('Activités', AppIcons.boat, BudgetCategory.activities);
 
-  const VendorCategory(this.label, this.icon, this.budget);
-  final String label;
+  const VendorCategory(this._label, this.icon, this.budget);
+  final String _label;
+  String get label => _label.tr;
   final IconData icon;
   final BudgetCategory budget;
 }
@@ -265,8 +272,9 @@ enum Sponsor {
   featured('Mise en avant'),
   result('Sponsorisé');
 
-  const Sponsor(this.label);
-  final String label;
+  const Sponsor(this._label);
+  final String _label;
+  String get label => _label.tr;
 }
 
 @immutable
@@ -344,8 +352,9 @@ enum VendorStatus {
   booked('Réservé'),
   paid('Payé');
 
-  const VendorStatus(this.label);
-  final String label;
+  const VendorStatus(this._label);
+  final String _label;
+  String get label => _label.tr;
 }
 
 /// Un prestataire rattaché à un événement.
@@ -408,8 +417,9 @@ enum TeamRole {
   editor('Éditeur'),
   viewer('Lecteur');
 
-  const TeamRole(this.label);
-  final String label;
+  const TeamRole(this._label);
+  final String _label;
+  String get label => _label.tr;
 }
 
 @immutable

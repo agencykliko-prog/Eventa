@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/i18n/tr.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/eventa_colors.dart';
 import '../../../../core/utils/formatters.dart';
@@ -66,14 +67,14 @@ class EventCard extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      Icon(event.category.icon, size: 13, color: hue.text),
+                      Icon(event.category.icon, size: 13, color: hue.base),
                       const SizedBox(width: 5),
                       Text(
                         event.subcategories.isEmpty
                             ? event.category.short
-                            : event.subcategories.first,
+                            : event.subcategories.first.tr,
                         style: context.text.labelSmall?.copyWith(
-                          color: Confetti.ink,
+                          color: Confetti.inkFixed,
                         ),
                       ),
                     ],
@@ -150,9 +151,9 @@ class EventCard extends StatelessWidget {
                         ),
                         _Stat(
                           '${event.tasksDone}/${event.tasks.length}',
-                          'tâches',
+                          'tâches'.tr,
                         ),
-                        _Stat('${event.guests.confirmed}', 'RSVP'),
+                        _Stat('${event.guests.confirmed}', 'RSVP'.tr),
                         const Spacer(),
                         AvatarStack(
                           images: [for (final m in event.team) m.avatar],

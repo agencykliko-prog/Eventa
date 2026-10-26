@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/eventa_colors.dart';
@@ -78,19 +79,18 @@ class _AgentScreenState extends ConsumerState<AgentScreen> {
         final lines = EventTemplates.aiBudget(e);
         return _Msg(
           true,
-          'Voici une répartition de ${fcfa(e.targetBudget)} adaptée à ${g.invited} invités, '
-          'en conservant vos ${fcfa(e.committed)} déjà engagés.',
+          'Voici une répartition de {0} adaptée à {1} invités, en conservant vos {2} déjà engagés.'.trf([fcfa(e.targetBudget), g.invited, fcfa(e.committed)]),
           bullets: [
             for (final l in lines.take(6))
               '${l.category.label} : ${fcfa(l.estimated)}',
           ],
           action: (
-            'Appliquer au budget',
+            'Appliquer au budget'.tr,
             () {
               n.replaceBudget(e.id, lines);
               toast(
                 context,
-                'Budget mis à jour par l’IA',
+                'Budget mis à jour par l’IA'.tr,
                 icon: AppIcons.sparkle,
               );
             },
@@ -103,13 +103,13 @@ class _AgentScreenState extends ConsumerState<AgentScreen> {
         return _Msg(
           true,
           quoted.isEmpty
-              ? 'Aucun devis en attente. Dès qu’un prestataire répond, je compare son prix au marché et je négocie pour vous.'
-              : 'J’ai analysé ${quoted.length} devis en attente. Le prix de ${quoted.first.vendor.name} est 9 % au-dessus de la moyenne observée pour sa catégorie.',
+              ? 'Aucun devis en attente. Dès qu’un prestataire répond, je compare son prix au marché et je négocie pour vous.'.tr
+              : 'J’ai analysé {0} devis en attente. Le prix de {1} est 9 % au-dessus de la moyenne observée pour sa catégorie.'.trf([quoted.length, quoted.first.vendor.name]),
           bullets: [
             if (quoted.isNotEmpty)
-              'Proposition : ${fcfa((quoted.first.amount * 0.93).round())} au lieu de ${fcfa(quoted.first.amount)}',
+              'Proposition : {0} au lieu de {1}'.trf([fcfa((quoted.first.amount * 0.93).round()), fcfa(quoted.first.amount)]),
             if (quoted.isNotEmpty)
-              'Argument : réservation ferme sous 48 h et acompte immédiat',
+              'Argument : réservation ferme sous 48 h et acompte immédiat'.tr,
           ],
         );
       case AgentAction.savings:
@@ -117,13 +117,13 @@ class _AgentScreenState extends ConsumerState<AgentScreen> {
         final deco = e.line(BudgetCategory.decor)?.estimated ?? 0;
         return _Msg(
           true,
-          'Trois pistes d’économies sans toucher à l’essentiel :',
+          'Trois pistes d’économies sans toucher à l’essentiel :'.tr,
           bullets: [
             if (drinks > 0)
-              'Boissons : forfait « softs + jus locaux » chez le traiteur, environ ${fcfa((drinks * 0.18).round())} économisés',
+              'Boissons : forfait « softs + jus locaux » chez le traiteur, environ {0} économisés'.trf([fcfa((drinks * 0.18).round())]),
             if (deco > 0)
-              'Décoration : réutiliser l’arche de la cérémonie pour la réception, environ ${fcfa((deco * 0.12).round())}',
-            'Papeterie : faire-part digital + 30 cartons imprimés pour les aînés, environ 120 000 FCFA',
+              'Décoration : réutiliser l’arche de la cérémonie pour la réception, environ {0}'.trf([fcfa((deco * 0.12).round())]),
+            'Papeterie : faire-part digital + 30 cartons imprimés pour les aînés, environ 120 000 FCFA'.tr,
           ],
         );
       case AgentAction.planning:
@@ -131,7 +131,7 @@ class _AgentScreenState extends ConsumerState<AgentScreen> {
           ..sort((a, b) => a.due.compareTo(b.due));
         return _Msg(
           true,
-          'Planning des 3 prochaines semaines, jalons critiques en premier :',
+          'Planning des 3 prochaines semaines, jalons critiques en premier :'.tr,
           bullets: [
             for (final t in open.take(5)) '${shortDate(t.due)} · ${t.title}',
           ],
@@ -140,37 +140,36 @@ class _AgentScreenState extends ConsumerState<AgentScreen> {
         final tables = (g.confirmed / 10).ceil();
         return _Msg(
           true,
-          'Pour ${g.confirmed} invités confirmés : $tables tables rondes de 10, plus une table d’honneur.',
-          bullets: const [
-            'Table d’honneur : mariés, témoins, parents',
-            'Tables 1 à 4 : aînés des deux familles, près de la scène',
-            'Collègues et amis regroupés, enfants près des parents',
-            'À séparer : 2 contraintes signalées par la famille',
+          'Pour {0} invités confirmés : {1} tables rondes de 10, plus une table d’honneur.'.trf([g.confirmed, tables]),
+          bullets: [
+            'Table d’honneur : mariés, témoins, parents'.tr,
+            'Tables 1 à 4 : aînés des deux familles, près de la scène'.tr,
+            'Collègues et amis regroupés, enfants près des parents'.tr,
+            'À séparer : 2 contraintes signalées par la famille'.tr,
           ],
         );
       case AgentAction.invitations:
         return _Msg(
           true,
-          'Proposition de faire-part :',
+          'Proposition de faire-part :'.tr,
           bullets: [
-            '« Les familles ont la joie de vous convier à ${e.name}, le ${longDate(e.date)}, à ${e.venue}. »',
-            'Version WhatsApp courte avec lien RSVP et plan d’accès',
-            'Version imprimée pour les aînés',
+            '« Les familles ont la joie de vous convier à {0}, le {1}, à {2}. »'.trf([e.name, longDate(e.date), e.venue]),
+            'Version WhatsApp courte avec lien RSVP et plan d’accès'.tr,
+            'Version imprimée pour les aînés'.tr,
           ],
         );
       case AgentAction.guestMessage:
         return _Msg(
           true,
-          'Message prêt pour les ${g.pending} invités qui n’ont pas répondu :',
+          'Message prêt pour les {0} invités qui n’ont pas répondu :'.trf([g.pending]),
           bullets: [
-            'Bonjour, nous serions ravis de vous compter parmi nous le ${shortDate(e.date)} pour ${e.name}. '
-                'Merci de confirmer votre présence avant le ${shortDate(e.date.subtract(const Duration(days: 21)))}.',
+            'Bonjour, nous serions ravis de vous compter parmi nous le {0} pour {1}. Merci de confirmer votre présence avant le {2}.'.trf([shortDate(e.date), e.name, shortDate(e.date.subtract(const Duration(days: 21)))]),
           ],
           action: (
-            'Envoyer sur WhatsApp',
+            'Envoyer sur WhatsApp'.tr,
             () => toast(
               context,
-              'Relance envoyée à ${g.pending} invités',
+              'Relance envoyée à {0} invités'.trf([g.pending]),
               icon: AppIcons.whatsapp,
             ),
           ),
@@ -178,12 +177,12 @@ class _AgentScreenState extends ConsumerState<AgentScreen> {
       case AgentAction.remaining:
         return _Msg(
           true,
-          'Où en est l’argent :',
+          'Où en est l’argent :'.tr,
           bullets: [
-            'Payé : ${fcfa(e.paid)}',
-            'Reste à payer aux prestataires : ${fcfa(e.remainingToPay)}',
-            'Reste à dépenser sur le budget cible : ${fcfa(e.remainingToSpend)}',
-            'Disponible non engagé : ${fcfa(e.available)}',
+            'Payé : {0}'.trf([fcfa(e.paid)]),
+            'Reste à payer aux prestataires : {0}'.trf([fcfa(e.remainingToPay)]),
+            'Reste à dépenser sur le budget cible : {0}'.trf([fcfa(e.remainingToSpend)]),
+            'Disponible non engagé : {0}'.trf([fcfa(e.available)]),
           ],
         );
     }
@@ -272,7 +271,7 @@ class _AgentScreenState extends ConsumerState<AgentScreen> {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'Je connais votre budget, vos tâches, vos invités et vos devis.',
+                          'Je connais votre budget, vos tâches, vos invités et vos devis.'.tr,
                           style: context.text.bodySmall?.copyWith(
                             color: Colors.white54,
                           ),
@@ -292,8 +291,8 @@ class _AgentScreenState extends ConsumerState<AgentScreen> {
             ),
             Container(
               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: Confetti.surface,
                 border: Border(top: BorderSide(color: Confetti.line)),
               ),
               child: SizedBox(
@@ -363,7 +362,7 @@ class _Bubble extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12, right: 24),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Confetti.surface,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: Confetti.line),
       ),
@@ -375,7 +374,7 @@ class _Bubble extends StatelessWidget {
               Icon(AppIcons.sparkle, size: 14, color: hue.text),
               const SizedBox(width: 6),
               Text(
-                'Agent IA',
+                'Agent IA'.tr,
                 style: context.text.labelSmall?.copyWith(color: hue.text),
               ),
             ],
@@ -454,7 +453,7 @@ class _TypingState extends State<_Typing> with SingleTickerProviderStateMixin {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Confetti.surface,
           borderRadius: BorderRadius.circular(18),
           border: Border.all(color: Confetti.line),
         ),
@@ -470,7 +469,7 @@ class _TypingState extends State<_Typing> with SingleTickerProviderStateMixin {
                   child: Container(
                     width: 7,
                     height: 7,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: Confetti.inkMuted,
                       shape: BoxShape.circle,
                     ),

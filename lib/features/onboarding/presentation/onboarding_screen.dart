@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_icons.dart';
@@ -48,7 +49,7 @@ class OnboardingScreen extends StatelessWidget {
                               Entrance(
                                 index: 6,
                                 child: Text(
-                                  'Le budget parfait\npour célébrer.',
+                                  'Le budget parfait\npour célébrer.'.tr,
                                   style: context.text.displaySmall,
                                 ),
                               ),
@@ -56,8 +57,7 @@ class OnboardingScreen extends StatelessWidget {
                               Entrance(
                                 index: 7,
                                 child: Text(
-                                  'Budget en FCFA, tâches, prestataires et équipe : '
-                                  'tout votre événement au même endroit.',
+                                  'Budget en FCFA, tâches, prestataires et équipe : tout votre événement au même endroit.'.tr,
                                   style: context.text.bodyLarge?.copyWith(
                                     color: context.eventa.muted,
                                   ),
@@ -68,7 +68,7 @@ class OnboardingScreen extends StatelessWidget {
                               Entrance(
                                 index: 8,
                                 child: PillButton(
-                                  label: 'Créer un compte',
+                                  label: 'Créer un compte'.tr,
                                   onPressed: () => context.push(Routes.signUp),
                                 ),
                               ),
@@ -76,7 +76,7 @@ class OnboardingScreen extends StatelessWidget {
                               Entrance(
                                 index: 9,
                                 child: PillButton(
-                                  label: 'Se connecter',
+                                  label: 'Se connecter'.tr,
                                   tone: ButtonTone.ghost,
                                   onPressed: () => context.push(Routes.signIn),
                                 ),
@@ -180,7 +180,7 @@ class _CollageState extends State<_Collage> with TickerProviderStateMixin {
               child: _Cover(
                 image: 'assets/images/onboarding_wedding.jpg',
                 width: card,
-                label: 'Mariage',
+                label: 'Mariage'.tr,
                 hue: Hue.coral,
               ),
             ),
@@ -193,7 +193,7 @@ class _CollageState extends State<_Collage> with TickerProviderStateMixin {
               child: _Cover(
                 image: 'assets/images/cover_birthday.jpg',
                 width: card * 0.9,
-                label: 'Anniversaire',
+                label: 'Anniversaire'.tr,
                 hue: Hue.violet,
               ),
             ),
@@ -206,7 +206,7 @@ class _CollageState extends State<_Collage> with TickerProviderStateMixin {
               child: _Cover(
                 image: 'assets/images/cover_babyshower.jpg',
                 width: card * 0.92,
-                label: 'Baby shower',
+                label: 'Baby shower'.tr,
                 hue: Hue.lagoon,
               ),
             ),
@@ -216,10 +216,10 @@ class _CollageState extends State<_Collage> with TickerProviderStateMixin {
               y: h * 0.7,
               angle: -0.04,
               phase: 0.2,
-              child: const _Chip(
+              child: _Chip(
                 hue: Hue.lagoon,
                 icon: AppIcons.wallet,
-                label: 'Budget',
+                label: 'Budget'.tr,
                 value: '68 %',
               ),
             ),
@@ -266,7 +266,7 @@ class _Cover extends StatelessWidget {
       height: width * 1.18,
       padding: const EdgeInsets.all(7),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Confetti.surface,
         borderRadius: BorderRadius.circular(26),
         boxShadow: [
           BoxShadow(
@@ -382,11 +382,11 @@ class _Countdown extends StatelessWidget {
           ),
         ],
       ),
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'J-42',
+            'J-42'.tr,
             style: TextStyle(
               color: Colors.white,
               fontSize: 26,
@@ -397,7 +397,7 @@ class _Countdown extends StatelessWidget {
           ),
           SizedBox(height: 2),
           Text(
-            'avant la fête',
+            'avant la fête'.tr,
             style: TextStyle(
               color: Colors.white,
               fontSize: 12,
@@ -418,7 +418,7 @@ class _TeamChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(6, 6, 14, 6),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Confetti.surface,
         borderRadius: BorderRadius.circular(99),
         boxShadow: [
           BoxShadow(
@@ -428,7 +428,7 @@ class _TeamChip extends StatelessWidget {
           ),
         ],
       ),
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           AvatarStack(
@@ -441,7 +441,7 @@ class _TeamChip extends StatelessWidget {
           ),
           SizedBox(width: 8),
           Text(
-            '6 en ligne',
+            '6 en ligne'.tr,
             style: TextStyle(
               fontSize: 12.5,
               fontWeight: FontWeight.w700,

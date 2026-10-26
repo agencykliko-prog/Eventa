@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/i18n/tr.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/eventa_colors.dart';
@@ -10,6 +11,7 @@ import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/donut.dart';
 import '../../../core/widgets/entrance.dart';
 import '../../../core/widgets/forms.dart';
+import '../../../core/widgets/mascot.dart';
 import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/ui.dart';
 import '../../commerce/domain/commerce_models.dart';
@@ -19,9 +21,10 @@ import '../../events/domain/models.dart';
 import '../../events/presentation/events_providers.dart';
 import '../../export/export_sheet.dart';
 import '../../premium/presentation/paywall.dart';
+import '../../premium/presentation/premium_nudge.dart';
 
 /// Palette de répartition : couleurs de la marque, du plus foncé au plus clair.
-const chartColors = [
+List<Color> get chartColors => [
   Confetti.violet,
   Confetti.lagoon,
   Confetti.coral,
@@ -48,7 +51,22 @@ class BudgetScreen extends ConsumerStatefulWidget {
   ConsumerState<BudgetScreen> createState() => _BudgetScreenState();
 }
 
+/// Ouvertures du budget pendant la session (suggestion Premium à la 3e).
+int _budgetVisits = 0;
+
 class _BudgetScreenState extends ConsumerState<BudgetScreen> {
+  @override
+  void initState() {
+    super.initState();
+    if (++_budgetVisits == 3) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          maybeShowPremiumNudge(context, ref, PremiumNudge.budget);
+        }
+      });
+    }
+  }
+
   int? _highlight;
   bool _byPaid = false;
   bool _generating = false;
@@ -63,7 +81,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
     setState(() => _generating = false);
     toast(
       context,
-      'Budget optimisé par l’IA pour ${e.guests.invited} invités',
+      'Budget optimisé par l’IA pour {0} invités'.trf([e.guests.invited]),
       icon: AppIcons.sparkle,
     );
   }
@@ -75,9 +93,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
       body: SafeArea(
         bottom: false,
         child: async.when(
-          loading: () => const Center(
-            child: CircularProgressIndicator(color: Confetti.coral),
-          ),
+          loading: () => const Center(child: MascotLoader.party()),
           error: (e, _) =>
               ErrorState(onRetry: () => ref.invalidate(eventsProvider)),
           data: (e) => e == null ? const SizedBox() : _body(e),
@@ -92,8 +108,8 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
               shape: const StadiumBorder(),
               onPressed: () => _expenseSheet(async.value!),
               icon: const Icon(AppIcons.add, size: 20),
-              label: const Text(
-                'Dépense',
+              label: Text(
+                'Dépense'.tr,
                 style: TextStyle(fontWeight: FontWeight.w600),
               ),
             ),
@@ -123,7 +139,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Budget', style: context.text.titleLarge),
+                  Text('Budget'.tr, style: context.text.titleLarge),
                   Text(e.name, style: context.text.bodySmall),
                 ],
               ),
@@ -150,7 +166,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                   color: Confetti.gold.withValues(alpha: 0.16),
                   borderRadius: BorderRadius.circular(13),
                 ),
-                child: const Icon(
+                child: Icon(
                   AppIcons.sparkle,
                   color: Confetti.gold,
                   size: 21,
@@ -164,7 +180,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                     Row(
                       children: [
                         Text(
-                          'Budget par l’IA',
+                          'Budget par l’IA'.tr,
                           style: context.text.titleMedium?.copyWith(
                             color: Colors.white,
                           ),
@@ -175,7 +191,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Répartition optimisée selon le type, la ville et le nombre d’invités.',
+                      'Répartition optimisée selon le type, la ville et le nombre d’invités.'.tr,
                       style: context.text.bodySmall?.copyWith(
                         color: Colors.white60,
                       ),
@@ -185,7 +201,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
               ),
               const SizedBox(width: 10),
               PillButton(
-                label: 'Générer',
+                label: 'Générer'.tr,
                 tone: ButtonTone.gold,
                 expand: false,
                 height: 40,
@@ -205,11 +221,11 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
         Row(
           children: [
             Expanded(
-              child: Text('Répartition', style: context.text.titleLarge),
+              child: Text('Répartition'.tr, style: context.text.titleLarge),
             ),
             _Toggle(
-              left: 'Prévu',
-              right: 'Payé',
+              left: 'Prévu'.tr,
+              right: 'Payé'.tr,
               rightOn: _byPaid,
               onChanged: (v) => setState(() {
                 _byPaid = v;
@@ -237,7 +253,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                   children: [
                     Text(
                       _highlight == null
-                          ? (_byPaid ? 'Payé' : 'Prévu')
+                          ? (_byPaid ? 'Payé'.tr : 'Prévu'.tr)
                           : lines[_highlight!].category.label,
                       style: context.text.labelSmall?.copyWith(
                         color: context.eventa.muted,
@@ -301,15 +317,15 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
         const SizedBox(height: 24),
         Row(
           children: [
-            Expanded(child: Text('Postes', style: context.text.titleLarge)),
+            Expanded(child: Text('Postes'.tr, style: context.text.titleLarge)),
             Pressable(
               onTap: () => _lineSheet(e, null),
               child: Row(
                 children: [
-                  const Icon(AppIcons.add, size: 16, color: Confetti.coralDeep),
+                  Icon(AppIcons.add, size: 16, color: Confetti.coralDeep),
                   const SizedBox(width: 4),
                   Text(
-                    'Ajouter un poste',
+                    'Ajouter un poste'.tr,
                     style: context.text.labelMedium?.copyWith(
                       color: Confetti.coralDeep,
                     ),
@@ -334,7 +350,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
           ),
         if (e.expenses.isNotEmpty) ...[
           const SizedBox(height: 16),
-          Text('Dépenses réglées', style: context.text.titleLarge),
+          Text('Dépenses réglées'.tr, style: context.text.titleLarge),
           const SizedBox(height: 12),
           Panel(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
@@ -394,16 +410,16 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Budget total', style: ctx.text.headlineSmall),
+            Text('Budget total'.tr, style: ctx.text.headlineSmall),
             Text(
-              'Saisissez le montant maximal que vous souhaitez dépenser.',
+              'Saisissez le montant maximal que vous souhaitez dépenser.'.tr,
               style: ctx.text.bodySmall,
             ),
             const SizedBox(height: 14),
             _AmountField(controller: c, autofocus: true),
             const SizedBox(height: 16),
             PillButton(
-              label: 'Enregistrer',
+              label: 'Enregistrer'.tr,
               tone: ButtonTone.dark,
               onPressed: () {
                 _n.setTarget(e.id, int.tryParse(c.text) ?? e.targetBudget);
@@ -436,17 +452,17 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                line == null ? 'Nouveau poste' : line.category.label,
+                line == null ? 'Nouveau poste'.tr : line.category.label,
                 style: ctx.text.headlineSmall,
               ),
               if (line != null)
                 Text(
-                  'Payé : ${fcfa(line.paid)} (mis à jour par les dépenses)',
+                  'Payé : {0} (mis à jour par les dépenses)'.trf([fcfa(line.paid)]),
                   style: ctx.text.bodySmall,
                 ),
               const SizedBox(height: 14),
               if (line == null) ...[
-                Text('Catégorie', style: ctx.text.labelMedium),
+                Text('Catégorie'.tr, style: ctx.text.labelMedium),
                 const SizedBox(height: 8),
                 Wrap(
                   spacing: 6,
@@ -464,7 +480,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                             vertical: 7,
                           ),
                           decoration: BoxDecoration(
-                            color: category == c ? Confetti.ink : Colors.white,
+                            color: category == c ? Confetti.ink : Confetti.surface,
                             borderRadius: BorderRadius.circular(99),
                             border: Border.all(
                               color: category == c
@@ -479,7 +495,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                                 c.icon,
                                 size: 14,
                                 color: category == c
-                                    ? Colors.white
+                                    ? Confetti.onInk
                                     : Confetti.inkMuted,
                               ),
                               const SizedBox(width: 5),
@@ -487,7 +503,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                                 c.label,
                                 style: ctx.text.labelMedium?.copyWith(
                                   color: category == c
-                                      ? Colors.white
+                                      ? Confetti.onInk
                                       : Confetti.ink,
                                 ),
                               ),
@@ -499,12 +515,12 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                 ),
                 const SizedBox(height: 14),
               ],
-              Text('Montant prévu', style: ctx.text.labelMedium),
+              Text('Montant prévu'.tr, style: ctx.text.labelMedium),
               const SizedBox(height: 8),
               _AmountField(controller: est),
               const SizedBox(height: 12),
               Text(
-                'Montant engagé (devis accepté)',
+                'Montant engagé (devis accepté)'.tr,
                 style: ctx.text.labelMedium,
               ),
               const SizedBox(height: 8),
@@ -512,13 +528,13 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
               const SizedBox(height: 12),
               TextField(
                 controller: note,
-                decoration: const InputDecoration(
-                  hintText: 'Note (facultatif)',
+                decoration: InputDecoration(
+                  hintText: 'Note (facultatif)'.tr,
                 ),
               ),
               const SizedBox(height: 16),
               PillButton(
-                label: line == null ? 'Ajouter le poste' : 'Enregistrer',
+                label: line == null ? 'Ajouter le poste'.tr : 'Enregistrer'.tr,
                 tone: ButtonTone.dark,
                 onPressed: () {
                   _n.upsertLine(
@@ -537,7 +553,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
               if (line != null && line.paid == 0) ...[
                 const SizedBox(height: 8),
                 PillButton(
-                  label: 'Supprimer le poste',
+                  label: 'Supprimer le poste'.tr,
                   icon: AppIcons.trash,
                   tone: ButtonTone.ghost,
                   onPressed: () {
@@ -568,9 +584,9 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Nouvelle dépense', style: ctx.text.headlineSmall),
+              Text('Nouvelle dépense'.tr, style: ctx.text.headlineSmall),
               Text(
-                'Hors plateforme : espèces, virement, achat direct…',
+                'Hors plateforme : espèces, virement, achat direct…'.tr,
                 style: ctx.text.bodySmall,
               ),
               const SizedBox(height: 14),
@@ -578,12 +594,12 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
               const SizedBox(height: 12),
               TextField(
                 controller: label,
-                decoration: const InputDecoration(
-                  hintText: 'Libellé (ex. Achat tissu)',
+                decoration: InputDecoration(
+                  hintText: 'Libellé (ex. Achat tissu)'.tr,
                 ),
               ),
               const SizedBox(height: 14),
-              Text('Poste', style: ctx.text.labelMedium),
+              Text('Poste'.tr, style: ctx.text.labelMedium),
               const SizedBox(height: 8),
               Wrap(
                 spacing: 6,
@@ -601,7 +617,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                         decoration: BoxDecoration(
                           color: category == l.category
                               ? Confetti.ink
-                              : Colors.white,
+                              : Confetti.surface,
                           borderRadius: BorderRadius.circular(99),
                           border: Border.all(
                             color: category == l.category
@@ -613,7 +629,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                           l.category.label,
                           style: ctx.text.labelMedium?.copyWith(
                             color: category == l.category
-                                ? Colors.white
+                                ? Confetti.onInk
                                 : Confetti.ink,
                           ),
                         ),
@@ -623,17 +639,17 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
               ),
               const SizedBox(height: 14),
               AppSelect<PayMethod>(
-                label: 'Payé avec',
+                label: 'Payé avec'.tr,
                 value: method,
                 options: PayMethod.values,
                 labelOf: (m) =>
-                    m.mobileMoney ? 'Mobile Money · ${m.label}' : m.label,
+                    m.mobileMoney ? 'Mobile Money · {0}'.trf([m.label]) : m.label,
                 iconOf: (m) => m.icon,
                 onChanged: (m) => set(() => method = m),
               ),
               const SizedBox(height: 18),
               PillButton(
-                label: 'Enregistrer la dépense',
+                label: 'Enregistrer la dépense'.tr,
                 tone: ButtonTone.dark,
                 onPressed: () {
                   final v = int.tryParse(amount.text) ?? 0;
@@ -652,7 +668,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                     ),
                   );
                   Navigator.of(ctx).pop();
-                  toast(context, '${fcfa(v)} ajoutés aux dépenses');
+                  toast(context, '{0} ajoutés aux dépenses'.trf([fcfa(v)]));
                 },
               ),
             ],
@@ -679,7 +695,7 @@ class _AmountField extends StatelessWidget {
       style: context.text.titleLarge?.copyWith(
         fontFeatures: const [FontFeature.tabularFigures()],
       ),
-      decoration: const InputDecoration(hintText: '0', suffixText: 'FCFA'),
+      decoration: InputDecoration(hintText: '0', suffixText: 'FCFA'.tr),
     );
   }
 }
@@ -705,7 +721,7 @@ class _Toggle extends StatelessWidget {
         duration: Motion.fast,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: on ? Colors.white : Colors.transparent,
+          color: on ? Confetti.surface : Colors.transparent,
           borderRadius: BorderRadius.circular(9),
         ),
         child: Text(
@@ -744,12 +760,12 @@ class _LineTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final base = line.estimated == 0 ? 1 : line.estimated;
     final status = line.committed == 0
-        ? ('À réserver', Hue.ink)
+        ? ('À réserver'.tr, Hue.ink)
         : line.isOver
-        ? ('Dépassement', Hue.coral)
+        ? ('Dépassement'.tr, Hue.coral)
         : line.paid >= line.committed
-        ? ('Soldé', Hue.lagoon)
-        : ('Acompte versé', Hue.violet);
+        ? ('Soldé'.tr, Hue.lagoon)
+        : ('Acompte versé'.tr, Hue.violet);
     return Panel(
       padding: const EdgeInsets.all(16),
       onTap: onTap,
@@ -775,7 +791,7 @@ class _LineTile extends StatelessWidget {
                     Text(line.category.label, style: context.text.titleSmall),
                     Text(
                       line.note ??
-                          'Reste à dépenser ${fcfa(line.estimated - line.paid)}',
+                          'Reste à dépenser {0}'.trf([fcfa(line.estimated - line.paid)]),
                       style: context.text.bodySmall,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -829,19 +845,19 @@ class _LineTile extends StatelessWidget {
           Row(
             children: [
               Text(
-                'Payé ${fcfaCompact(line.paid)}',
+                'Payé {0}'.trf([fcfaCompact(line.paid)]),
                 style: context.text.labelSmall,
               ),
               const SizedBox(width: 10),
               Text(
-                'Engagé ${fcfaCompact(line.committed)}',
+                'Engagé {0}'.trf([fcfaCompact(line.committed)]),
                 style: context.text.labelSmall?.copyWith(
                   color: context.eventa.muted,
                 ),
               ),
               const Spacer(),
               Text(
-                'Prévu ${fcfaCompact(line.estimated)}',
+                'Prévu {0}'.trf([fcfaCompact(line.estimated)]),
                 style: context.text.labelSmall?.copyWith(
                   color: context.eventa.muted,
                 ),

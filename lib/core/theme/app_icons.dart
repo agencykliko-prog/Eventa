@@ -385,4 +385,44 @@ abstract final class AppIcons {
     0xe7b4,
     fontFamily: 'PhosphorRegular',
   );
+
+  // Préférences, à propos, confidentialité
+  static const IconData moon = IconData(0xe330, fontFamily: 'PhosphorRegular');
+  static const IconData translate = IconData(
+    0xe4a2,
+    fontFamily: 'PhosphorRegular',
+  );
+  static const IconData speaker = IconData(
+    0xe44a,
+    fontFamily: 'PhosphorRegular',
+  );
+  static const IconData speakerOff = IconData(
+    0xe45a,
+    fontFamily: 'PhosphorRegular',
+  );
+  static const IconData scroll = IconData(
+    0xeb7a,
+    fontFamily: 'PhosphorRegular',
+  );
+  static const IconData cookie = IconData(
+    0xe6ca,
+    fontFamily: 'PhosphorRegular',
+  );
+  static const IconData heart = IconData(0xe2a8, fontFamily: 'PhosphorRegular');
+  static const IconData target = IconData(
+    0xe47c,
+    fontFamily: 'PhosphorRegular',
+  );
+  static const IconData database = IconData(
+    0xe1de,
+    fontFamily: 'PhosphorRegular',
+  );
+  static const IconData handHeart = IconData(
+    0xe810,
+    fontFamily: 'PhosphorRegular',
+  );
+  static const IconData lifebuoy = IconData(
+    0xe63a,
+    fontFamily: 'PhosphorRegular',
+  );
 }

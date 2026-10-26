@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/i18n/tr.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/eventa_colors.dart';
 import '../../../../core/utils/formatters.dart';
@@ -8,7 +9,7 @@ import '../../../../core/widgets/ui.dart';
 import '../../../events/domain/models.dart';
 
 String priceLabel(Vendor v) =>
-    'dès ${fcfa(v.priceFrom)}${v.unit == 'forfait' ? '' : ' / ${v.unit}'}';
+    'dès {0}{1}'.trf([fcfa(v.priceFrom), v.unit == 'forfait' ? '' : ' / ${v.unit}']);
 
 /// Carte prestataire orientée conversion : photo, puis nom et prix en
 /// premier plan, catégorie, et coordonnées directement lisibles.
@@ -26,7 +27,7 @@ class VendorCard extends StatelessWidget {
       semanticLabel: v.name,
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Confetti.surface,
           borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Confetti.line),
         ),
@@ -81,7 +82,7 @@ class VendorCard extends StatelessWidget {
                             ),
                             if (v.verified) ...[
                               const SizedBox(width: 5),
-                              const Icon(
+                              Icon(
                                 AppIcons.verified,
                                 size: 16,
                                 color: Confetti.violet,
@@ -118,7 +119,7 @@ class VendorCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        'à partir de',
+                        'à partir de'.tr,
                         style: context.text.labelSmall?.copyWith(
                           color: Confetti.inkFaint,
                           fontWeight: FontWeight.w500,
@@ -205,7 +206,7 @@ class SponsorTag extends StatelessWidget {
         borderRadius: BorderRadius.circular(99),
       ),
       child: Text(
-        sponsor == Sponsor.recommended ? 'Recommandé' : 'Sponsorisé',
+        sponsor == Sponsor.recommended ? 'Recommandé'.tr : 'Sponsorisé'.tr,
         style: context.text.labelSmall?.copyWith(
           color: Confetti.ink,
           fontSize: 10.5,
@@ -242,7 +243,7 @@ class AvailabilityPill extends StatelessWidget {
           ),
           const SizedBox(width: 5),
           Text(
-            ok ? 'Disponible' : (vendor.nextAvailable ?? 'Complet'),
+            ok ? 'Disponible'.tr : (vendor.nextAvailable ?? 'Complet'.tr),
             style: context.text.labelSmall?.copyWith(
               color: Confetti.ink,
               fontSize: 10.5,
