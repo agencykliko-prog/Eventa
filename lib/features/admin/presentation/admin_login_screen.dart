@@ -27,7 +27,8 @@ class AdminLoginScreen extends ConsumerStatefulWidget {
 
 class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
   AdminMember _member = AdminDemo.team.first;
-  final _code = TextEditingController();
+  // Code de démo prérempli : un seul geste pour entrer.
+  final _code = TextEditingController(text: '123456');
   bool _busy = false;
   String? _error;
 
@@ -38,6 +39,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
   }
 
   Future<void> _submit() async {
+    if (_busy) return;
     if (_code.text.trim().length != 6) {
       setState(() => _error = 'Saisissez les 6 chiffres du code reçu');
       return;
@@ -170,6 +172,10 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                           LengthLimitingTextInputFormatter(6),
                         ],
                         textInputAction: TextInputAction.done,
+                        onChanged: (_) {
+                          if (_error != null) setState(() => _error = null);
+                        },
+                        onSubmitted: (_) => _submit(),
                       ),
                       if (_error != null) ...[
                         const SizedBox(height: 6),

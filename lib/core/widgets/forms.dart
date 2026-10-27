@@ -57,6 +57,7 @@ class AppField extends StatefulWidget {
     this.autofocus = false,
     this.textInputAction = TextInputAction.next,
     this.onChanged,
+    this.onSubmitted,
   });
 
   final String label;
@@ -73,6 +74,7 @@ class AppField extends StatefulWidget {
   final bool autofocus;
   final TextInputAction textInputAction;
   final ValueChanged<String>? onChanged;
+  final ValueChanged<String>? onSubmitted;
 
   @override
   State<AppField> createState() => _AppFieldState();
@@ -100,6 +102,7 @@ class _AppFieldState extends State<AppField> {
               : widget.textInputAction,
           validator: widget.validator,
           onChanged: widget.onChanged,
+          onFieldSubmitted: widget.onSubmitted,
           autovalidateMode: AutovalidateMode.onUserInteraction,
           style: context.text.bodyLarge,
           decoration: InputDecoration(
