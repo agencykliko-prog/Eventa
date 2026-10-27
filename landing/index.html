@@ -6,15 +6,13 @@
 <title>Eventa · Le budget parfait pour célébrer</title>
 <meta name="description" content="Eventa organise vos mariages, anniversaires, baby showers et séminaires en Côte d’Ivoire : budget en FCFA, prestataires vérifiés, invités et équipe, paiement Mobile Money sécurisé.">
 <meta name="theme-color" content="#6246EA">
-<link rel="preload" href="fonts/Baloo2-800.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css">
+<link rel="preload" href="fonts/RedHatDisplay-800.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
 
 <a class="skip" href="#contenu">Aller au contenu</a>
 
-<!-- Compagnon de défilement : la mascotte descend avec la lecture -->
-<div class="buddy" aria-hidden="true"><span class="buddy-track"><i></i></span><img class="buddy-img" src="img/mascots/red_thumbs.webp" alt=""></div>
 
 <div class="banner" role="note">
   <span>Version de démonstration · testez Eventa gratuitement sur votre téléphone</span>
@@ -37,12 +35,10 @@
     </div>
     <div class="nav-cta">
       <a class="ghost" href="#demo">Se connecter</a>
-      <a class="btn btn-cta btn-sm" data-confetti href="#demo">Essayer la démo</a>
+      <a class="btn btn-cta btn-sm" href="#demo">Essayer la démo</a>
     </div>
     <button class="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
   </nav>
-
-  <div class="balloons" aria-hidden="true"></div>
 
   <div class="wrap hero-grid" id="contenu">
     <div class="hero-copy">
@@ -50,13 +46,21 @@
       <h1 class="display split">Le budget parfait pour célébrer.</h1>
       <p class="lead">Mariage, anniversaire, baby shower ou séminaire : budget, prestataires vérifiés, invités et équipe, tout votre événement au même endroit.</p>
       <div class="hero-actions">
-        <a class="btn btn-cta" data-confetti href="#demo">Essayer la démo</a>
-        <a class="btn btn-white" href="#creators">Je suis prestataire</a>
+        <a class="btn btn-cta" href="#demo">Essayer la démo</a>
+        <a class="btn-link" href="#creators">Je suis prestataire <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="community">
+        <span class="faces" aria-hidden="true"><img src="img/avatar_1.jpg" alt=""><img src="img/avatar_2.jpg" alt=""><img src="img/avatar_3.jpg" alt=""><img src="img/avatar_4.jpg" alt=""></span>
+        <p>Plus de <b>1 000 utilisateurs</b> nous font déjà confiance.</p>
       </div>
       <div class="stores stores-hero">
         <a class="store" href="#demo" aria-label="Bientôt sur l’App Store"><img src="img/stores/app-store.svg" alt="Télécharger dans l’App Store"></a>
         <a class="store" href="#demo" aria-label="Bientôt sur Google Play"><img src="img/stores/google-play.png" alt="Disponible sur Google Play"></a>
         <span class="soon">Bientôt sur les stores</span>
+      </div>
+      <div class="countries">
+        <span class="countries-label">Bientôt disponible</span>
+        <ul><li><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect width="1" height="2" fill="#14B53A"/><rect x="1" width="1" height="2" fill="#FCD116"/><rect x="2" width="1" height="2" fill="#CE1126"/></svg>Mali</li><li><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect width="3" height="1" fill="#EF2B2D"/><rect y="1" width="3" height="1" fill="#009E49"/><path d="M1.5 .62l.11.34h.36l-.29.21.11.34-.29-.21-.29.21.11-.34-.29-.21h.36z" fill="#FCD116"/></svg>Burkina Faso</li><li><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect width="3" height="2" fill="#006A4E"/><rect y=".4" width="3" height=".4" fill="#FFCE00"/><rect y="1.2" width="3" height=".4" fill="#FFCE00"/><rect width="1.2" height="1.2" fill="#D21034"/><path d="M.6 .28l.08.24h.25l-.2.15.08.24-.21-.15-.21.15.08-.24-.2-.15h.25z" fill="#fff"/></svg>Togo</li><li><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect width="1.2" height="2" fill="#008751"/><rect x="1.2" width="1.8" height="1" fill="#FCD116"/><rect x="1.2" y="1" width="1.8" height="1" fill="#E8112D"/></svg>Bénin</li></ul>
       </div>
     </div>
 
@@ -77,10 +81,7 @@
           </div>
         </div>
       </div>
-      <div class="bubble b-in b1">Le DJ confirme pour samedi 🎶<time>10:42</time></div>
-      <div class="bubble b-out b2">Acompte payé avec Wave ✓<time>10:44</time></div>
       <div class="hero-mascot" data-mascot="red_jump" data-interactive title="Touchez-moi !"></div>
-      <div class="hero-peek" data-mascot="green_wave" data-interactive title="Coucou !"></div>
     </div>
   </div>
 </header>
@@ -94,7 +95,6 @@
 
 <!-- ─── Budget ────────────────────────────────────────────── -->
 <section class="band band-lagoon" id="budget">
-  <div class="edge-peek edge-right" data-mascot="green_thumbs" data-peek data-interactive></div>
   <div class="wrap split-2">
     <div>
       <p class="eyebrow">Budget</p>
@@ -168,7 +168,6 @@
 
 <!-- ─── Invités & équipe ──────────────────────────────────── -->
 <section class="band band-candy" id="invites">
-  <div class="edge-peek edge-left" data-mascot="red_cheeks" data-peek data-interactive></div>
   <div class="wrap split-2 reverse">
     <div>
       <p class="eyebrow">Invités &amp; équipe</p>
@@ -231,7 +230,7 @@
       <h2 class="h-xl split">Essayez-la ici, tout de suite.</h2>
       <p class="body-l ink-soft">L’application tourne dans le téléphone à côté. Saisissez n’importe quel e-mail et mot de passe : les données sont fictives.</p>
       <div class="hero-actions">
-        <a class="btn btn-cta" data-confetti data-demo href="#">Ouvrir la démo en plein écran</a>
+        <a class="btn btn-cta" data-demo href="#">Ouvrir la démo en plein écran</a>
         <a class="btn btn-ink-ghost" data-demo-pro href="#">Version prestataire</a>
       </div>
     </div>
@@ -259,9 +258,8 @@
       <article class="pro reveal"><span>F</span><h3>Réputation</h3><p>Avis vérifiés, réponses publiques, taux de réponse.</p></article>
     </div>
     <div class="creator-cta">
-      <div class="creator-mascot" data-mascot="green_jump" data-interactive title="Touchez-moi !"></div>
       <p><b>Offre Business / Creator</b> à partir de 29 900 FCFA par mois.</p>
-      <a class="btn btn-cta" data-confetti data-demo-pro href="#">Créer mon espace pro</a>
+      <a class="btn btn-cta" data-demo-pro href="#">Créer mon espace pro</a>
     </div>
   </div>
 </section>
@@ -315,12 +313,12 @@
 <!-- ─── Appel final ───────────────────────────────────────── -->
 <section class="band band-cream final">
   <div class="wrap center">
-    <div class="duo" data-duo>
+    <div class="duo">
       <div class="duo-m duo-red" data-mascot="red_jump" data-interactive title="Organisateurs"></div>
       <div class="duo-m duo-green" data-mascot="green_jump" data-interactive title="Créateurs"></div>
     </div>
     <h2 class="display ink split">On prépare la fête ?</h2>
-    <a class="btn btn-cta btn-xl" data-confetti data-demo href="#">Essayer Eventa</a>
+    <a class="btn btn-cta btn-xl" data-demo href="#">Essayer Eventa</a>
     <div class="stores stores-final">
       <a class="store" href="#demo" aria-label="Bientôt sur l’App Store"><img src="img/stores/app-store.svg" alt="Télécharger dans l’App Store"></a>
       <a class="store" href="#demo" aria-label="Bientôt sur Google Play"><img src="img/stores/google-play.png" alt="Disponible sur Google Play"></a>
@@ -330,7 +328,6 @@
 </section>
 
 <footer class="footer">
-  <img class="foot-mascot" src="img/mascots/green_peace.webp" alt="" aria-hidden="true">
   <div class="wrap foot-grid">
     <div>
       <a class="logo logo-light" href="#haut"><span class="logo-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>eventa</a>
@@ -349,7 +346,6 @@
   <p class="wrap legal">© 2026 Eventa · Version de démonstration</p>
 </footer>
 
-<canvas class="confetti" aria-hidden="true"></canvas>
-<script src="app.js"></script>
+<script src="app.js?v=3"></script>
 </body>
 </html>

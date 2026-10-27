@@ -1,4 +1,4 @@
-/* Eventa · landing page : mascottes, confettis, révélations, simulateur, démo. */
+/* Eventa · landing page : mascottes, révélations, simulateur, démo. */
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const fcfa = (n) => Math.round(n).toLocaleString('fr-FR').replace(/ | /g, ' ');
@@ -27,15 +27,13 @@
     host.setAttribute('aria-label', 'Mascotte Eventa');
     host.tabIndex = 0;
     const jump = () => {
-      // Saut, nouvelle pose, pluie de confettis.
+      // Petit saut et nouvelle pose.
       const list = poses[m.team];
       const next = list[(list.indexOf(m.img.src.split('/').pop().replace('.webp', '')) + 1) % list.length];
       m.img.classList.remove('jump');
       void m.img.offsetWidth;
       m.img.classList.add('jump');
       setTimeout(() => { m.img.src = src(next); }, 220);
-      const r = host.getBoundingClientRect();
-      burst(r.left + r.width / 2, r.top + r.height * .35, 60);
     };
     host.addEventListener('click', jump);
     host.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); jump(); } });
@@ -61,60 +59,6 @@
       px = e.clientX; py = e.clientY;
       if (!leanQueued) { leanQueued = true; requestAnimationFrame(lean); }
     }, { passive: true });
-  }
-
-  /* ── Confettis ───────────────────────────────────────── */
-  const cv = document.querySelector('.confetti');
-  const ctx = cv.getContext('2d');
-  const colors = ['#E5484D', '#6246EA', '#E5A21A', '#0E9F8E', '#DB4F9E', '#FFC233'];
-  let parts = [], running = false;
-  const size = () => { const d = devicePixelRatio || 1; cv.width = innerWidth * d; cv.height = innerHeight * d; ctx.setTransform(d, 0, 0, d, 0, 0); };
-  size(); addEventListener('resize', size);
-  function burst(x, y, n = 90) {
-    if (reduce) return;
-    for (let i = 0; i < n; i++) {
-      const a = Math.random() * Math.PI * 2, v = 4 + Math.random() * 8;
-      parts.push({
-        x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v - 6,
-        w: 6 + Math.random() * 6, h: 4 + Math.random() * 8,
-        r: Math.random() * 6, vr: (Math.random() - .5) * .4,
-        c: colors[i % colors.length], life: 0, round: Math.random() < .3,
-      });
-    }
-    if (!running) { running = true; requestAnimationFrame(tick); }
-  }
-  function tick() {
-    ctx.clearRect(0, 0, innerWidth, innerHeight);
-    parts = parts.filter((p) => p.life < 160 && p.y < innerHeight + 40);
-    parts.forEach((p) => {
-      p.life++; p.vy += .28; p.vx *= .985; p.vy *= .985;
-      p.x += p.vx; p.y += p.vy; p.r += p.vr;
-      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r);
-      ctx.globalAlpha = Math.min(1, (160 - p.life) / 40);
-      ctx.fillStyle = p.c;
-      if (p.round) { ctx.beginPath(); ctx.arc(0, 0, p.w / 2, 0, 7); ctx.fill(); }
-      else ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h * Math.abs(Math.cos(p.life / 8)));
-      ctx.restore();
-    });
-    if (parts.length) requestAnimationFrame(tick); else { running = false; ctx.clearRect(0, 0, innerWidth, innerHeight); }
-  }
-  document.querySelectorAll('[data-confetti]').forEach((el) => el.addEventListener('click', (e) => {
-    const r = el.getBoundingClientRect();
-    burst(e.clientX || r.left + r.width / 2, e.clientY || r.top + r.height / 2);
-  }));
-
-  /* ── Ballons de l'ouverture ──────────────────────────── */
-  const sky = document.querySelector('.balloons');
-  if (sky && !reduce) {
-    const hues = ['#DB4F9E', '#0E9F8E', '#FF9ACB', '#ffffff', '#EAE7F3'];
-    for (let i = 0; i < 9; i++) {
-      const b = document.createElement('span');
-      b.className = 'balloon';
-      const s = .6 + Math.random() * .7;
-      b.style.cssText = `left:${(i / 9) * 100 + Math.random() * 6}%;background:${hues[i % hues.length]};` +
-        `scale:${s};animation-duration:${14 + Math.random() * 12}s;animation-delay:${-Math.random() * 20}s;opacity:${.35 + s * .4}`;
-      sky.appendChild(b);
-    }
   }
 
   /* ── Bandeau défilant : contenu doublé pour une boucle sans couture ── */
@@ -148,27 +92,12 @@
     el.classList.add('in');
     el.querySelectorAll('[data-count]').forEach((c) => countTo(c, +c.dataset.count));
     if (el.matches('[data-chat]')) playChat(el);
-    if (el.matches('[data-duo]')) setTimeout(() => {
-      // Le duo se retrouve au centre puis saute de joie.
-      el.querySelectorAll('.m-img').forEach((img) => { img.classList.add('jump'); });
-      const r = el.getBoundingClientRect();
-      burst(r.left + r.width / 2, r.top + r.height * .4, 110);
-    }, reduce ? 0 : 950);
     io.unobserve(el);
   }), { threshold: .2, rootMargin: '0px 0px -8% 0px' });
-  document.querySelectorAll('.reveal, .split, [data-chat], [data-duo]').forEach((el, i) => {
+  document.querySelectorAll('.reveal, .split, [data-chat]').forEach((el, i) => {
     if (el.matches('.reveal')) el.style.transitionDelay = `${(i % 4) * 70}ms`;
     io.observe(el);
   });
-
-  // Mascottes des bordures : déclenchées par l'arrivée de leur section
-  // (elles-mêmes démarrent hors champ).
-  const peekIO = new IntersectionObserver((entries) => entries.forEach((en) => {
-    if (!en.isIntersecting) return;
-    en.target.querySelectorAll(':scope > [data-peek]').forEach((p) => p.classList.add('in'));
-    peekIO.unobserve(en.target);
-  }), { threshold: .15 });
-  document.querySelectorAll('[data-peek]').forEach((p) => peekIO.observe(p.parentElement));
 
   /* ── Conversation WhatsApp ───────────────────────────── */
   function playChat(chat) {
@@ -191,57 +120,6 @@
     if (rest.closest('.in')) countTo(rest, b * .37);
   };
   if (sb && sg) { sb.addEventListener('input', sim); sg.addEventListener('input', sim); sim(); }
-
-  /* ── Téléphone qui se redresse au défilement ─────────── */
-  const phone = document.querySelector('.phone-tilt');
-  if (phone && !reduce) {
-    let q = false;
-    addEventListener('scroll', () => {
-      if (q) return; q = true;
-      requestAnimationFrame(() => {
-        q = false;
-        const k = Math.min(1, scrollY / 600);
-        phone.style.setProperty('--tilt', `${(7 - k * 9).toFixed(2)}deg`);
-        phone.style.translate = `${innerWidth <= 980 ? '50%' : '0'} ${(-k * 40).toFixed(1)}px`;
-      });
-    }, { passive: true });
-  }
-
-  /* ── Compagnon de défilement ────────────────────────────
-     Il descend avec la lecture, change d'équipe dans l'espace pro, et
-     saute en arrivant en bas. */
-  const buddy = document.querySelector('.buddy');
-  const buddyImg = buddy && buddy.querySelector('.buddy-img');
-  const pro = document.getElementById('creators');
-  const heroPeek = document.querySelector('.hero-peek');
-  let buddyPose = 'red_thumbs', lastY = scrollY, arrived = false, bq = false;
-  const setBuddy = (pose) => {
-    if (pose === buddyPose) return;
-    buddyPose = pose;
-    buddyImg.src = src(pose);
-    buddyImg.classList.remove('swap'); void buddyImg.offsetWidth; buddyImg.classList.add('swap');
-  };
-  const onScroll = () => {
-    bq = false;
-    const max = document.documentElement.scrollHeight - innerHeight;
-    const k = max > 0 ? Math.min(1, scrollY / max) : 0;
-    if (heroPeek) heroPeek.style.setProperty('--peek-x', `${Math.min(80, scrollY * .25)}px`);
-    if (!buddy) return;
-    buddy.style.setProperty('--p', `${(k * 100).toFixed(2)}%`);
-    const v = scrollY - lastY; lastY = scrollY;
-    buddyImg.style.setProperty('--tilt', `${Math.max(-14, Math.min(14, v * .6)).toFixed(1)}deg`);
-    const r = pro.getBoundingClientRect();
-    const inPro = r.top < innerHeight / 2 && r.bottom > innerHeight / 2;
-    if (k > .985) {
-      setBuddy(inPro ? 'green_jump' : 'red_jump');
-      if (!arrived) { arrived = true; const b = buddyImg.getBoundingClientRect(); burst(b.left + 32, b.top + 20, 40); }
-    } else {
-      arrived = false;
-      setBuddy(inPro ? 'green_thumbs' : Math.abs(v) > 18 ? 'red_jump' : 'red_thumbs');
-    }
-  };
-  if (!reduce) addEventListener('scroll', () => { if (!bq) { bq = true; requestAnimationFrame(onScroll); } }, { passive: true });
-  onScroll();
 
   /* ── Liens vers l'application de démo ────────────────── */
   // En ligne, l'application est servie sous /app/ ; en local, par le serveur de démo (port 8080).

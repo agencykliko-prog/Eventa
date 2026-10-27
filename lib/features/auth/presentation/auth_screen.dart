@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -39,40 +40,18 @@ class AuthScreen extends ConsumerStatefulWidget {
   ConsumerState<AuthScreen> createState() => _AuthScreenState();
 }
 
-class _AuthScreenState extends ConsumerState<AuthScreen>
-    with SingleTickerProviderStateMixin {
+class _AuthScreenState extends ConsumerState<AuthScreen> {
   late bool _signUp = widget.signUp;
   late UserRole _role = widget.role;
-  late final AnimationController _glow = AnimationController(
-    vsync: this,
-    duration: const Duration(seconds: 9),
-  )..repeat(reverse: true);
-
-  @override
-  void dispose() {
-    _glow.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     final creator = _role == UserRole.creator;
     return Scaffold(
+      // Fond blanc épuré (le mode sombre garde son fond).
+      backgroundColor: Confetti.dark ? Confetti.cream : Colors.white,
       body: Stack(
         children: [
-          // Halos de couleur qui dérivent lentement derrière le formulaire.
-          Positioned.fill(
-            child: AnimatedBuilder(
-              animation: _glow,
-              builder: (context, _) => CustomPaint(
-                painter: _GlowPainter(
-                  t: Curves.easeInOut.transform(_glow.value),
-                  accent: creator ? Confetti.lagoon : Confetti.coral,
-                  dark: Confetti.dark,
-                ),
-              ),
-            ),
-          ),
           SafeArea(
             child: Center(
               child: ConstrainedBox(
@@ -81,20 +60,24 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
                   children: [
                     Padding(
                       padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                      child: Row(
-                        children: [
-                          RoundIconButton(
-                            icon: AppIcons.back,
-                            tooltip: 'Retour',
-                            onTap: () => context.canPop()
-                                ? context.pop()
-                                : context.go(Routes.onboarding),
-                          ),
-                          const Spacer(),
-                          const Entrance(child: EventaWordmark(size: 26)),
-                          const Spacer(),
-                          const SizedBox(width: 42),
-                        ],
+                      child: SizedBox(
+                        height: 56,
+                        child: Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: RoundIconButton(
+                                icon: AppIcons.back,
+                                tooltip: 'Retour',
+                                onTap: () => context.canPop()
+                                    ? context.pop()
+                                    : context.go(Routes.onboarding),
+                              ),
+                            ),
+                            const Entrance(child: EventaWordmark(size: 30)),
+                          ],
+                        ),
                       ),
                     ),
                     Padding(
@@ -208,44 +191,6 @@ class _AuthScreenState extends ConsumerState<AuthScreen>
   }
 }
 
-/// Deux halos flous (couleur du profil et violet) qui glissent lentement.
-class _GlowPainter extends CustomPainter {
-  _GlowPainter({required this.t, required this.accent, required this.dark});
-
-  final double t;
-  final Color accent;
-  final bool dark;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    void blob(Offset c, double r, Color color) {
-      canvas.drawCircle(
-        c,
-        r,
-        Paint()
-          ..shader = RadialGradient(colors: [color, color.withValues(alpha: 0)])
-              .createShader(Rect.fromCircle(center: c, radius: r)),
-      );
-    }
-
-    final a = dark ? 0.22 : 0.16;
-    blob(
-      Offset(size.width * (0.85 - 0.1 * t), size.height * (0.08 + 0.05 * t)),
-      size.width * 0.6,
-      accent.withValues(alpha: a),
-    );
-    blob(
-      Offset(size.width * (0.05 + 0.12 * t), size.height * (0.55 - 0.06 * t)),
-      size.width * 0.55,
-      Confetti.violet.withValues(alpha: a * 0.7),
-    );
-  }
-
-  @override
-  bool shouldRepaint(_GlowPainter old) =>
-      old.t != t || old.accent != accent || old.dark != dark;
-}
-
 /// Choix du profil : deux tuiles symétriques.
 class RolePicker extends StatelessWidget {
   const RolePicker({
@@ -279,7 +224,7 @@ class RolePicker extends StatelessWidget {
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: on ? Confetti.ink : Confetti.surface,
-                borderRadius: BorderRadius.circular(18),
+                borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: on ? Confetti.ink : Confetti.line),
                 boxShadow: on
                     ? [
@@ -353,6 +298,8 @@ class _SignInForm extends ConsumerStatefulWidget {
 
 class _SignInFormState extends ConsumerState<_SignInForm> {
   final _form = GlobalKey<FormState>();
+  bool _accepted = false;
+  bool _consentError = false;
   final _id = TextEditingController();
   final _pwd = TextEditingController();
   bool _busy = false;
@@ -365,7 +312,9 @@ class _SignInFormState extends ConsumerState<_SignInForm> {
   }
 
   Future<void> _submit() async {
-    if (!_form.currentState!.validate()) return;
+    final ok = _form.currentState!.validate();
+    setState(() => _consentError = !_accepted);
+    if (!ok || !_accepted) return;
     setState(() => _busy = true);
     await Future<void>.delayed(const Duration(milliseconds: 700));
     if (!mounted) return;
@@ -384,6 +333,7 @@ class _SignInFormState extends ConsumerState<_SignInForm> {
         padding: const EdgeInsets.fromLTRB(20, 22, 20, 24),
         children: [
           AppField(
+            floating: true,
             label: widget.role == UserRole.creator
                 ? 'E-mail professionnel ou téléphone'.tr
                 : 'E-mail ou téléphone'.tr,
@@ -394,6 +344,7 @@ class _SignInFormState extends ConsumerState<_SignInForm> {
           ),
           const SizedBox(height: 14),
           AppField(
+            floating: true,
             label: 'Mot de passe'.tr,
             controller: _pwd,
             password: true,
@@ -416,8 +367,18 @@ class _SignInFormState extends ConsumerState<_SignInForm> {
               ),
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
+          LegalConsent(
+            value: _accepted,
+            error: _consentError,
+            onChanged: (v) => setState(() {
+              _accepted = v;
+              if (v) _consentError = false;
+            }),
+          ),
+          const SizedBox(height: 16),
           PillButton(
+            flat: true,
             label: 'Se connecter'.tr,
             loading: _busy,
             onPressed: _submit,
@@ -495,6 +456,8 @@ class _OrganizerSignUpState extends ConsumerState<_OrganizerSignUp> {
   final _phone = TextEditingController();
   final _pwd = TextEditingController();
   final _pwd2 = TextEditingController();
+  bool _accepted = false;
+  bool _consentError = false;
   String? _city = 'Abidjan'.tr;
   Uint8List? _photo;
   bool _busy = false;
@@ -508,7 +471,9 @@ class _OrganizerSignUpState extends ConsumerState<_OrganizerSignUp> {
   }
 
   Future<void> _submit() async {
-    if (!_form.currentState!.validate()) return;
+    final ok = _form.currentState!.validate();
+    setState(() => _consentError = !_accepted);
+    if (!ok || !_accepted) return;
     setState(() => _busy = true);
     await Future<void>.delayed(const Duration(milliseconds: 800));
     if (!mounted) return;
@@ -547,6 +512,7 @@ class _OrganizerSignUpState extends ConsumerState<_OrganizerSignUp> {
           ),
           const SizedBox(height: 20),
           AppField(
+            floating: true,
             label: 'Nom et prénom'.tr,
             controller: _name,
             hint: 'Awa Traoré'.tr,
@@ -555,6 +521,7 @@ class _OrganizerSignUpState extends ConsumerState<_OrganizerSignUp> {
           ),
           const SizedBox(height: 14),
           AppField(
+            floating: true,
             label: 'Adresse e-mail'.tr,
             controller: _email,
             hint: 'awa@exemple.ci',
@@ -563,6 +530,7 @@ class _OrganizerSignUpState extends ConsumerState<_OrganizerSignUp> {
           ),
           const SizedBox(height: 14),
           AppField(
+            floating: true,
             label: 'Téléphone'.tr,
             controller: _phone,
             hint: '07 08 12 34 56',
@@ -584,6 +552,7 @@ class _OrganizerSignUpState extends ConsumerState<_OrganizerSignUp> {
           ),
           const SizedBox(height: 14),
           AppField(
+            floating: true,
             label: 'Mot de passe'.tr,
             controller: _pwd,
             password: true,
@@ -592,6 +561,7 @@ class _OrganizerSignUpState extends ConsumerState<_OrganizerSignUp> {
           ),
           const SizedBox(height: 14),
           AppField(
+            floating: true,
             label: 'Confirmation du mot de passe'.tr,
             controller: _pwd2,
             password: true,
@@ -600,8 +570,18 @@ class _OrganizerSignUpState extends ConsumerState<_OrganizerSignUp> {
                 ? null
                 : 'Les mots de passe ne correspondent pas'.tr,
           ),
-          const SizedBox(height: 22),
+          const SizedBox(height: 16),
+          LegalConsent(
+            value: _accepted,
+            error: _consentError,
+            onChanged: (v) => setState(() {
+              _accepted = v;
+              if (v) _consentError = false;
+            }),
+          ),
+          const SizedBox(height: 16),
           PillButton(
+            flat: true,
             label: 'Créer mon compte'.tr,
             loading: _busy,
             onPressed: _submit,
@@ -733,6 +713,8 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
     GlobalKey<FormState>(),
   ];
   int _step = 0;
+  bool _accepted = false;
+  bool _consentError = false;
   bool _busy = false;
 
   // Informations professionnelles
@@ -796,6 +778,8 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
     if (_step == 1 && _display.text.isEmpty) _display.text = _business.text;
     if (_step < 2) {
       setState(() => _step++);
+    } else if (!_accepted) {
+      setState(() => _consentError = true);
     } else {
       _submit();
     }
@@ -911,12 +895,24 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
                     1 => _activity(context),
                     _ => _publicProfile(context),
                   },
+                  if (_step == 2) ...[
+                    const SizedBox(height: 16),
+                    LegalConsent(
+                      value: _accepted,
+                      error: _consentError,
+                      onChanged: (v) => setState(() {
+                        _accepted = v;
+                        if (v) _consentError = false;
+                      }),
+                    ),
+                  ],
                   const SizedBox(height: 22),
                   Row(
                     children: [
                       if (_step > 0) ...[
                         Expanded(
                           child: PillButton(
+                            flat: true,
                             label: 'Retour'.tr,
                             tone: ButtonTone.ghost,
                             onPressed: () => setState(() => _step--),
@@ -927,6 +923,7 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
                       Expanded(
                         flex: 2,
                         child: PillButton(
+                          flat: true,
                           label: _step < 2
                               ? 'Continuer'.tr
                               : 'Créer mon espace Creator'.tr,
@@ -996,12 +993,14 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
     ),
     const SizedBox(height: 14),
     AppField(
+      floating: true,
       label: 'Nom et prénom'.tr,
       controller: _name,
       validator: Validators.required,
     ),
     const SizedBox(height: 14),
     AppField(
+      floating: true,
       label: 'Adresse e-mail professionnelle'.tr,
       controller: _email,
       keyboard: TextInputType.emailAddress,
@@ -1010,6 +1009,7 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
     ),
     const SizedBox(height: 14),
     AppField(
+      floating: true,
       label: 'Numéro de téléphone'.tr,
       controller: _phone,
       keyboard: TextInputType.phone,
@@ -1023,6 +1023,7 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
     ),
     const SizedBox(height: 14),
     AppField(
+      floating: true,
       label: 'Mot de passe'.tr,
       controller: _pwd,
       password: true,
@@ -1033,6 +1034,7 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
 
   List<Widget> _activity(BuildContext context) => [
     AppField(
+      floating: true,
       label: _kind == CreatorKind.agency
           ? 'Nom de l’agence'.tr
           : 'Nom commercial'.tr,
@@ -1066,6 +1068,7 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
     ),
     const SizedBox(height: 14),
     AppField(
+      floating: true,
       label: 'Numéro RCCM'.tr,
       controller: _rccm,
       optional: true,
@@ -1073,6 +1076,7 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
     ),
     const SizedBox(height: 14),
     AppField(
+      floating: true,
       label: 'Description de votre activité'.tr,
       controller: _desc,
       maxLines: 4,
@@ -1083,6 +1087,7 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
 
   List<Widget> _publicProfile(BuildContext context) => [
     AppField(
+      floating: true,
       label: 'Nom affiché sur la plateforme'.tr,
       controller: _display,
       validator: Validators.required,
@@ -1090,6 +1095,7 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
     ),
     const SizedBox(height: 14),
     AppField(
+      floating: true,
       label: 'Tarif de départ'.tr,
       controller: _price,
       keyboard: TextInputType.number,
@@ -1100,6 +1106,7 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
     ),
     const SizedBox(height: 14),
     AppField(
+      floating: true,
       label: 'Adresse professionnelle'.tr,
       controller: _address,
       hint: 'Rue, quartier, commune'.tr,
@@ -1107,6 +1114,7 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
     ),
     const SizedBox(height: 14),
     AppField(
+      floating: true,
       label: 'Site web'.tr,
       controller: _website,
       optional: true,
@@ -1116,6 +1124,7 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
     ),
     const SizedBox(height: 14),
     AppField(
+      floating: true,
       label: 'Portfolio ou réseau social'.tr,
       controller: _portfolio,
       optional: true,
@@ -1247,120 +1256,270 @@ class _AuthMascotState extends ConsumerState<AuthMascot> {
   }
 }
 
-/// Pied des formulaires d'accès : mentions légales, communauté et pays à
-/// venir. Apparaît en cascade.
+/// Consentement obligatoire, en une ligne sobre : case à cocher animée,
+/// liens vers les deux documents.
+class LegalConsent extends StatelessWidget {
+  const LegalConsent({
+    super.key,
+    required this.value,
+    required this.onChanged,
+    this.error = false,
+  });
+
+  final bool value;
+  final ValueChanged<bool> onChanged;
+  final bool error;
+
+  @override
+  Widget build(BuildContext context) {
+    final link = context.text.bodySmall?.copyWith(
+      color: Confetti.ink,
+      fontWeight: FontWeight.w700,
+      decoration: TextDecoration.underline,
+      decorationColor: Confetti.border,
+    );
+    final border = error ? Confetti.danger : Confetti.border;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Semantics(
+              checked: value,
+              label: 'J’accepte les conditions'.tr,
+              child: Pressable(
+                scale: 0.88,
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  onChanged(!value);
+                },
+                child: AnimatedContainer(
+                  duration: Motion.fast,
+                  curve: Motion.easeOut,
+                  width: 22,
+                  height: 22,
+                  margin: const EdgeInsets.only(top: 1),
+                  decoration: BoxDecoration(
+                    color: value ? Confetti.ink : Colors.transparent,
+                    borderRadius: BorderRadius.circular(7),
+                    border: Border.all(
+                      color: value ? Confetti.ink : border,
+                      width: 1.6,
+                    ),
+                  ),
+                  child: AnimatedScale(
+                    duration: Motion.fast,
+                    curve: Curves.easeOutBack,
+                    scale: value ? 1 : 0,
+                    child: Icon(
+                      AppIcons.check,
+                      size: 14,
+                      color: Confetti.onInk,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(text: 'En continuant, vous acceptez nos '.tr),
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.baseline,
+                      baseline: TextBaseline.alphabetic,
+                      child: Pressable(
+                        onTap: () => context.push(Routes.terms),
+                        child: Text('Conditions d’utilisation'.tr, style: link),
+                      ),
+                    ),
+                    TextSpan(text: ' et notre '.tr),
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.baseline,
+                      baseline: TextBaseline.alphabetic,
+                      child: Pressable(
+                        onTap: () => context.push(Routes.privacy),
+                        child: Text(
+                          'Politique de confidentialité'.tr,
+                          style: link,
+                        ),
+                      ),
+                    ),
+                    const TextSpan(text: '.'),
+                  ],
+                ),
+                style: context.text.bodySmall?.copyWith(
+                  color: Confetti.inkMuted,
+                ),
+              ),
+            ),
+          ],
+        ),
+        AnimatedSize(
+          duration: Motion.fast,
+          child: error
+              ? Padding(
+                  padding: const EdgeInsets.only(left: 32, top: 6),
+                  child: Text(
+                    'Cochez la case pour continuer.'.tr,
+                    style: TextStyle(color: Confetti.danger, fontSize: 12),
+                  ),
+                )
+              : const SizedBox(width: double.infinity),
+        ),
+      ],
+    );
+  }
+}
+
+/// Pied des formulaires d'accès, minimaliste : communauté et pays à venir.
 class AuthFooter extends StatelessWidget {
   const AuthFooter({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final link = context.text.bodySmall?.copyWith(
-      color: Confetti.coralDeep,
-      fontWeight: FontWeight.w700,
-    );
+    final muted = context.text.bodySmall?.copyWith(color: Confetti.inkMuted);
     return Column(
       children: [
-        Entrance(
-          index: 4,
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(12, 10, 16, 10),
-            decoration: BoxDecoration(
-              color: Confetti.surface,
-              borderRadius: BorderRadius.circular(99),
-              border: Border.all(color: Confetti.line),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(
-                  width: 74,
-                  height: 28,
-                  child: Stack(
-                    children: [
-                      for (var i = 0; i < 4; i++)
-                        Positioned(
-                          left: i * 15.0,
-                          child: Avatar(
-                            image: 'assets/images/avatar_${i + 1}.jpg',
-                            initials: '',
-                            size: 28,
-                            ring: Confetti.surface,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Flexible(
-                  child: Text(
-                    'Déjà plus de 1 000 utilisateurs nous font confiance.'.tr,
-                    style: context.text.labelMedium,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 16),
-        Entrance(
-          index: 5,
-          child: Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(text: 'En continuant, vous acceptez nos '.tr),
-                WidgetSpan(
-                  alignment: PlaceholderAlignment.baseline,
-                  baseline: TextBaseline.alphabetic,
-                  child: Pressable(
-                    onTap: () => context.push(Routes.terms),
-                    child: Text('Conditions d’utilisation'.tr, style: link),
-                  ),
-                ),
-                TextSpan(text: ' et notre '.tr),
-                WidgetSpan(
-                  alignment: PlaceholderAlignment.baseline,
-                  baseline: TextBaseline.alphabetic,
-                  child: Pressable(
-                    onTap: () => context.push(Routes.privacy),
-                    child: Text('Politique de confidentialité'.tr, style: link),
-                  ),
-                ),
-                const TextSpan(text: '.'),
-              ],
-            ),
-            textAlign: TextAlign.center,
-            style: context.text.bodySmall,
-          ),
-        ),
-        const SizedBox(height: 14),
-        Entrance(
-          index: 6,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-            decoration: BoxDecoration(
-              color: Confetti.lavender,
-              borderRadius: BorderRadius.circular(99),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(AppIcons.globe, size: 14, color: Confetti.violet),
-                const SizedBox(width: 6),
-                Flexible(
-                  child: Text(
-                    'Bientôt disponible au Mali, au Burkina Faso et au Togo.'
-                        .tr,
-                    textAlign: TextAlign.center,
-                    style: context.text.labelSmall?.copyWith(
-                      color: Confetti.ink,
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 58,
+              height: 22,
+              child: Stack(
+                children: [
+                  for (var i = 0; i < 4; i++)
+                    Positioned(
+                      left: i * 12.0,
+                      child: Avatar(
+                        image: 'assets/images/avatar_${i + 1}.jpg',
+                        initials: '',
+                        size: 22,
+                        ring: Colors.white,
+                      ),
                     ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                'Plus de 1 000 utilisateurs nous font déjà confiance.'.tr,
+                style: muted,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Wrap(
+          alignment: WrapAlignment.center,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 6,
+          runSpacing: 4,
+          children: [
+            Text('Bientôt disponible :'.tr, style: muted),
+            for (final c in Country.soon)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  MiniFlag(country: c),
+                  const SizedBox(width: 4),
+                  Text(c.name.tr, style: muted),
+                ],
+              ),
+          ],
         ),
       ],
     );
   }
+}
+
+/// Pays où Eventa arrive bientôt.
+enum Country {
+  mali('Mali'),
+  burkina('Burkina Faso'),
+  togo('Togo'),
+  benin('Bénin');
+
+  const Country(this.name);
+  final String name;
+
+  static const soon = Country.values;
+}
+
+/// Petit drapeau dessiné (les drapeaux émoji ne s'affichent pas partout).
+class MiniFlag extends StatelessWidget {
+  const MiniFlag({super.key, required this.country});
+
+  final Country country;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(2),
+      child: CustomPaint(
+        size: const Size(18, 12),
+        painter: _FlagPainter(country),
+      ),
+    );
+  }
+}
+
+class _FlagPainter extends CustomPainter {
+  _FlagPainter(this.c);
+
+  final Country c;
+
+  static const _green = Color(0xFF14B53A);
+  static const _yellow = Color(0xFFFCD116);
+  static const _red = Color(0xFFCE1126);
+
+  @override
+  void paint(Canvas canvas, Size s) {
+    final w = s.width, h = s.height;
+    Paint p(Color c) => Paint()..color = c;
+    void star(Offset o, double r, Color color) {
+      final path = Path();
+      for (var i = 0; i < 10; i++) {
+        final a = -1.5708 + i * 0.6283;
+        final rr = i.isEven ? r : r * 0.42;
+        final pt = o + Offset(rr * _cos(a), rr * _sin(a));
+        i == 0 ? path.moveTo(pt.dx, pt.dy) : path.lineTo(pt.dx, pt.dy);
+      }
+      canvas.drawPath(path..close(), p(color));
+    }
+
+    switch (c) {
+      case Country.mali:
+        canvas.drawRect(Rect.fromLTWH(0, 0, w / 3, h), p(_green));
+        canvas.drawRect(Rect.fromLTWH(w / 3, 0, w / 3, h), p(_yellow));
+        canvas.drawRect(Rect.fromLTWH(2 * w / 3, 0, w / 3, h), p(_red));
+      case Country.burkina:
+        canvas.drawRect(Rect.fromLTWH(0, 0, w, h / 2), p(_red));
+        canvas.drawRect(Rect.fromLTWH(0, h / 2, w, h / 2), p(_green));
+        star(Offset(w / 2, h / 2), h * 0.24, _yellow);
+      case Country.togo:
+        for (var i = 0; i < 5; i++) {
+          canvas.drawRect(
+            Rect.fromLTWH(0, i * h / 5, w, h / 5),
+            p(i.isEven ? const Color(0xFF006A4E) : _yellow),
+          );
+        }
+        canvas.drawRect(Rect.fromLTWH(0, 0, h * 0.6, h * 0.6), p(_red));
+        star(Offset(h * 0.3, h * 0.3), h * 0.22, Colors.white);
+      case Country.benin:
+        canvas.drawRect(Rect.fromLTWH(0, 0, w * 0.4, h), p(_green));
+        canvas.drawRect(Rect.fromLTWH(w * 0.4, 0, w * 0.6, h / 2), p(_yellow));
+        canvas.drawRect(Rect.fromLTWH(w * 0.4, h / 2, w * 0.6, h / 2), p(_red));
+    }
+  }
+
+  static double _cos(double a) => math.cos(a);
+  static double _sin(double a) => math.sin(a);
+
+  @override
+  bool shouldRepaint(_FlagPainter old) => old.c != c;
 }

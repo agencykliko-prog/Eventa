@@ -79,17 +79,17 @@ flutter:
     - family: PhosphorFill
       fonts:
         - asset: assets/fonts/Phosphor-Fill.ttf
-    - family: Baloo2
+    - family: RedHatDisplay
       fonts:
-        - asset: assets/fonts/Baloo2-400.ttf
+        - asset: assets/fonts/RedHatDisplay-400.ttf
           weight: 400
-        - asset: assets/fonts/Baloo2-500.ttf
+        - asset: assets/fonts/RedHatDisplay-500.ttf
           weight: 500
-        - asset: assets/fonts/Baloo2-600.ttf
+        - asset: assets/fonts/RedHatDisplay-600.ttf
           weight: 600
-        - asset: assets/fonts/Baloo2-700.ttf
+        - asset: assets/fonts/RedHatDisplay-700.ttf
           weight: 700
-        - asset: assets/fonts/Baloo2-800.ttf
+        - asset: assets/fonts/RedHatDisplay-800.ttf
           weight: 800
 
   # To add assets to your application, add an assets section, like this:
