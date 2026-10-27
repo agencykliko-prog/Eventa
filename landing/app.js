@@ -186,7 +186,9 @@
   }
 
   /* ── Liens vers l'application de démo ────────────────── */
-  const base = `${location.protocol === 'https:' ? 'https:' : 'http:'}//${location.hostname || 'localhost'}:8080/#`;
+  // En ligne, l'application est servie sous /app/ ; en local, par le serveur de démo (port 8080).
+  const local = !location.hostname || location.port === '8090';
+  const base = local ? `http://${location.hostname || 'localhost'}:8080/#` : `${location.origin}/app/#`;
   const app = (path) => base + path;
   document.querySelectorAll('[data-demo]').forEach((a) => { a.href = app('/connexion'); a.target = '_blank'; a.rel = 'noopener'; });
   document.querySelectorAll('[data-demo-pro]').forEach((a) => { a.href = app('/connexion?profil=creator'); a.target = '_blank'; a.rel = 'noopener'; });

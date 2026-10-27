@@ -1,0 +1,10 @@
+# Démo en ligne : landing à la racine, application sous /app/.
+# Chaque push sur main redéploie automatiquement.
+[build]
+  command = "bash tool/netlify_build.sh"
+  publish = "dist"
+
+[[headers]]
+  for = "/app/*"
+  [headers.values]
+    Cache-Control = "no-cache"
