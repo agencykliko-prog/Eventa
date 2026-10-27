@@ -59,7 +59,6 @@ class AppField extends StatefulWidget {
     this.textInputAction = TextInputAction.next,
     this.onChanged,
     this.onSubmitted,
-    this.floating = false,
   });
 
   final String label;
@@ -77,10 +76,6 @@ class AppField extends StatefulWidget {
   final TextInputAction textInputAction;
   final ValueChanged<String>? onChanged;
   final ValueChanged<String>? onSubmitted;
-
-  /// Libellé dans le champ, qui flotte au-dessus au focus ou une fois
-  /// rempli (écrans d'accès).
-  final bool floating;
 
   @override
   State<AppField> createState() => _AppFieldState();
@@ -114,20 +109,19 @@ class _AppFieldState extends State<AppField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Le libellé se colore et glisse à peine quand le champ est actif.
-        if (!widget.floating)
-          AnimatedSlide(
+        AnimatedSlide(
+          duration: Motion.fast,
+          curve: Motion.easeOut,
+          offset: Offset(_focused ? 0.012 : 0, 0),
+          child: TweenAnimationBuilder<Color?>(
             duration: Motion.fast,
-            curve: Motion.easeOut,
-            offset: Offset(_focused ? 0.012 : 0, 0),
-            child: TweenAnimationBuilder<Color?>(
-              duration: Motion.fast,
-              tween: ColorTween(
-                end: _focused ? Confetti.coralDeep : Confetti.ink,
-              ),
-              builder: (context, c, _) =>
-                  FieldLabel(widget.label, optional: widget.optional, color: c),
+            tween: ColorTween(
+              end: _focused ? Confetti.coralDeep : Confetti.ink,
             ),
+            builder: (context, c, _) =>
+                FieldLabel(widget.label, optional: widget.optional, color: c),
           ),
+        ),
         // Halo coloré et léger soulèvement au focus.
         AnimatedContainer(
           duration: Motion.base,
@@ -162,17 +156,8 @@ class _AppFieldState extends State<AppField> {
             autovalidateMode: AutovalidateMode.onUserInteraction,
             style: context.text.bodyLarge,
             decoration: InputDecoration(
-              labelText: widget.floating ? widget.label : null,
-              floatingLabelStyle: TextStyle(
-                color: Confetti.coralDeep,
-                fontWeight: FontWeight.w600,
-              ),
-              labelStyle: TextStyle(color: Confetti.inkMuted),
-              contentPadding: widget.floating
-                  ? const EdgeInsets.fromLTRB(16, 20, 16, 12)
-                  : null,
               // Le texte d'exemple s'estompe et glisse quand on entre.
-              hint: hint == null || (widget.floating && !_focused)
+              hint: hint == null
                   ? null
                   : AnimatedSlide(
                       duration: Motion.base,

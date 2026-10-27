@@ -15,7 +15,7 @@ abstract final class Motion {
 }
 
 abstract final class AppTheme {
-  static const font = 'RedHatDisplay';
+  static const font = 'Baloo2';
 
   /// Thème du mode courant ([Confetti.dark]).
   static ThemeData current() {
@@ -62,7 +62,7 @@ abstract final class AppTheme {
       displayColor: Confetti.ink,
     );
 
-    // Red Hat Display : géométrique et nette, approche resserrée sur les titres.
+    // Baloo 2 : rondeurs chaleureuses, approche à peine resserrée.
     return base.copyWith(
       extensions: [EventaColors.current],
       textTheme: t.copyWith(
@@ -70,24 +70,24 @@ abstract final class AppTheme {
           fontSize: 36,
           height: 1.06,
           fontWeight: FontWeight.w700,
-          letterSpacing: -1.1,
+          letterSpacing: -0.6,
         ),
         headlineMedium: t.headlineMedium?.copyWith(
           fontSize: 27,
           height: 1.12,
           fontWeight: FontWeight.w700,
-          letterSpacing: -0.7,
+          letterSpacing: -0.4,
         ),
         headlineSmall: t.headlineSmall?.copyWith(
           fontSize: 21,
           height: 1.18,
           fontWeight: FontWeight.w700,
-          letterSpacing: -0.4,
+          letterSpacing: -0.2,
         ),
         titleLarge: t.titleLarge?.copyWith(
           fontSize: 17.5,
           fontWeight: FontWeight.w600,
-          letterSpacing: -0.2,
+          letterSpacing: -0.1,
         ),
         titleMedium: t.titleMedium?.copyWith(
           fontSize: 15,
@@ -101,12 +101,12 @@ abstract final class AppTheme {
         ),
         bodyLarge: t.bodyLarge?.copyWith(
           fontSize: 15.5,
-          height: 1.48,
+          height: 1.42,
           letterSpacing: 0,
         ),
         bodyMedium: t.bodyMedium?.copyWith(
           fontSize: 14,
-          height: 1.44,
+          height: 1.38,
           letterSpacing: 0,
         ),
         bodySmall: t.bodySmall?.copyWith(
