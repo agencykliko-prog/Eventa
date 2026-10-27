@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -396,8 +395,6 @@ class _SignInFormState extends ConsumerState<_SignInForm> {
             action: 'Créer un compte'.tr,
             onTap: widget.onSwitch,
           ),
-          const SizedBox(height: 26),
-          const AuthFooter(),
         ],
       ),
     );
@@ -586,10 +583,7 @@ class _OrganizerSignUpState extends ConsumerState<_OrganizerSignUp> {
             loading: _busy,
             onPressed: _submit,
           ),
-          const SizedBox(height: 10),
-          const SizedBox(height: 18),
-          const AuthFooter(),
-          const SizedBox(height: 8),
+          const SizedBox(height: 22),
           _SwitchLine(
             text: 'Déjà inscrit ?'.tr,
             action: 'Se connecter'.tr,
@@ -1372,154 +1366,4 @@ class LegalConsent extends StatelessWidget {
       ],
     );
   }
-}
-
-/// Pied des formulaires d'accès, minimaliste : communauté et pays à venir.
-class AuthFooter extends StatelessWidget {
-  const AuthFooter({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final muted = context.text.bodySmall?.copyWith(color: Confetti.inkMuted);
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              width: 58,
-              height: 22,
-              child: Stack(
-                children: [
-                  for (var i = 0; i < 4; i++)
-                    Positioned(
-                      left: i * 12.0,
-                      child: Avatar(
-                        image: 'assets/images/avatar_${i + 1}.jpg',
-                        initials: '',
-                        size: 22,
-                        ring: Colors.white,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            Flexible(
-              child: Text(
-                'Plus de 1 000 utilisateurs nous font déjà confiance.'.tr,
-                style: muted,
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10),
-        Wrap(
-          alignment: WrapAlignment.center,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: 6,
-          runSpacing: 4,
-          children: [
-            Text('Bientôt disponible :'.tr, style: muted),
-            for (final c in Country.soon)
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  MiniFlag(country: c),
-                  const SizedBox(width: 4),
-                  Text(c.name.tr, style: muted),
-                ],
-              ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-/// Pays où Eventa arrive bientôt.
-enum Country {
-  mali('Mali'),
-  burkina('Burkina Faso'),
-  togo('Togo'),
-  benin('Bénin');
-
-  const Country(this.name);
-  final String name;
-
-  static const soon = Country.values;
-}
-
-/// Petit drapeau dessiné (les drapeaux émoji ne s'affichent pas partout).
-class MiniFlag extends StatelessWidget {
-  const MiniFlag({super.key, required this.country});
-
-  final Country country;
-
-  @override
-  Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(2),
-      child: CustomPaint(
-        size: const Size(18, 12),
-        painter: _FlagPainter(country),
-      ),
-    );
-  }
-}
-
-class _FlagPainter extends CustomPainter {
-  _FlagPainter(this.c);
-
-  final Country c;
-
-  static const _green = Color(0xFF14B53A);
-  static const _yellow = Color(0xFFFCD116);
-  static const _red = Color(0xFFCE1126);
-
-  @override
-  void paint(Canvas canvas, Size s) {
-    final w = s.width, h = s.height;
-    Paint p(Color c) => Paint()..color = c;
-    void star(Offset o, double r, Color color) {
-      final path = Path();
-      for (var i = 0; i < 10; i++) {
-        final a = -1.5708 + i * 0.6283;
-        final rr = i.isEven ? r : r * 0.42;
-        final pt = o + Offset(rr * _cos(a), rr * _sin(a));
-        i == 0 ? path.moveTo(pt.dx, pt.dy) : path.lineTo(pt.dx, pt.dy);
-      }
-      canvas.drawPath(path..close(), p(color));
-    }
-
-    switch (c) {
-      case Country.mali:
-        canvas.drawRect(Rect.fromLTWH(0, 0, w / 3, h), p(_green));
-        canvas.drawRect(Rect.fromLTWH(w / 3, 0, w / 3, h), p(_yellow));
-        canvas.drawRect(Rect.fromLTWH(2 * w / 3, 0, w / 3, h), p(_red));
-      case Country.burkina:
-        canvas.drawRect(Rect.fromLTWH(0, 0, w, h / 2), p(_red));
-        canvas.drawRect(Rect.fromLTWH(0, h / 2, w, h / 2), p(_green));
-        star(Offset(w / 2, h / 2), h * 0.24, _yellow);
-      case Country.togo:
-        for (var i = 0; i < 5; i++) {
-          canvas.drawRect(
-            Rect.fromLTWH(0, i * h / 5, w, h / 5),
-            p(i.isEven ? const Color(0xFF006A4E) : _yellow),
-          );
-        }
-        canvas.drawRect(Rect.fromLTWH(0, 0, h * 0.6, h * 0.6), p(_red));
-        star(Offset(h * 0.3, h * 0.3), h * 0.22, Colors.white);
-      case Country.benin:
-        canvas.drawRect(Rect.fromLTWH(0, 0, w * 0.4, h), p(_green));
-        canvas.drawRect(Rect.fromLTWH(w * 0.4, 0, w * 0.6, h / 2), p(_yellow));
-        canvas.drawRect(Rect.fromLTWH(w * 0.4, h / 2, w * 0.6, h / 2), p(_red));
-    }
-  }
-
-  static double _cos(double a) => math.cos(a);
-  static double _sin(double a) => math.sin(a);
-
-  @override
-  bool shouldRepaint(_FlagPainter old) => old.c != c;
 }

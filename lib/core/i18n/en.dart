@@ -1243,14 +1243,6 @@ const en = <String, String>{
   'Conditions d’utilisation': 'Terms of use',
   'En continuant, vous acceptez nos ': 'By continuing, you accept our ',
   ' et notre ': ' and our ',
-  'Bientôt disponible au Mali, au Burkina Faso et au Togo.':
-      'Coming soon to Mali, Burkina Faso and Togo.',
-  'Déjà plus de 1 000 utilisateurs nous font confiance.':
-      'Over 1,000 users already trust us.',
   'J’accepte les conditions': 'I accept the terms',
   'Cochez la case pour continuer.': 'Tick the box to continue.',
-  'Plus de 1 000 utilisateurs nous font déjà confiance.':
-      'Over 1,000 users already trust us.',
-  'Bientôt disponible :': 'Coming soon:',
-  'Bénin': 'Benin',
 };
