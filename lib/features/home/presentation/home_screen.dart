@@ -41,6 +41,8 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final events = ref.watch(eventsProvider);
     return Scaffold(
+      // Accueil sur fond blanc (le mode sombre garde son fond).
+      backgroundColor: Confetti.dark ? null : Colors.white,
       body: SafeArea(
         bottom: false,
         child: RefreshIndicator(

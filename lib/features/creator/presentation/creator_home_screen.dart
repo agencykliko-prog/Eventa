@@ -36,6 +36,8 @@ class CreatorHomeScreen extends ConsumerWidget {
     final revenue = confirmed.fold<int>(0, (s, r) => s + (r.quote ?? 0));
 
     return Scaffold(
+      // Accueil sur fond blanc (le mode sombre garde son fond).
+      backgroundColor: Confetti.dark ? null : Colors.white,
       body: SafeArea(
         bottom: false,
         child: ListView(

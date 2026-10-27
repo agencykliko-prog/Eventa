@@ -20,6 +20,7 @@ class PillButton extends StatelessWidget {
     this.loading = false,
     this.expand = true,
     this.height = 54,
+    this.flat = false,
   });
 
   final String label;
@@ -30,6 +31,9 @@ class PillButton extends StatelessWidget {
   final bool loading;
   final bool expand;
   final double height;
+
+  /// Sans relief ni reflet, coins à 14 px : CTA sobre des écrans d'accès.
+  final bool flat;
 
   @override
   Widget build(BuildContext context) {
@@ -85,10 +89,11 @@ class PillButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20),
           decoration: BoxDecoration(
             color: bg,
-            borderRadius: BorderRadius.circular(height),
+            borderRadius: BorderRadius.circular(flat ? 14 : height),
             border: Border.all(color: border, width: 1.5),
             // Reflet doux en haut : volume « bonbon » sans effet plastique.
-            gradient: tone == ButtonTone.ghost || tone == ButtonTone.light
+            gradient:
+                flat || tone == ButtonTone.ghost || tone == ButtonTone.light
                 ? null
                 : LinearGradient(
                     begin: Alignment.topCenter,
@@ -96,7 +101,7 @@ class PillButton extends StatelessWidget {
                     colors: [Color.lerp(bg, Colors.white, 0.14)!, bg],
                   ),
             // Relief net sous le bouton, plus une ombre colorée pour l'action.
-            boxShadow: enabled
+            boxShadow: enabled && !flat
                 ? [
                     BoxShadow(color: lip, offset: const Offset(0, 3.5)),
                     if (tone == ButtonTone.primary)
@@ -492,14 +497,17 @@ class _SkeletonState extends State<Skeleton>
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: Tween(begin: 0.45, end: 1.0).animate(_c),
-      child: Container(
-        height: widget.height,
-        width: widget.width,
-        decoration: BoxDecoration(
-          color: Confetti.lavender,
-          borderRadius: BorderRadius.circular(widget.radius),
+    // Couche isolée : le clignotement ne redessine pas l'écran autour.
+    return RepaintBoundary(
+      child: FadeTransition(
+        opacity: Tween(begin: 0.45, end: 1.0).animate(_c),
+        child: Container(
+          height: widget.height,
+          width: widget.width,
+          decoration: BoxDecoration(
+            color: Confetti.lavender,
+            borderRadius: BorderRadius.circular(widget.radius),
+          ),
         ),
       ),
     );

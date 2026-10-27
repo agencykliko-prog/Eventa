@@ -11,8 +11,8 @@ import '../../../core/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/mascot.dart';
 
-/// En-tête d'accueil : lumière chaude, confettis qui flottent, grande
-/// salutation et la mascotte du profil, en pied, qui suit le pointeur et
+/// En-tête d'accueil : fond blanc, confettis animés derrière une très grande
+/// salutation (« BONSOIR »), et la mascotte du profil qui suit le pointeur et
 /// saute quand on la touche.
 class GreetingHero extends ConsumerStatefulWidget {
   const GreetingHero({
@@ -42,14 +42,15 @@ class GreetingHero extends ConsumerStatefulWidget {
 class _GreetingHeroState extends ConsumerState<GreetingHero>
     with SingleTickerProviderStateMixin {
   late final Ticker _ticker;
-  Duration _t = Duration.zero;
+  final _time = ValueNotifier<double>(0);
   Offset? _pointer;
   bool _reduced = false;
 
   @override
   void initState() {
     super.initState();
-    _ticker = createTicker((t) => setState(() => _t = t))..start();
+    _ticker = createTicker((t) => _time.value = t.inMicroseconds / 1e6)
+      ..start();
   }
 
   @override
@@ -62,6 +63,7 @@ class _GreetingHeroState extends ConsumerState<GreetingHero>
   @override
   void dispose() {
     _ticker.dispose();
+    _time.dispose();
     super.dispose();
   }
 
@@ -77,13 +79,9 @@ class _GreetingHeroState extends ConsumerState<GreetingHero>
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
     final compact = width < 400;
-    final h = compact ? 300.0 : 320.0;
+    final h = compact ? 330.0 : 360.0;
     final dark = Confetti.dark;
     final mascotSize = compact ? 132.0 : 168.0;
-    final creator = widget.mascot == MascotColor.creator;
-    final warm = creator
-        ? const [Color(0xFFD5F6EE), Color(0xFFEAF8F2)]
-        : const [Color(0xFFFFDCCB), Color(0xFFFFF0DA)];
 
     return MouseRegion(
       onHover: (e) => setState(() => _pointer = e.localPosition),
@@ -100,26 +98,16 @@ class _GreetingHeroState extends ConsumerState<GreetingHero>
             child: Stack(
               clipBehavior: Clip.none,
               children: [
-                // Lumière chaude qui se fond dans le fond de page.
+                // Fond blanc ; confettis animés derrière la salutation.
                 Positioned.fill(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: dark
-                            ? const [Color(0xFF34195A), Color(0x00110722)]
-                            : [warm[0], warm[1], Confetti.cream],
-                        stops: dark ? const [0, 1] : const [0, 0.55, 1],
-                      ),
-                    ),
+                  child: ColoredBox(
+                    color: dark ? Colors.transparent : Colors.white,
                   ),
                 ),
                 Positioned.fill(
-                  child: CustomPaint(
-                    painter: _ConfettiPainter(
-                      t: _t.inMicroseconds / 1e6,
-                      dark: dark,
+                  child: RepaintBoundary(
+                    child: CustomPaint(
+                      painter: _ConfettiPainter(time: _time, dark: dark),
                     ),
                   ),
                 ),
@@ -138,13 +126,13 @@ class _GreetingHeroState extends ConsumerState<GreetingHero>
                           fit: BoxFit.scaleDown,
                           alignment: Alignment.centerLeft,
                           child: Text(
-                            '${greeting()} !',
+                            greeting().toUpperCase(),
                             style: TextStyle(
                               fontFamily: AppTheme.font,
-                              fontSize: compact ? 44 : 54,
-                              height: 1,
+                              fontSize: compact ? 66 : 84,
+                              height: .92,
                               fontWeight: FontWeight.w800,
-                              letterSpacing: -1,
+                              letterSpacing: compact ? -2.4 : -3.2,
                               color: Confetti.ink,
                             ),
                           ),
@@ -226,9 +214,10 @@ class _Rise extends StatelessWidget {
 
 /// Confettis qui flottent lentement : rubans, pastilles et petites étoiles.
 class _ConfettiPainter extends CustomPainter {
-  _ConfettiPainter({required this.t, required this.dark});
+  _ConfettiPainter({required this.time, required this.dark})
+    : super(repaint: time);
 
-  final double t;
+  final ValueNotifier<double> time;
   final bool dark;
 
   static const _colors = [
@@ -241,20 +230,24 @@ class _ConfettiPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    final t = time.value;
     final rnd = math.Random(7);
-    for (var i = 0; i < 18; i++) {
+    // Confettis qui tombent en voletant, derrière la salutation.
+    for (var i = 0; i < 34; i++) {
       final x0 = rnd.nextDouble(), y0 = rnd.nextDouble();
-      final speed = 0.012 + rnd.nextDouble() * 0.02;
+      final speed = 0.04 + rnd.nextDouble() * 0.05;
+      final s = 0.9 + rnd.nextDouble() * 0.8;
       final phase = rnd.nextDouble() * math.pi * 2;
       final kind = i % 3;
       final y = ((y0 + t * speed) % 1.1 - 0.05) * size.height;
-      final x = x0 * size.width + math.sin(t * 0.8 + phase) * 10;
-      final a = (dark ? 0.35 : 0.5) * (0.6 + 0.4 * math.sin(t + phase));
+      final x = x0 * size.width + math.sin(t * 1.4 + phase) * 16;
+      final a = dark ? 0.55 : 0.85;
       final paint = Paint()
         ..color = _colors[i % _colors.length].withValues(alpha: a);
       canvas.save();
       canvas.translate(x, y);
-      canvas.rotate(t * (0.6 + rnd.nextDouble()) + phase);
+      canvas.rotate(t * (1.2 + rnd.nextDouble() * 1.6) + phase);
+      canvas.scale(s, s * (0.35 + 0.65 * math.cos(t * 3 + phase).abs()));
       switch (kind) {
         case 0:
           canvas.drawRRect(
@@ -281,5 +274,6 @@ class _ConfettiPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_ConfettiPainter old) => old.t != t || old.dark != dark;
+  bool shouldRepaint(_ConfettiPainter old) =>
+      old.time != time || old.dark != dark;
 }

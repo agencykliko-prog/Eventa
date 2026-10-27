@@ -192,56 +192,44 @@
   };
   if (sb && sg) { sb.addEventListener('input', sim); sg.addEventListener('input', sim); sim(); }
 
-  /* ── Téléphone qui se redresse au défilement ─────────── */
-  const phone = document.querySelector('.phone-tilt');
-  if (phone && !reduce) {
-    let q = false;
-    addEventListener('scroll', () => {
-      if (q) return; q = true;
-      requestAnimationFrame(() => {
-        q = false;
-        const k = Math.min(1, scrollY / 600);
-        phone.style.setProperty('--tilt', `${(7 - k * 9).toFixed(2)}deg`);
-        phone.style.translate = `${innerWidth <= 980 ? '50%' : '0'} ${(-k * 40).toFixed(1)}px`;
-      });
-    }, { passive: true });
+  /* ── Téléphones : un tour complet sur eux-mêmes, une seule fois ── */
+  const spinIO = new IntersectionObserver((entries) => entries.forEach((en) => {
+    if (!en.isIntersecting) return;
+    if (!reduce) en.target.classList.add('spin');
+    spinIO.unobserve(en.target);
+  }), { threshold: .35 });
+  document.querySelectorAll('[data-spin]').forEach((ph) => spinIO.observe(ph));
+
+  /* ── Budget : petite démonstration du simulateur ─────── */
+  const budget = document.getElementById('budget');
+  if (budget && sb && !reduce) {
+    const card = budget.querySelector('.budget-card');
+    const bIO = new IntersectionObserver((entries) => {
+      if (!entries[0].isIntersecting) return;
+      bIO.disconnect();
+      // Le curseur glisse de 3,5 à 6 millions puis revient, une fois.
+      const from = +sb.value, to = 6000000, t0 = performance.now(), dur = 2600;
+      const step = (t) => {
+        const k = Math.min(1, (t - t0) / dur);
+        const e = Math.sin(k * Math.PI);
+        sb.value = Math.round((from + (to - from) * e) / 100000) * 100000;
+        sim();
+        if (k < 1) requestAnimationFrame(step); else { card.classList.add('pulse'); }
+      };
+      setTimeout(() => requestAnimationFrame(step), 700);
+    }, { threshold: .45 });
+    bIO.observe(budget);
   }
 
-  /* ── Compagnon de défilement ────────────────────────────
-     Il descend avec la lecture, change d'équipe dans l'espace pro, et
-     saute en arrivant en bas. */
-  const buddy = document.querySelector('.buddy');
-  const buddyImg = buddy && buddy.querySelector('.buddy-img');
-  const pro = document.getElementById('creators');
-  const heroPeek = document.querySelector('.hero-peek');
-  let buddyPose = 'red_thumbs', lastY = scrollY, arrived = false, bq = false;
-  const setBuddy = (pose) => {
-    if (pose === buddyPose) return;
-    buddyPose = pose;
-    buddyImg.src = src(pose);
-    buddyImg.classList.remove('swap'); void buddyImg.offsetWidth; buddyImg.classList.add('swap');
-  };
-  const onScroll = () => {
-    bq = false;
-    const max = document.documentElement.scrollHeight - innerHeight;
-    const k = max > 0 ? Math.min(1, scrollY / max) : 0;
-    if (heroPeek) heroPeek.style.setProperty('--peek-x', `${Math.min(80, scrollY * .25)}px`);
-    if (!buddy) return;
-    buddy.style.setProperty('--p', `${(k * 100).toFixed(2)}%`);
-    const v = scrollY - lastY; lastY = scrollY;
-    buddyImg.style.setProperty('--tilt', `${Math.max(-14, Math.min(14, v * .6)).toFixed(1)}deg`);
-    const r = pro.getBoundingClientRect();
-    const inPro = r.top < innerHeight / 2 && r.bottom > innerHeight / 2;
-    if (k > .985) {
-      setBuddy(inPro ? 'green_jump' : 'red_jump');
-      if (!arrived) { arrived = true; const b = buddyImg.getBoundingClientRect(); burst(b.left + 32, b.top + 20, 40); }
-    } else {
-      arrived = false;
-      setBuddy(inPro ? 'green_thumbs' : Math.abs(v) > 18 ? 'red_jump' : 'red_thumbs');
-    }
-  };
-  if (!reduce) addEventListener('scroll', () => { if (!bq) { bq = true; requestAnimationFrame(onScroll); } }, { passive: true });
-  onScroll();
+  /* ── Retour en haut ──────────────────────────────────── */
+  const toTop = document.querySelector('.to-top');
+  if (toTop) {
+    let tq = false;
+    const check = () => { tq = false; toTop.classList.toggle('show', scrollY > innerHeight * 1.2); };
+    addEventListener('scroll', () => { if (!tq) { tq = true; requestAnimationFrame(check); } }, { passive: true });
+    toTop.addEventListener('click', () => scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }));
+    check();
+  }
 
   /* ── Liens vers l'application de démo ────────────────── */
   // En ligne, l'application est servie sous /app/ ; en local, par le serveur de démo (port 8080).

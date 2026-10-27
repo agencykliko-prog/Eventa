@@ -99,11 +99,14 @@ h1, h2, h3, h4, p { margin: 0; }
   transition: transform .18s var(--ease), background-color .18s;
   -webkit-tap-highlight-color: transparent;
 }
-.btn:active { transform: scale(.96); }
+.btn:active { transform: scale(.98); }
+.btn-link { display: inline-flex; align-items: center; gap: 6px; height: 56px; padding: 0 8px; font-weight: 700; color: inherit; text-decoration: none; }
+.btn-link span { transition: transform .2s var(--ease); }
+.btn-link:hover span { transform: translateX(4px); }
 .btn-cta { background: var(--coral); color: var(--white); }
-.btn-cta:hover { background: var(--coral-press); transform: translateY(-2px) rotate(-1deg); }
+.btn-cta:hover { background: var(--coral-press); }
 .btn-white { background: var(--white); color: var(--ink); }
-.btn-white:hover { transform: translateY(-2px) rotate(1deg); }
+.btn-white:hover { background: var(--lavender); }
 .btn-ink-ghost { border: 2px solid var(--ink); color: var(--ink); }
 .btn-sm { height: 44px; padding: 0 20px; font-size: 15px; }
 .btn-xl { height: 68px; padding: 0 40px; font-size: 19px; }
@@ -167,13 +170,35 @@ h1, h2, h3, h4, p { margin: 0; }
 }
 
 /* Téléphone */
+/* iPhone 14 Pro Max : cadre fin, coins très arrondis, Dynamic Island,
+   boutons latéraux ; il tourne une fois sur lui-même (rotation 3D). */
 .phone {
-  position: relative; width: 300px; aspect-ratio: 9 / 19.2;
-  border-radius: 46px; background: var(--ink); padding: 11px;
+  --frame: #2B2440;
+  position: relative; width: 300px; aspect-ratio: 430 / 932;
+  border-radius: 54px; padding: 9px;
+  background: #0B0712;
+  box-shadow: inset 0 0 0 2px var(--frame), inset 0 0 0 3.5px #4A4262;
+  transform-style: preserve-3d;
 }
-.phone::before { content: ""; position: absolute; top: 20px; left: 50%; translate: -50% 0; width: 86px; height: 24px; border-radius: 99px; background: var(--ink); z-index: 3; }
-.phone .screen, .phone iframe { width: 100%; height: 100%; border-radius: 36px; overflow: hidden; border: 0; background: var(--cream); }
-.phone-tilt { position: absolute; right: 70px; bottom: -60px; transform: rotate(var(--tilt, 7deg)); transition: transform .2s linear; z-index: 1; }
+.phone .screen, .phone iframe { width: 100%; height: 100%; border-radius: 45px; overflow: hidden; border: 0; background: var(--cream); backface-visibility: hidden; }
+.island { position: absolute; top: 20px; left: 50%; translate: -50% 0; width: 96px; height: 28px; border-radius: 99px; background: #000; z-index: 3; backface-visibility: hidden; }
+.side { position: absolute; width: 3px; border-radius: 2px; background: #3B3352; }
+.side-l1 { left: -3px; top: 17%; height: 30px; }
+.side-l2 { left: -3px; top: 25%; height: 56px; }
+.side-l3 { left: -3px; top: 34%; height: 56px; }
+.side-r { right: -3px; top: 27%; height: 86px; }
+/* Dos du téléphone (visible pendant la rotation) */
+.phone-back { position: absolute; inset: 0; border-radius: 54px; transform: rotateY(180deg) translateZ(1px); backface-visibility: hidden;
+  background: linear-gradient(150deg, #4B3B7A, #2A1E4A 60%, #1B1233); box-shadow: inset 0 0 0 2px var(--frame); }
+.cams { position: absolute; top: 18px; left: 18px; width: 46%; aspect-ratio: 1; border-radius: 34px; background: rgba(255, 255, 255, .08);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .15); }
+.cams i { position: absolute; width: 38%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 40% 40%, #2c3550, #05060b 65%); box-shadow: 0 0 0 4px #1d1630; }
+.cams i:nth-child(1) { left: 8%; top: 8%; }
+.cams i:nth-child(2) { left: 8%; bottom: 8%; }
+.cams i:nth-child(3) { right: 8%; top: 31%; }
+.phone.spin { animation: spin3d 2.2s cubic-bezier(.65, 0, .35, 1) both; }
+@keyframes spin3d { from { transform: perspective(1400px) rotateY(0); } to { transform: perspective(1400px) rotateY(360deg); } }
+.phone-tilt { position: absolute; right: 70px; bottom: -60px; rotate: 6deg; z-index: 1; }
 
 /* Écran d'accueil reproduit */
 .screen-home { position: relative; font-size: 12px; }
@@ -230,7 +255,7 @@ h1, h2, h3, h4, p { margin: 0; }
 
 /* Mascotte de l'ouverture et sa voisine verte qui pointe le bout du nez */
 .hero-peek { position: absolute; right: -36px; top: 40px; width: 120px; z-index: 0; rotate: -14deg;
-  transition: transform .6s var(--spring); transform: translateX(var(--peek-x, 0)); }
+  }
 
 /* Mascottes qui surgissent sur la bordure haute quand la section arrive */
 .edge-peek { position: absolute; top: -84px; width: 140px; z-index: 3; opacity: 0;
@@ -239,13 +264,87 @@ h1, h2, h3, h4, p { margin: 0; }
 .edge-left { left: 9%; }
 .edge-peek.in { opacity: 1; transform: none; }
 
-/* Compagnon de défilement (bureau) */
-.buddy { position: fixed; right: 18px; top: 170px; bottom: 110px; width: 64px; z-index: 40; pointer-events: none; }
-.buddy-track { position: absolute; left: 50%; top: 0; bottom: 0; width: 4px; translate: -50% 0; border-radius: 4px; background: rgba(26, 6, 55, .12); }
-.buddy-track i { position: absolute; inset: 0 0 auto 0; height: var(--p, 0%); border-radius: 4px; background: linear-gradient(var(--coral), var(--mango)); }
-.buddy-img { position: absolute; left: 0; width: 64px; top: calc(var(--p, 0%) - 32px); transition: rotate .3s var(--ease);
-  filter: drop-shadow(0 8px 10px rgba(26, 6, 55, .25)); rotate: var(--tilt, 0deg); }
-.buddy-img.swap { animation: swap .35s var(--spring); }
+/* Verre dépoli derrière chaque mascotte */
+[data-mascot] { isolation: isolate; }
+[data-mascot]::before {
+  content: ""; position: absolute; z-index: -1; left: 6%; right: 6%; top: 12%; bottom: 4%;
+  border-radius: 50%;
+  background: linear-gradient(145deg, rgba(255, 255, 255, .42), rgba(255, 255, 255, .12));
+  border: 1px solid rgba(255, 255, 255, .55);
+  -webkit-backdrop-filter: blur(14px) saturate(150%); backdrop-filter: blur(14px) saturate(150%);
+  box-shadow: 0 10px 30px rgba(26, 6, 55, .12);
+}
+
+/* Badge « 100 % Côte d'Ivoire » : anneau de texte qui tourne, verre dépoli */
+.ci-badge { position: absolute; left: 30%; top: 20px; width: 150px; aspect-ratio: 1; border-radius: 50%; z-index: 3;
+  display: grid; place-items: center;
+  background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .5);
+  -webkit-backdrop-filter: blur(12px) saturate(160%); backdrop-filter: blur(12px) saturate(160%);
+  box-shadow: 0 12px 36px rgba(26, 6, 55, .2); }
+.ci-ring { position: absolute; inset: 0; width: 100%; height: 100%; animation: ring 16s linear infinite; }
+.ci-ring text { font-size: 17px; font-weight: 800; letter-spacing: .14em; fill: var(--white);
+  stroke: rgba(26, 6, 55, .35); stroke-width: 3px; paint-order: stroke; }
+@keyframes ring { to { transform: rotate(360deg); } }
+.ci-flag { display: flex; width: 54px; height: 54px; border-radius: 50%; overflow: hidden; border: 2px solid rgba(255, 255, 255, .85); box-shadow: 0 4px 12px rgba(0, 0, 0, .2); }
+.ci-flag i { flex: 1; }
+.ci-flag i:nth-child(1) { background: #F77F00; }
+.ci-flag i:nth-child(2) { background: #FFFFFF; }
+.ci-flag i:nth-child(3) { background: #009E60; }
+
+/* Preuve sociale et pays à venir */
+.community { display: flex; align-items: center; gap: 12px; margin-top: 28px; }
+.community p { font-size: 15px; }
+.community b { font-weight: 800; }
+.faces { display: flex; flex: none; }
+.faces img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--violet); object-fit: cover; }
+.faces img + img { margin-left: -10px; }
+.countries { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 18px; font-size: 14px; }
+.countries-label { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; opacity: .8; }
+.countries ul { display: flex; flex-wrap: wrap; gap: 6px 14px; list-style: none; margin: 0; padding: 0; }
+.countries li { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+.flag { width: 21px; height: 14px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .3); }
+
+/* Bordures variées : chaque section a sa propre forme de bord */
+.band[data-edge] { position: relative; }
+.band[data-edge]::before {
+  content: ""; position: absolute; left: 0; right: 0; top: -46px; height: 48px; background: inherit; pointer-events: none;
+  -webkit-mask: var(--edge) top left / var(--edge-w, 100%) 48px repeat-x; mask: var(--edge) top left / var(--edge-w, 100%) 48px repeat-x;
+}
+[data-edge="wave"] { --edge-w: 160px; --edge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 48' preserveAspectRatio='none'%3E%3Cpath d='M0 30 C40 0 80 0 80 24 S120 48 160 30 V48 H0Z'/%3E%3C/svg%3E"); }
+[data-edge="zigzag"] { --edge-w: 48px; --edge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48' preserveAspectRatio='none'%3E%3Cpath d='M0 48 L24 20 L48 48Z'/%3E%3C/svg%3E"); }
+[data-edge="scallop"] { --edge-w: 64px; --edge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 48' preserveAspectRatio='none'%3E%3Cpath d='M0 48 V34 A32 20 0 0 1 64 34 V48Z'/%3E%3C/svg%3E"); }
+[data-edge="curve"] { --edge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 48' preserveAspectRatio='none'%3E%3Cpath d='M0 48 Q50 -20 100 48Z'/%3E%3C/svg%3E"); }
+[data-edge="slant"] { --edge: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 48' preserveAspectRatio='none'%3E%3Cpath d='M0 48 L100 4 V48Z'/%3E%3C/svg%3E"); }
+[data-edge="round"]::before { -webkit-mask: none; mask: none; top: -40px; height: 42px; border-radius: 48px 48px 0 0; }
+
+/* Pièces qui flottent autour du budget */
+.budget-card { position: relative; }
+.coin { position: absolute; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center;
+  background: radial-gradient(circle at 35% 30%, #FFE08A, #FFC233 55%, #E5A21A); color: #8A5A00; font-weight: 800; font-size: 16px;
+  box-shadow: inset 0 -3px 0 rgba(0, 0, 0, .12), 0 6px 14px rgba(26, 6, 55, .18); animation: coin 4s ease-in-out infinite; }
+.coin.c1 { left: -18px; top: 18%; }
+.coin.c2 { right: -14px; top: 46%; width: 30px; height: 30px; font-size: 13px; animation-delay: -1.4s; }
+.coin.c3 { left: 22%; bottom: -16px; width: 26px; height: 26px; font-size: 11px; animation-delay: -2.6s; }
+@keyframes coin { 0%, 100% { transform: translateY(0) rotateY(0); } 50% { transform: translateY(-14px) rotateY(180deg); } }
+.budget-card.pulse .donut-center b { animation: pulse .6s var(--spring); }
+@keyframes pulse { 50% { transform: scale(1.08); color: var(--violet); } }
+
+/* Retour en haut */
+.to-top { position: fixed; right: 18px; bottom: 18px; z-index: 60; width: 54px; height: 54px; border-radius: 50%; cursor: pointer;
+  display: grid; place-items: center; color: var(--ink);
+  background: rgba(255, 255, 255, .55); border: 1px solid rgba(255, 255, 255, .8);
+  -webkit-backdrop-filter: blur(14px) saturate(160%); backdrop-filter: blur(14px) saturate(160%);
+  box-shadow: 0 10px 28px rgba(26, 6, 55, .22);
+  opacity: 0; transform: translateY(16px) scale(.9); pointer-events: none; transition: opacity .3s var(--ease), transform .4s var(--spring); }
+.to-top.show { opacity: 1; transform: none; pointer-events: auto; }
+.to-top:hover { transform: translateY(-3px); }
+.to-top svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Pied de page : grand logo blanc */
+.foot-brand { display: flex; align-items: center; gap: clamp(12px, 2vw, 26px); color: var(--white); font-weight: 800;
+  font-size: clamp(64px, 13vw, 180px); line-height: .9; letter-spacing: -.05em; margin-bottom: 56px; }
+.foot-brand .logo-mark { width: .78em; height: .78em; gap: .07em; flex: none; }
+.foot-brand .logo-mark i { border-radius: .1em; }
 
 /* ── Bandeau des occasions ──────────────────────────────── */
 .marquee { background: var(--ink); color: var(--white); overflow: hidden; padding: 22px 0; }
@@ -347,7 +446,7 @@ h1, h2, h3, h4, p { margin: 0; }
 /* ── Démo ───────────────────────────────────────────────── */
 .demo { padding-top: 40px; }
 .phone-live { justify-self: center; width: 360px; }
-.phone-fallback { display: none; position: absolute; inset: 11px; border-radius: 36px; background: var(--lavender); color: var(--muted); padding: 40px 28px; text-align: center; align-content: center; font-weight: 500; }
+.phone-fallback { display: none; position: absolute; inset: 9px; border-radius: 45px; backface-visibility: hidden; background: var(--lavender); color: var(--muted); padding: 40px 28px; text-align: center; align-content: center; font-weight: 500; }
 .phone-live.offline .phone-fallback { display: grid; }
 
 /* ── Creators ───────────────────────────────────────────── */
@@ -362,15 +461,15 @@ h1, h2, h3, h4, p { margin: 0; }
 
 /* ── Tarifs ─────────────────────────────────────────────── */
 .plans { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: start; }
-.plan { position: relative; background: var(--white); border-radius: var(--r-card); padding: 32px 28px; transition: transform .35s var(--spring); }
-.plan:hover { transform: translateY(-6px) rotate(-1.2deg); }
+.plan { position: relative; background: var(--white); border: 1px solid rgba(26, 6, 55, .16); border-radius: var(--r-card); padding: 32px 28px; transition: transform .35s var(--spring), border-color .25s; }
+.plan:hover { transform: translateY(-4px); border-color: var(--violet); }
 .plan h3 { font-size: 22px; font-weight: 800; letter-spacing: -.005em; }
 .price { margin: 14px 0 20px; color: var(--muted); font-weight: 500; }
 .price b { font-size: 40px; font-weight: 800; letter-spacing: -.015em; color: var(--ink); }
 .plan ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; font-size: 15px; }
 .plan li { padding-left: 24px; position: relative; }
 .plan li::before { content: ""; position: absolute; left: 0; top: 6px; width: 12px; height: 12px; border-radius: 4px; background: var(--lagoon); }
-.plan-hot { background: var(--violet); color: var(--white); }
+.plan-hot { background: var(--violet); color: var(--white); border-color: rgba(255, 255, 255, .55); box-shadow: 0 0 0 1px var(--violet); }
 .plan-hot .price, .plan-hot .price b { color: var(--white); }
 .plan-hot li::before { background: var(--mango-hi); }
 .badge { position: absolute; top: -14px; right: 24px; background: var(--mango-hi); color: var(--ink); border-radius: 99px; padding: 6px 14px; font-size: 13px; font-weight: 800; transform: rotate(4deg); }
@@ -427,7 +526,7 @@ h1, h2, h3, h4, p { margin: 0; }
 
 /* ── Adaptations ────────────────────────────────────────── */
 @media (max-width: 980px) {
-  .buddy, .hero-peek { display: none; }
+  .hero-peek { display: none; }
   .edge-peek { width: 104px; top: -64px; }
   .nav-links, .nav-cta .ghost { display: none; }
   .hero-grid, .split-2, .pay-row { grid-template-columns: 1fr; }
@@ -435,6 +534,8 @@ h1, h2, h3, h4, p { margin: 0; }
   .hero-copy { padding-bottom: 0; }
   .hero-visual { height: 560px; }
   .phone-tilt { right: 50%; translate: 50% 0; }
+  .ci-badge { left: auto; right: 2%; top: 0; width: 118px; }
+  .ci-ring text { font-size: 18px; }
   .hero-mascot { left: 2%; width: 130px; }
   .vendors, .plans { grid-template-columns: repeat(2, 1fr); }
   .pro-grid { grid-template-columns: repeat(2, 1fr); }
@@ -451,7 +552,12 @@ h1, h2, h3, h4, p { margin: 0; }
   .pill-nav.open .nav-links { display: flex; flex-direction: column; width: 100%; order: 5; margin: 6px 0 0; }
   .hero-grid { padding-top: 48px; }
   .hero-visual { height: 520px; }
-  .phone { width: 250px; }
+  .phone { width: 250px; border-radius: 46px; }
+  .phone .screen, .phone iframe { border-radius: 38px; }
+  .phone-back { border-radius: 46px; }
+  .ci-badge { width: 104px; }
+  .ci-flag { width: 40px; height: 40px; }
+  .to-top { width: 48px; height: 48px; right: 14px; bottom: 14px; }
   .phone-live { width: 300px; }
   .hero .b1 { top: 40px; max-width: 200px; font-size: 13px; }
   .hero .b2 { top: 220px; right: 0; max-width: 200px; font-size: 13px; }
@@ -477,7 +583,6 @@ h1, h2, h3, h4, p { margin: 0; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .split .w > span, .reveal, .chat-body > * { transform: none !important; opacity: 1 !important; }
   .edge-peek, .duo-m { transform: none !important; }
-  .buddy { display: none; }
   .in .d-seg, .d-seg { stroke-dasharray: calc(289px * var(--len) - 3px) 289; }
   .meter i { width: var(--w); }
   html { scroll-behavior: auto; }

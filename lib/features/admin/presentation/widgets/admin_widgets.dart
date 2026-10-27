@@ -207,10 +207,9 @@ class _LiveDotState extends State<LiveDot> with SingleTickerProviderStateMixin {
       children: [
         SizedBox.square(
           dimension: 12,
-          child: AnimatedBuilder(
-            animation: _c,
-            builder: (_, _) =>
-                CustomPaint(painter: _PulsePainter(_c.value, Confetti.success)),
+          // Redessin limité au point lui-même, sans reconstruction.
+          child: RepaintBoundary(
+            child: CustomPaint(painter: _PulsePainter(_c, Confetti.success)),
           ),
         ),
         const SizedBox(width: 5),
@@ -224,12 +223,13 @@ class _LiveDotState extends State<LiveDot> with SingleTickerProviderStateMixin {
 }
 
 class _PulsePainter extends CustomPainter {
-  _PulsePainter(this.t, this.color);
-  final double t;
+  _PulsePainter(this.anim, this.color) : super(repaint: anim);
+  final Animation<double> anim;
   final Color color;
 
   @override
   void paint(Canvas canvas, Size size) {
+    final t = anim.value;
     final c = size.center(Offset.zero);
     canvas.drawCircle(
       c,
@@ -240,7 +240,8 @@ class _PulsePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_PulsePainter old) => old.t != t;
+  bool shouldRepaint(_PulsePainter old) =>
+      old.anim != anim || old.color != color;
 }
 
 class _SparkPainter extends CustomPainter {

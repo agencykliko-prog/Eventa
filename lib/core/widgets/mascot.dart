@@ -85,10 +85,15 @@ class Mascot extends StatefulWidget {
 
 class MascotState extends State<Mascot> with SingleTickerProviderStateMixin {
   late final Ticker _ticker;
+  // Seule la transformation change à chaque image : l'image elle-même
+  // n'est reconstruite que lorsque la pose change.
+  final _frame = ValueNotifier<int>(0);
   Duration _now = Duration.zero;
   Duration? _jumpAt;
   Offset _look = Offset.zero;
   double _wave = 0;
+  double _lift = 0, _squash = 0, _sway = 0;
+  _Shot? _shot;
   bool _reduced = false;
 
   @override
@@ -106,11 +111,12 @@ class MascotState extends State<Mascot> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     _ticker.dispose();
+    _frame.dispose();
     super.dispose();
   }
 
   /// Petit saut de joie (appelable depuis l'extérieur via une GlobalKey).
-  void jump() => setState(() => _jumpAt = _now);
+  void jump() => _jumpAt = _now;
 
   void _tick(Duration t) {
     final dt = (t - _now).inMicroseconds / 1e6;
@@ -118,17 +124,7 @@ class MascotState extends State<Mascot> with SingleTickerProviderStateMixin {
     final k = (dt * 8).clamp(0.0, 1.0);
     _look = Offset.lerp(_look, widget.look ?? _idleLook(), k)!;
     _wave += ((widget.waving ? 1.0 : 0.0) - _wave) * (dt * 6).clamp(0, 1);
-    setState(() {});
-  }
 
-  Offset _idleLook() {
-    if (!widget.idle || _reduced) return Offset.zero;
-    final s = _now.inMilliseconds / 1000;
-    return Offset(math.sin(s * 0.7) * 0.4, 0);
-  }
-
-  @override
-  Widget build(BuildContext context) {
     final s = _now.inMicroseconds / 1e6;
     var lift = 0.0, squash = 0.0;
     if (widget.idle && !_reduced) squash = math.sin(s * 2.6) * 0.25;
@@ -155,8 +151,26 @@ class MascotState extends State<Mascot> with SingleTickerProviderStateMixin {
         }
       }
     }
+    _lift = lift;
+    _squash = squash;
+    _sway = _wave * math.sin(s * 9) * 0.07 + _look.dx * 0.06;
+    if (shot != _shot) {
+      setState(() => _shot = shot);
+    } else {
+      _frame.value++;
+    }
+  }
+
+  Offset _idleLook() {
+    if (!widget.idle || _reduced) return Offset.zero;
+    final s = _now.inMilliseconds / 1000;
+    return Offset(math.sin(s * 0.7) * 0.4, 0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final size = widget.size;
-    final sway = _wave * math.sin(s * 9) * 0.07 + _look.dx * 0.06;
+    final shot = _shot ?? _shotFor(widget.mood);
     final img = AnimatedSwitcher(
       duration: const Duration(milliseconds: 180),
       switchInCurve: Curves.easeOutBack,
@@ -181,14 +195,18 @@ class MascotState extends State<Mascot> with SingleTickerProviderStateMixin {
     final body = SizedBox(
       width: size,
       height: size,
-      child: Transform.translate(
-        offset: Offset(_look.dx * size * 0.03, -lift * size),
-        child: Transform(
-          alignment: Alignment.bottomCenter,
-          transform: Matrix4.identity()
-            ..rotateZ(sway)
-            ..scaleByDouble(1 + 0.05 * squash, 1 - 0.05 * squash, 1, 1),
-          child: img,
+      child: AnimatedBuilder(
+        animation: _frame,
+        child: img,
+        builder: (context, child) => Transform.translate(
+          offset: Offset(_look.dx * size * 0.03, -_lift * size),
+          child: Transform(
+            alignment: Alignment.bottomCenter,
+            transform: Matrix4.identity()
+              ..rotateZ(_sway)
+              ..scaleByDouble(1 + 0.05 * _squash, 1 - 0.05 * _squash, 1, 1),
+            child: child,
+          ),
         ),
       ),
     );

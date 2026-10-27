@@ -40,7 +40,12 @@ class EventCard extends StatelessWidget {
             children: [
               Hero(
                 tag: 'cover-${event.id}',
-                child: Image.asset(event.cover, fit: BoxFit.cover),
+                // Décodage à la taille d'affichage : défilement plus fluide.
+                child: Image.asset(
+                  event.cover,
+                  fit: BoxFit.cover,
+                  cacheWidth: 900,
+                ),
               ),
               DecoratedBox(
                 decoration: BoxDecoration(

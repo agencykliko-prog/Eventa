@@ -293,9 +293,11 @@ class _SparklesState extends State<_Sparkles>
   }
 
   @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-    animation: _c,
-    builder: (_, _) => CustomPaint(painter: _SparklePainter(_c.value)),
+  Widget build(BuildContext context) => RepaintBoundary(
+    child: AnimatedBuilder(
+      animation: _c,
+      builder: (_, _) => CustomPaint(painter: _SparklePainter(_c.value)),
+    ),
   );
 }
 
