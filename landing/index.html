@@ -5,93 +5,116 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Eventa · Le budget parfait pour célébrer</title>
 <meta name="description" content="Eventa organise vos mariages, anniversaires, baby showers et séminaires en Côte d’Ivoire : budget en FCFA, prestataires vérifiés, invités et équipe, paiement Mobile Money sécurisé.">
-<meta name="theme-color" content="#1A0637">
-<link rel="preload" href="fonts/RedHatDisplay-900.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css?v=10">
+<meta name="theme-color" content="#FFF5EE">
+<link rel="preload" href="fonts/RedHatDisplay-500.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="styles.css?v=11">
 </head>
 <body>
 
 <a class="skip" href="#contenu">Aller au contenu</a>
 
-<!-- ─── Bandeau défilant noir : les occasions ─────────────── -->
-<div class="marquee" aria-label="Occasions">
-  <div class="marquee-track">
-    <span>Mariage</span><span>Dot</span><span>Fiançailles</span><span>Anniversaire</span><span>Baby shower</span><span>Baptême</span><span>Communion</span><span>EVJF</span><span>Séminaire</span><span>Gala</span><span>Remise de diplôme</span><span>Pool party</span><span>Retrouvailles</span>
-  </div>
-</div>
-
-<!-- ─── Navigation : logo, pilules, un bouton plein ────────── -->
+<!-- ─── Navigation ────────────────────────────────────────── -->
 <header class="top">
-  <nav class="nav" aria-label="Navigation principale">
+  <nav class="nav wrap" aria-label="Navigation principale">
     <a class="logo" href="#haut" aria-label="Eventa, accueil">
-      <span class="logo-badge" aria-hidden="true"><span class="logo-mark"><i></i><i></i><i></i><i></i></span></span>
-      <span class="logo-word">eventa</span>
+      <span class="logo-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      eventa
     </a>
     <div class="nav-links">
-      <a class="pill" href="#fonctions">Fonctions</a>
-      <a class="pill" href="#prestataires">Prestataires</a>
-      <a class="pill" href="#creators">Pour les pros</a>
-      <a class="pill" href="#tarifs">Tarifs</a>
-      <a class="pill" href="#faq">FAQ</a>
+      <a href="#fonctions">Fonctionnalités</a>
+      <a href="#prestataires">Prestataires</a>
+      <a href="#creators">Pour les pros</a>
+      <a href="#tarifs">Tarifs</a>
+      <a href="#faq">FAQ</a>
     </div>
-    <a class="btn btn-sm nav-cta" data-demo href="#">Essayer la démo</a>
-    <button class="burger" aria-label="Menu" aria-expanded="false">+</button>
+    <div class="nav-cta">
+      <a class="nav-login" href="#demo">Se connecter</a>
+      <a class="btn btn-sm" data-demo href="#">Essayer la démo</a>
+    </div>
+    <button class="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
   </nav>
 </header>
 
 <main id="contenu">
 
-<!-- ─── Ouverture : titre-sculpture, mascottes et stickers ─── -->
-<section class="band band-sky hero" id="haut">
-  <div class="wrap">
-    <div class="poster">
-      <h1 class="display split">Le budget parfait pour célébrer</h1>
-      <div class="m m-hero-red" data-mascot="red_jump" data-interactive title="Touchez-moi !"></div>
-      <div class="m m-hero-green" data-mascot="green_wave" data-interactive title="Coucou !"></div>
-      <span class="sticker s-sun" style="--r:-8deg">FCFA</span>
-      <span class="sticker s-mint" style="--r:6deg">Mobile Money</span>
-      <span class="sticker s-ember" style="--r:-4deg">J-14</span>
-      <span class="sticker s-lav" style="--r:5deg">✓ Prestataire vérifié</span>
-    </div>
-    <p class="tagline">Mariage, anniversaire, baby shower ou séminaire : budget, prestataires, invités et équipe. Tout votre événement au même endroit, en Côte d’Ivoire.</p>
+<!-- ─── Ouverture : titre centré, mascottes qui flottent, un seul CTA ── -->
+<section class="hero" id="haut">
+  <div class="wrap hero-inner">
+    <p class="chip">Côte d’Ivoire · FCFA · Mobile Money</p>
+    <h1 class="display split">Le budget parfait pour <em>célébrer</em>.</h1>
+    <p class="lead">Mariage, anniversaire, baby shower ou séminaire : budget, prestataires vérifiés, invités et équipe. Tout votre événement au même endroit.</p>
     <div class="actions">
-      <a class="btn" data-demo href="#">Essayer la démo</a>
-      <a class="btn btn-ghost" href="#creators">Je suis prestataire</a>
+      <a class="btn" data-demo href="#">Essayer la démo gratuitement</a>
+      <a class="text-link" href="#creators">Je suis prestataire <span aria-hidden="true">→</span></a>
     </div>
-    <div class="proof">
-      <div class="community">
-        <span class="faces" aria-hidden="true"><img src="img/avatar_1.jpg" alt=""><img src="img/avatar_2.jpg" alt=""><img src="img/avatar_3.jpg" alt=""><img src="img/avatar_4.jpg" alt=""></span>
-        <p>Plus de <b>1.2k utilisateurs</b> nous font déjà confiance.</p>
+    <div class="community">
+      <span class="faces" aria-hidden="true"><img src="img/avatar_1.jpg" alt=""><img src="img/avatar_2.jpg" alt=""><img src="img/avatar_3.jpg" alt=""><img src="img/avatar_4.jpg" alt=""></span>
+      <p>Plus de <b>1.2k utilisateurs</b> nous font déjà confiance.</p>
+    </div>
+  </div>
+
+  <div class="stage wrap" aria-hidden="true">
+    <div class="float f-red" data-mascot="red_jump" data-interactive title="Touchez-moi !"></div>
+    <div class="frame">
+      <div class="phone">
+        <div class="screen screen-home">
+          <div class="sky">
+            <div class="sh-top"><img src="img/avatar_1.jpg" alt=""><div><small>Lundi 26 octobre</small><b>Awa</b></div><span class="bell"></span></div>
+            <p class="sh-hello">Bonjour !</p>
+            <p class="sh-q">Qu’est-ce qu’on célèbre aujourd’hui ?</p>
+          </div>
+          <div class="sh-card">
+            <img src="img/cover_babyshower.jpg" alt="">
+            <span class="sh-chip">Baby shower</span><span class="count">J-14</span>
+            <div class="sh-card-txt"><b>Baby shower de Mariam</b><small>Villa Les Palmiers · Riviera 3</small>
+              <div class="sh-bar"><i style="--w:63%"></i></div></div>
+          </div>
+        </div>
       </div>
-      <div class="countries">
-        <span class="countries-label">Bientôt disponible</span>
-        <ul><li><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect width="1" height="2" fill="#14B53A"/><rect x="1" width="1" height="2" fill="#FCD116"/><rect x="2" width="1" height="2" fill="#CE1126"/></svg>Mali</li><li><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect width="3" height="1" fill="#EF2B2D"/><rect y="1" width="3" height="1" fill="#009E49"/><path d="M1.5 .62l.11.34h.36l-.29.21.11.34-.29-.21-.29.21.11-.34-.29-.21h.36z" fill="#FCD116"/></svg>Burkina Faso</li><li><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect width="3" height="2" fill="#006A4E"/><rect y=".4" width="3" height=".4" fill="#FFCE00"/><rect y="1.2" width="3" height=".4" fill="#FFCE00"/><rect width="1.2" height="1.2" fill="#D21034"/><path d="M.6 .28l.08.24h.25l-.2.15.08.24-.21-.15-.21.15.08-.24-.2-.15h.25z" fill="#fff"/></svg>Togo</li><li><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect width="1.2" height="2" fill="#008751"/><rect x="1.2" width="1.8" height="1" fill="#FCD116"/><rect x="1.2" y="1" width="1.8" height="1" fill="#E8112D"/></svg>Bénin</li></ul>
-      </div>
+    </div>
+    <div class="float f-green" data-mascot="green_wave" data-interactive title="Coucou !"></div>
+  </div>
+
+  <div class="wrap hero-foot">
+    <div class="stores">
+      <a class="store" href="#demo" aria-label="Bientôt sur l’App Store"><img src="img/stores/app-store.svg" alt="Télécharger dans l’App Store"></a>
+      <a class="store" href="#demo" aria-label="Bientôt sur Google Play"><img src="img/stores/google-play.png" alt="Disponible sur Google Play"></a>
+    </div>
+    <div class="countries">
+      <span class="countries-label">Bientôt disponible</span>
+      <ul><li><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect width="1" height="2" fill="#14B53A"/><rect x="1" width="1" height="2" fill="#FCD116"/><rect x="2" width="1" height="2" fill="#CE1126"/></svg>Mali</li><li><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect width="3" height="1" fill="#EF2B2D"/><rect y="1" width="3" height="1" fill="#009E49"/><path d="M1.5 .62l.11.34h.36l-.29.21.11.34-.29-.21-.29.21.11-.34-.29-.21h.36z" fill="#FCD116"/></svg>Burkina Faso</li><li><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect width="3" height="2" fill="#006A4E"/><rect y=".4" width="3" height=".4" fill="#FFCE00"/><rect y="1.2" width="3" height=".4" fill="#FFCE00"/><rect width="1.2" height="1.2" fill="#D21034"/><path d="M.6 .28l.08.24h.25l-.2.15.08.24-.21-.15-.21.15.08-.24-.2-.15h.25z" fill="#fff"/></svg>Togo</li><li><svg class="flag" viewBox="0 0 3 2" aria-hidden="true"><rect width="1.2" height="2" fill="#008751"/><rect x="1.2" width="1.8" height="1" fill="#FCD116"/><rect x="1.2" y="1" width="1.8" height="1" fill="#E8112D"/></svg>Bénin</li></ul>
     </div>
   </div>
 </section>
 
-<!-- ─── Fonctions : cartes-stickers ─────────────────────────── -->
-<section class="band band-white" id="fonctions">
+<!-- ─── Bandeau des occasions (sans conteneur) ───────────────── -->
+<section class="marquee" aria-label="Occasions">
+  <div class="marquee-track">
+    <span>Mariage</span><span>Dot</span><span>Fiançailles</span><span>Anniversaire</span><span>Baby shower</span><span>Baptême</span><span>Communion</span><span>EVJF</span><span>Séminaire</span><span>Gala</span><span>Remise de diplôme</span><span>Pool party</span><span>Retrouvailles</span>
+  </div>
+</section>
+
+<!-- ─── Fonctionnalités : tuiles pastel ───────────────────────── -->
+<section class="section" id="fonctions">
   <div class="wrap">
-    <h2 class="heading split">Tout votre événement, au même endroit.</h2>
-    <div class="cards3">
-      <article class="card c-mint reveal" style="--r:-1.5deg">
-        <img class="card-art" src="img/mascots/red_thumbs.webp" alt="" loading="lazy">
-        <span class="label">01 · Budget</span>
-        <h3>Chaque franc a sa place.</h3>
+    <div class="head">
+      <h2 class="h-xl split">Tout votre événement, au même endroit.</h2>
+      <p class="sub">Trois choses qui changent l’organisation d’une fête, du premier devis au dernier invité.</p>
+    </div>
+    <div class="tiles">
+      <article class="tile t-mint reveal">
+        <img class="tile-art" src="img/mascots/red_thumbs.webp" alt="" loading="lazy">
+        <h3>Budget en FCFA</h3>
         <p>Prévu, engagé, payé, reste : tout se met à jour à chaque devis et à chaque paiement.</p>
       </article>
-      <article class="card c-lav reveal" style="--r:1deg">
-        <img class="card-art" src="img/mascots/green_thumbs.webp" alt="" loading="lazy">
-        <span class="label">02 · Prestataires</span>
-        <h3>Les bons pros, au bon prix.</h3>
-        <p>Traiteurs, décorateurs, DJ, lieux : profils vérifiés et devis comparables.</p>
+      <article class="tile t-lavender reveal">
+        <img class="tile-art" src="img/mascots/green_thumbs.webp" alt="" loading="lazy">
+        <h3>Prestataires vérifiés</h3>
+        <p>Traiteurs, décorateurs, DJ, lieux : devis comparables, réservation en quelques gestes.</p>
       </article>
-      <article class="card c-sun reveal" style="--r:-1deg">
-        <img class="card-art" src="img/mascots/red_peace.webp" alt="" loading="lazy">
-        <span class="label">03 · Invités</span>
-        <h3>On s’organise à plusieurs.</h3>
+      <article class="tile t-mint reveal">
+        <img class="tile-art" src="img/mascots/red_peace.webp" alt="" loading="lazy">
+        <h3>Invités et équipe</h3>
         <p>RSVP par WhatsApp, relances en un geste, co-organisateurs avec leurs droits.</p>
       </article>
     </div>
@@ -99,54 +122,58 @@
 </section>
 
 <!-- ─── Budget ────────────────────────────────────────────── -->
-<section class="band band-sky" id="budget">
-  <div class="wrap split-2">
-    <div>
-      <span class="sticker s-ember static" style="--r:-4deg">Simulateur</span>
-      <h2 class="heading split">Chaque franc a sa place.</h2>
-      <p class="body">Fini le cahier et les calculs sur WhatsApp. Faites glisser, la répartition se calcule toute seule.</p>
-      <div class="sim" aria-label="Simulateur de budget">
-        <label>Budget total <output id="simBudgetOut">3 500 000 FCFA</output>
-          <input type="range" id="simBudget" min="300000" max="15000000" step="100000" value="3500000"></label>
-        <label>Invités <output id="simGuestsOut">150</output>
-          <input type="range" id="simGuests" min="10" max="600" step="10" value="150"></label>
-        <p class="sim-result">Soit <b id="simPerGuest">23 333 FCFA</b> par invité.</p>
+<section class="section" id="budget">
+  <div class="wrap">
+    <div class="card split-2">
+      <div>
+        <p class="eyebrow">Budget</p>
+        <h2 class="h-lg split">Chaque franc a sa place.</h2>
+        <p class="body">Fini le cahier et les calculs sur WhatsApp. Faites glisser : la répartition se calcule toute seule.</p>
+        <div class="sim" aria-label="Simulateur de budget">
+          <label>Budget total <output id="simBudgetOut">3 500 000 FCFA</output>
+            <input type="range" id="simBudget" min="300000" max="15000000" step="100000" value="3500000"></label>
+          <label>Invités <output id="simGuestsOut">150</output>
+            <input type="range" id="simGuests" min="10" max="600" step="10" value="150"></label>
+          <p class="sim-result">Soit <b id="simPerGuest">23 333 FCFA</b> par invité.</p>
+        </div>
       </div>
-    </div>
-    <div class="budget-card reveal">
-      <div class="donut-wrap">
-        <svg viewBox="0 0 120 120" class="donut" aria-hidden="true">
-          <circle cx="60" cy="60" r="46" class="d-track"/>
-          <circle cx="60" cy="60" r="46" class="d-seg" style="--c:#6246EA;--from:0;--len:.32"/>
-          <circle cx="60" cy="60" r="46" class="d-seg" style="--c:#FB5A3C;--from:.32;--len:.22"/>
-          <circle cx="60" cy="60" r="46" class="d-seg" style="--c:#FFD731;--from:.54;--len:.18"/>
-          <circle cx="60" cy="60" r="46" class="d-seg" style="--c:#55DB9C;--from:.72;--len:.12"/>
-        </svg>
-        <div class="donut-center"><small>Reste à dépenser</small><b data-count="1295000">0</b><small>FCFA</small></div>
+      <div class="budget-card reveal">
+        <div class="donut-wrap">
+          <svg viewBox="0 0 120 120" class="donut" aria-hidden="true">
+            <circle cx="60" cy="60" r="46" class="d-track"/>
+            <circle cx="60" cy="60" r="46" class="d-seg" style="--c:#6246EA;--from:0;--len:.32"/>
+            <circle cx="60" cy="60" r="46" class="d-seg" style="--c:#E5484D;--from:.32;--len:.22"/>
+            <circle cx="60" cy="60" r="46" class="d-seg" style="--c:#E5A21A;--from:.54;--len:.18"/>
+            <circle cx="60" cy="60" r="46" class="d-seg" style="--c:#0E9F8E;--from:.72;--len:.12"/>
+          </svg>
+          <div class="donut-center"><small>Reste à dépenser</small><b data-count="1295000">0</b><small>FCFA</small></div>
+        </div>
+        <ul class="b-lines">
+          <li><i style="background:#6246EA"></i>Lieu<span id="lineVenue">1 120 000</span></li>
+          <li><i style="background:#E5484D"></i>Traiteur<span id="lineFood">770 000</span></li>
+          <li><i style="background:#E5A21A"></i>Décoration<span id="lineDeco">630 000</span></li>
+          <li><i style="background:#0E9F8E"></i>Musique &amp; DJ<span id="lineMusic">420 000</span></li>
+        </ul>
       </div>
-      <ul class="b-lines">
-        <li><i style="background:#6246EA"></i>Lieu<span id="lineVenue">1 120 000</span></li>
-        <li><i style="background:#FB5A3C"></i>Traiteur<span id="lineFood">770 000</span></li>
-        <li><i style="background:#FFD731"></i>Décoration<span id="lineDeco">630 000</span></li>
-        <li><i style="background:#55DB9C"></i>Musique &amp; DJ<span id="lineMusic">420 000</span></li>
-      </ul>
     </div>
   </div>
 </section>
 
-<!-- ─── Prestataires : photos en collage ──────────────────── -->
-<section class="band band-white" id="prestataires">
+<!-- ─── Prestataires ──────────────────────────────────────── -->
+<section class="section" id="prestataires">
   <div class="wrap">
-    <h2 class="heading split">Les bons prestataires, au bon prix.</h2>
-    <p class="body center-text">Des profils vérifiés, des avis réels, des devis que l’on compare en un coup d’œil.</p>
-    <div class="collage">
-      <figure class="photo reveal" style="--r:-3deg"><img src="img/vendor_deco.jpg" alt="Arche de cérémonie fleurie" loading="lazy"><figcaption class="sticker s-lav">Décoration · dès 450 000 FCFA</figcaption></figure>
-      <figure class="photo reveal" style="--r:2deg"><img src="img/food_1.jpg" alt="Plateau de grillades d’un traiteur" loading="lazy"><figcaption class="sticker s-sun">Traiteur · devis en 24 h</figcaption></figure>
-      <figure class="photo reveal" style="--r:-1.5deg"><img src="img/vendor_dj.jpg" alt="DJ aux platines" loading="lazy"><figcaption class="sticker s-mint">Musique &amp; DJ</figcaption></figure>
-      <figure class="photo reveal" style="--r:3deg"><img src="img/photo_1.jpg" alt="Photographe d’événement" loading="lazy"><figcaption class="sticker s-ember">Photo &amp; vidéo</figcaption></figure>
+    <div class="head">
+      <h2 class="h-xl split">Les bons prestataires, au bon prix.</h2>
+      <p class="sub">Des profils vérifiés, des avis réels, des devis que l’on compare en un coup d’œil.</p>
+    </div>
+    <div class="vendors">
+      <figure class="vendor reveal"><img src="img/vendor_deco.jpg" alt="Arche de cérémonie fleurie" loading="lazy"><figcaption><b>Décoration</b><span>dès 450 000 FCFA</span></figcaption></figure>
+      <figure class="vendor reveal"><img src="img/food_1.jpg" alt="Plateau de grillades d’un traiteur" loading="lazy"><figcaption><b>Traiteur</b><span>Devis en 24 h</span></figcaption></figure>
+      <figure class="vendor reveal"><img src="img/vendor_dj.jpg" alt="DJ aux platines" loading="lazy"><figcaption><b>Musique &amp; DJ</b><span>Disponible à votre date</span></figcaption></figure>
+      <figure class="vendor reveal"><img src="img/photo_1.jpg" alt="Photographe d’événement" loading="lazy"><figcaption><b>Photo &amp; vidéo</b><span>Avis vérifiés</span></figcaption></figure>
     </div>
     <div class="pay">
-      <p class="label">Payez comme vous payez déjà</p>
+      <p>Payez comme vous payez déjà. L’acompte est conservé jusqu’à la prestation.</p>
       <ul class="pay-logos" aria-label="Moyens de paiement">
         <li><img src="img/pay/orange-money.webp" alt="Orange Money"></li>
         <li><img src="img/pay/momo.webp" alt="MoMo de MTN"></li>
@@ -154,93 +181,104 @@
         <li><img src="img/pay/moov.webp" alt="Moov Africa Money"></li>
         <li><img src="img/pay/visa.webp" alt="Visa"></li>
       </ul>
-      <p class="fine">L’acompte est conservé jusqu’à la prestation, puis reversé au prestataire.</p>
     </div>
   </div>
 </section>
 
-<!-- ─── Invités ───────────────────────────────────────────── -->
-<section class="band band-lav" id="invites">
-  <div class="wrap split-2 reverse">
-    <div>
-      <h2 class="heading split">On s’organise à plusieurs, sans se perdre.</h2>
-      <ul class="ticks">
-        <li>Relances WhatsApp des invités sans réponse</li>
-        <li>Co-organisateurs : propriétaire, éditeur, lecteur</li>
-        <li>Rétroplanning prêt selon le type d’événement</li>
-      </ul>
-    </div>
-    <div class="chat" aria-label="Exemple de conversation" data-chat>
-      <div class="chat-head"><img src="img/avatar_2.jpg" alt=""><div><b>Mariage Awa &amp; Koffi</b><small>Invitation · 250 invités</small></div></div>
-      <div class="chat-body">
-        <div class="bubble b-out">Bonjour ! Vous êtes invités au mariage d’Awa &amp; Koffi le 7 décembre. Vous venez ?<time>09:12</time></div>
-        <div class="bubble b-in">Oui, avec plaisir ! On sera 2 🙌<time>09:20</time></div>
-        <div class="rsvp"><b>+1 présent</b> · 182 confirmés sur 250</div>
-        <div class="bubble b-in">Tantie Mariam confirme aussi 💛<time>09:31</time></div>
-        <div class="typing"><i></i><i></i><i></i></div>
+<!-- ─── Invités & équipe ──────────────────────────────────── -->
+<section class="section" id="invites">
+  <div class="wrap">
+    <div class="card split-2 reverse">
+      <div>
+        <p class="eyebrow">Invités &amp; équipe</p>
+        <h2 class="h-lg split">On s’organise à plusieurs, sans se perdre.</h2>
+        <ul class="ticks">
+          <li>Relances WhatsApp des invités sans réponse</li>
+          <li>Co-organisateurs : propriétaire, éditeur, lecteur</li>
+          <li>Rétroplanning prêt selon le type d’événement</li>
+        </ul>
+      </div>
+      <div class="chat" aria-label="Exemple de conversation" data-chat>
+        <div class="chat-head"><img src="img/avatar_2.jpg" alt=""><div><b>Mariage Awa &amp; Koffi</b><small>Invitation · 250 invités</small></div></div>
+        <div class="chat-body">
+          <div class="bubble b-out">Bonjour ! Vous êtes invités au mariage d’Awa &amp; Koffi le 7 décembre. Vous venez ?<time>09:12</time></div>
+          <div class="bubble b-in">Oui, avec plaisir ! On sera 2 🙌<time>09:20</time></div>
+          <div class="rsvp"><b>+1 présent</b> · 182 confirmés sur 250</div>
+          <div class="bubble b-in">Tantie Mariam confirme aussi 💛<time>09:31</time></div>
+          <div class="typing"><i></i><i></i><i></i></div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ─── Étapes ────────────────────────────────────────────── -->
-<section class="band band-white" id="etapes">
+<!-- ─── Comment ça marche ─────────────────────────────────── -->
+<section class="section" id="etapes">
   <div class="wrap">
-    <h2 class="display display-sm split">De l’idée à la fête</h2>
+    <div class="head">
+      <h2 class="h-xl split">De l’idée à la fête.</h2>
+    </div>
     <ol class="steps">
-      <li class="step c-ember reveal" style="--r:-2deg"><span class="step-n">1</span><h3>Créez l’événement</h3><p>Type, date, invités, budget : la checklist et la répartition sont prêtes.</p></li>
-      <li class="step c-sun reveal" style="--r:1.5deg"><span class="step-n">2</span><h3>Réservez vos prestataires</h3><p>Comparez les devis, posez vos questions, payez l’acompte en Mobile Money.</p></li>
-      <li class="step c-mint reveal" style="--r:-1deg"><span class="step-n">3</span><h3>Célébrez</h3><p>Validez la prestation après la fête : le prestataire est payé.</p></li>
+      <li class="step reveal"><span class="step-n">01</span><h3>Créez l’événement</h3><p>Type, date, invités, budget : Eventa prépare la checklist et la répartition du budget.</p></li>
+      <li class="step reveal"><span class="step-n">02</span><h3>Réservez vos prestataires</h3><p>Comparez les devis, posez vos questions, payez l’acompte en Mobile Money.</p></li>
+      <li class="step reveal"><span class="step-n">03</span><h3>Célébrez</h3><p>Validez la prestation après la fête : le prestataire est payé, vous gardez tout dans le coffre-fort.</p></li>
     </ol>
   </div>
 </section>
 
 <!-- ─── Démo ──────────────────────────────────────────────── -->
-<section class="band band-sky" id="demo">
-  <div class="wrap split-2">
-    <div>
-      <h2 class="heading split">Essayez-la ici, tout de suite.</h2>
-      <p class="body">Saisissez n’importe quel e-mail et mot de passe : les données sont fictives.</p>
-      <div class="actions left">
-        <a class="btn" data-demo href="#">Ouvrir la démo</a>
-        <a class="btn btn-ghost" data-demo-pro href="#">Version prestataire</a>
+<section class="section" id="demo">
+  <div class="wrap">
+    <div class="head">
+      <h2 class="h-xl split">Essayez-la ici, tout de suite.</h2>
+      <p class="sub">Saisissez n’importe quel e-mail et mot de passe : les données sont fictives.</p>
+      <div class="actions">
+        <a class="btn" data-demo href="#">Ouvrir la démo en plein écran</a>
+        <a class="text-link" data-demo-pro href="#">Version prestataire <span aria-hidden="true">→</span></a>
       </div>
     </div>
-    <div class="phone phone-live">
-      <iframe title="Démo de l’application Eventa" data-demo-frame loading="lazy"></iframe>
-      <div class="phone-fallback">La démo n’est pas joignable pour le moment.<br>Réessayez dans quelques minutes.</div>
+    <div class="frame frame-live">
+      <div class="phone phone-live">
+        <iframe title="Démo de l’application Eventa" data-demo-frame loading="lazy"></iframe>
+        <div class="phone-fallback">La démo n’est pas joignable pour le moment.<br>Réessayez dans quelques minutes.</div>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ─── Creators : bande grise, titre-sculpture ───────────── -->
-<section class="band band-gray" id="creators">
+<!-- ─── Creators ──────────────────────────────────────────── -->
+<section class="section" id="creators">
   <div class="wrap">
-    <div class="poster poster-pro">
-      <h2 class="display display-md split">Espace pro</h2>
-      <div class="m m-pro" data-mascot="green_jump" data-interactive title="Touchez-moi !"></div>
-      <span class="sticker s-violet" style="--r:6deg">Business dès 29 900 FCFA / mois</span>
-    </div>
-    <p class="tagline">Votre agence événementielle dans une seule app : demandes qualifiées, devis détaillés, reversements suivis.</p>
-    <div class="pro-grid">
-      <article class="pro"><h3>Profil &amp; catalogue</h3><p>Forfaits, options, zone d’intervention.</p></article>
-      <article class="pro"><h3>Disponibilités</h3><p>Dates bloquées, plus de doubles réservations.</p></article>
-      <article class="pro"><h3>Devis &amp; demandes</h3><p>Options, validité et acompte en un écran.</p></article>
-      <article class="pro"><h3>Commandes</h3><p>Échéances, préparation, jour J, clôture.</p></article>
-      <article class="pro"><h3>Revenus</h3><p>Commission affichée, reversements Wave ou Orange Money.</p></article>
-      <article class="pro"><h3>Réputation</h3><p>Avis vérifiés et réponses publiques.</p></article>
-    </div>
-    <div class="actions">
-      <a class="btn" data-demo-pro href="#">Créer mon espace pro</a>
+    <div class="pro-block">
+      <img class="pro-art" src="img/mascots/green_jump.webp" alt="" loading="lazy">
+      <div class="head">
+        <p class="eyebrow">Pour les prestataires et agences</p>
+        <h2 class="h-xl split">Votre agence, dans une seule app.</h2>
+        <p class="sub">Demandes qualifiées, devis détaillés, reversements suivis. Sans courir après les acomptes.</p>
+      </div>
+      <div class="pro-grid">
+        <article class="pro"><h3>Profil &amp; catalogue</h3><p>Forfaits, options, zone d’intervention, conditions de vente.</p></article>
+        <article class="pro"><h3>Disponibilités</h3><p>Dates bloquées, capacité par jour, plus de doubles réservations.</p></article>
+        <article class="pro"><h3>Devis &amp; demandes</h3><p>Questions au client, options, validité et acompte en un écran.</p></article>
+        <article class="pro"><h3>Commandes</h3><p>Exigences du client, échéances, préparation, jour J, clôture.</p></article>
+        <article class="pro"><h3>Revenus</h3><p>Commission affichée, reversements Wave ou Orange Money, relevés CSV.</p></article>
+        <article class="pro"><h3>Réputation</h3><p>Avis vérifiés, réponses publiques, taux de réponse.</p></article>
+      </div>
+      <div class="actions center">
+        <a class="btn" data-demo-pro href="#">Créer mon espace pro</a>
+        <span class="price-note">Offre Business dès 29 900 FCFA / mois</span>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- ─── Tarifs ────────────────────────────────────────────── -->
-<section class="band band-white" id="tarifs">
+<section class="section" id="tarifs">
   <div class="wrap">
-    <h2 class="heading split">Gratuit pour commencer.</h2>
-    <p class="body center-text">Sans engagement, résiliable à tout moment. Payez en Mobile Money.</p>
+    <div class="head">
+      <h2 class="h-xl split">Gratuit pour commencer.</h2>
+      <p class="sub">Sans engagement, résiliable à tout moment. Payez en Mobile Money.</p>
+    </div>
     <div class="plans">
       <article class="plan reveal">
         <h3>Découverte</h3><p class="price"><b>0</b> FCFA</p>
@@ -251,7 +289,7 @@
         <ul><li>Budget créé par l’IA</li><li>Graphiques et export</li><li>Jusqu’à 5 collaborateurs</li><li>Rappels WhatsApp et SMS</li><li>QR code RSVP</li></ul>
       </article>
       <article class="plan plan-hot reveal">
-        <span class="sticker s-sun badge" style="--r:6deg">Le plus choisi</span>
+        <span class="badge">Le plus choisi</span>
         <h3>Signature</h3><p class="price"><b>5 900</b> FCFA / mois</p>
         <ul><li>Tout Azur</li><li>Agent IA de votre événement</li><li>Coffre-fort numérique 5 Go</li><li>Collaborateurs illimités</li><li>Négociation de devis par l’IA</li></ul>
       </article>
@@ -265,9 +303,9 @@
 </section>
 
 <!-- ─── FAQ ───────────────────────────────────────────────── -->
-<section class="band band-sky" id="faq">
+<section class="section" id="faq">
   <div class="wrap narrow">
-    <h2 class="heading split">Questions fréquentes</h2>
+    <div class="head"><h2 class="h-xl split">Questions fréquentes</h2></div>
     <div class="faq">
       <details><summary>Mon argent est-il en sécurité ?</summary><div class="faq-a"><p>L’acompte est conservé jusqu’à la validation de la prestation, puis reversé au prestataire. En cas de litige, les fonds restent bloqués le temps de l’examen.</p></div></details>
       <details><summary>Quels moyens de paiement sont acceptés ?</summary><div class="faq-a"><p>Orange Money, MTN MoMo, Wave, Moov Money et la carte bancaire. Les frais sont affichés avant de payer.</p></div></details>
@@ -279,23 +317,22 @@
   </div>
 </section>
 
-<!-- ─── Appel final : titre-sculpture et carte de téléchargement ── -->
-<section class="band band-white final">
+<!-- ─── Appel final ───────────────────────────────────────── -->
+<section class="section final">
   <div class="wrap">
-    <div class="poster poster-final">
-      <h2 class="display split">On prépare la fête ?</h2>
-      <div class="m m-final-red" data-mascot="red_cheeks" data-interactive title="Organisateurs"></div>
-      <div class="m m-final-green" data-mascot="green_peace" data-interactive title="Créateurs"></div>
-    </div>
-    <div class="actions">
-      <a class="btn btn-lg" data-demo href="#">Essayer Eventa</a>
-    </div>
-    <div class="download">
-      <div class="download-label">Bientôt sur les stores</div>
-      <div class="download-stores">
+    <div class="final-card">
+      <div class="float f-final-l" data-mascot="red_cheeks" data-interactive title="Organisateurs"></div>
+      <div class="float f-final-r" data-mascot="green_peace" data-interactive title="Créateurs"></div>
+      <h2 class="h-xl split">On prépare la fête ?</h2>
+      <p class="sub">La démo est gratuite et sans inscription réelle.</p>
+      <div class="actions center">
+        <a class="btn btn-lg" data-demo href="#">Essayer Eventa</a>
+      </div>
+      <div class="stores center">
         <a class="store" href="#demo" aria-label="Bientôt sur l’App Store"><img src="img/stores/app-store.svg" alt="Télécharger dans l’App Store"></a>
         <a class="store" href="#demo" aria-label="Bientôt sur Google Play"><img src="img/stores/google-play.png" alt="Disponible sur Google Play"></a>
       </div>
+      <p class="fine">Application mobile bientôt disponible sur iPhone et Android.</p>
     </div>
   </div>
 </section>
@@ -305,7 +342,7 @@
 <footer class="footer">
   <div class="wrap foot-grid">
     <div>
-      <a class="logo" href="#haut"><span class="logo-badge" aria-hidden="true"><span class="logo-mark"><i></i><i></i><i></i><i></i></span></span><span class="logo-word">eventa</span></a>
+      <a class="logo" href="#haut"><span class="logo-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>eventa</a>
       <p>Le budget parfait pour célébrer.<br>Conçu pour la Côte d’Ivoire.</p>
       <div class="socials" aria-label="Eventa sur les réseaux sociaux">
         <a class="social s-wa" href="#" aria-label="WhatsApp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a>
@@ -314,13 +351,13 @@
         <a class="social s-ig" href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg></a>
       </div>
     </div>
-    <div><h4>Produit</h4><a href="#fonctions">Fonctions</a><a href="#prestataires">Prestataires</a><a href="#tarifs">Tarifs</a><a href="#demo">Démo</a></div>
+    <div><h4>Produit</h4><a href="#fonctions">Fonctionnalités</a><a href="#prestataires">Prestataires</a><a href="#tarifs">Tarifs</a><a href="#demo">Démo</a></div>
     <div><h4>Professionnels</h4><a href="#creators">Espace pro</a><a href="#creators">Offre Business</a></div>
     <div><h4>Eventa</h4><a data-app-link="/a-propos" href="#">À propos</a><a data-app-link="/conditions" href="#">Conditions générales</a><a data-app-link="/confidentialite" href="#">Confidentialité</a></div>
   </div>
   <p class="wrap legal">© 2026 Eventa · Version de démonstration</p>
 </footer>
 
-<script src="app.js?v=7"></script>
+<script src="app.js?v=11"></script>
 </body>
 </html>
