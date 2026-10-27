@@ -66,10 +66,23 @@
   if (track) track.innerHTML += track.innerHTML.replace(/<span>/g, '<span aria-hidden="true">');
 
   /* ── Titres découpés en mots ─────────────────────────── */
+  // Les mots mis en relief (<em>) gardent leur balise.
   document.querySelectorAll('.split').forEach((h) => {
-    const words = h.textContent.trim().split(/\s+/);
+    const words = [];
+    h.childNodes.forEach((n) => {
+      const tag = n.nodeType === 1 ? n.tagName.toLowerCase() : null;
+      n.textContent.split(/(\s+)/).forEach((w) => {
+        if (!w.trim()) { if (words.length) words.push(null); return; }
+        words.push(tag ? `<${tag}>${w}</${tag}>` : w);
+      });
+    });
     h.setAttribute('aria-label', h.textContent.trim());
-    h.innerHTML = words.map((w, i) => `<span class="w" aria-hidden="true"><span style="--i:${i}">${w}</span></span>`).join(' ');
+    let i = 0, out = '';
+    words.forEach((w) => {
+      if (w === null) { out += ' '; return; }
+      out += `<span class="w" aria-hidden="true"><span style="--i:${i++}">${w}</span></span>`;
+    });
+    h.innerHTML = out.replace(/\s+/g, ' ').trim();
   });
 
   /* ── Compteurs ───────────────────────────────────────── */
@@ -98,6 +111,12 @@
     if (el.matches('.reveal')) el.style.transitionDelay = `${(i % 4) * 70}ms`;
     io.observe(el);
   });
+  // L'ouverture ne dépend pas de l'observateur : son titre s'anime dès
+  // le chargement, et tout ce qui est déjà à l'écran finit révélé.
+  requestAnimationFrame(() => document.querySelectorAll('.hero .split').forEach((el) => el.classList.add('in')));
+  setTimeout(() => document.querySelectorAll('.reveal:not(.in), .split:not(.in)').forEach((el) => {
+    if (el.getBoundingClientRect().top < innerHeight) el.classList.add('in');
+  }), 1200);
 
   /* ── Conversation WhatsApp ───────────────────────────── */
   function playChat(chat) {
@@ -139,7 +158,7 @@
   }
 
   /* ── Menu mobile ─────────────────────────────────────── */
-  const burger = document.querySelector('.burger'), nav = document.querySelector('.pill-nav');
+  const burger = document.querySelector('.burger'), nav = document.querySelector('.nav');
   burger.addEventListener('click', () => {
     const open = burger.getAttribute('aria-expanded') !== 'true';
     burger.setAttribute('aria-expanded', open);
