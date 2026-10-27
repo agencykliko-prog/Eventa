@@ -69,7 +69,7 @@ class EventaWordmark extends StatelessWidget {
         Text(
           'eventa',
           style: TextStyle(
-            fontFamily: 'Baloo2',
+            fontFamily: 'RedHatDisplay',
             fontSize: size,
             fontWeight: FontWeight.w700,
             letterSpacing: -size * 0.05,

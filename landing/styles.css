@@ -3,11 +3,11 @@
    bulles de discussion flottantes (WhatsApp), surtitres espacés (Perk).
    Couleurs Confetti à leur rôle : corail = action uniquement. */
 
-@font-face { font-family: "Baloo 2"; src: url(fonts/Baloo2-400.woff2) format("woff2"); font-weight: 400; font-display: swap; }
-@font-face { font-family: "Baloo 2"; src: url(fonts/Baloo2-500.woff2) format("woff2"); font-weight: 500; font-display: swap; }
-@font-face { font-family: "Baloo 2"; src: url(fonts/Baloo2-600.woff2) format("woff2"); font-weight: 600; font-display: swap; }
-@font-face { font-family: "Baloo 2"; src: url(fonts/Baloo2-700.woff2) format("woff2"); font-weight: 700; font-display: swap; }
-@font-face { font-family: "Baloo 2"; src: url(fonts/Baloo2-800.woff2) format("woff2"); font-weight: 800; font-display: swap; }
+@font-face { font-family: "Red Hat Display"; src: url(fonts/RedHatDisplay-400.woff2) format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Red Hat Display"; src: url(fonts/RedHatDisplay-500.woff2) format("woff2"); font-weight: 500; font-display: swap; }
+@font-face { font-family: "Red Hat Display"; src: url(fonts/RedHatDisplay-600.woff2) format("woff2"); font-weight: 600; font-display: swap; }
+@font-face { font-family: "Red Hat Display"; src: url(fonts/RedHatDisplay-700.woff2) format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Red Hat Display"; src: url(fonts/RedHatDisplay-800.woff2) format("woff2"); font-weight: 800; font-display: swap; }
 
 :root {
   /* Palette Confetti (app Eventa) */
@@ -40,7 +40,7 @@
 html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; overflow-x: clip; }
 body {
   margin: 0;
-  font-family: "Baloo 2", system-ui, sans-serif;
+  font-family: "Red Hat Display", system-ui, sans-serif;
   font-size: 16px;
   line-height: 1.5;
   letter-spacing: 0;
@@ -65,14 +65,14 @@ h1, h2, h3, h4, p { margin: 0; }
   font-size: clamp(48px, 7.4vw, 96px);
   font-weight: 800;
   line-height: 1;
-  letter-spacing: -.005em;
+  letter-spacing: -.04em;
   text-wrap: balance;
 }
 .h-xl {
   font-size: clamp(38px, 5.2vw, 68px);
   font-weight: 800;
   line-height: 1.02;
-  letter-spacing: -.015em;
+  letter-spacing: -.035em;
   text-wrap: balance;
   margin-bottom: 20px;
 }
