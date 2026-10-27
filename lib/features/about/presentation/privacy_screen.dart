@@ -254,7 +254,7 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen> {
                     ],
                   ),
                 ),
-                const Mascot(size: 84, color: MascotColor.violet, cover: true),
+                const Mascot(size: 84, color: MascotColor.creator, cover: true),
               ],
             ),
             const SizedBox(height: 12),

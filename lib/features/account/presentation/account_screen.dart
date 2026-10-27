@@ -621,7 +621,7 @@ class _AccountMascotState extends ConsumerState<_AccountMascot> {
       offset: const Offset(0, 14),
       child: Mascot(
         size: 78,
-        color: widget.creator ? MascotColor.violet : MascotColor.orange,
+        color: widget.creator ? MascotColor.creator : MascotColor.organizer,
         waving: _waving,
         legs: false,
         onTap: () {

@@ -254,7 +254,10 @@ class _PlanningScreenState extends ConsumerState<PlanningScreen> {
                     Text(
                       dayItems.isEmpty
                           ? 'Libre'.tr
-                          : (dayItems.length > 1 ? '{0} activités' : '{0} activité').trf([dayItems.length]),
+                          : (dayItems.length > 1
+                                    ? '{0} activités'
+                                    : '{0} activité')
+                                .trf([dayItems.length]),
                       style: context.text.labelMedium?.copyWith(
                         color: Confetti.inkMuted,
                       ),
@@ -747,7 +750,7 @@ class _EmptyDay extends StatelessWidget {
         children: [
           const Mascot(
             size: 88,
-            color: MascotColor.lagoon,
+            color: MascotColor.organizer,
             mood: MascotMood.sleepy,
           ),
           const SizedBox(height: 10),
@@ -870,7 +873,9 @@ class _ActivitySheetState extends ConsumerState<_ActivitySheet> {
     Navigator.of(context).pop();
     toast(
       context,
-      _editing ? 'Activité modifiée'.tr : 'Activité ajoutée à {0}'.trf([timeOf(due)]),
+      _editing
+          ? 'Activité modifiée'.tr
+          : 'Activité ajoutée à {0}'.trf([timeOf(due)]),
     );
   }
 

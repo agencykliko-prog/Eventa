@@ -193,7 +193,7 @@ class _TermsScreenState extends State<TermsScreen> {
                     ],
                   ),
                 ),
-                const Mascot(size: 84, color: MascotColor.lagoon),
+                const Mascot(size: 84, color: MascotColor.creator),
               ],
             ),
             const SizedBox(height: 12),

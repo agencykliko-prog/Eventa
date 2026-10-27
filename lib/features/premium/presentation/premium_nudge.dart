@@ -141,7 +141,7 @@ class _NudgeSheet extends ConsumerWidget {
                       Icon(AppIcons.crown, color: Confetti.gold, size: 28),
                       const Mascot(
                         size: 132,
-                        color: MascotColor.gold,
+                        color: MascotColor.organizer,
                         mood: MascotMood.cheer,
                         waving: true,
                         legs: false,
@@ -162,9 +162,7 @@ class _NudgeSheet extends ConsumerWidget {
           const SizedBox(height: 6),
           Text(
             nudge.pitch,
-            style: context.text.bodyMedium?.copyWith(
-              color: Confetti.inkMuted,
-            ),
+            style: context.text.bodyMedium?.copyWith(color: Confetti.inkMuted),
           ),
           const SizedBox(height: 16),
           Text(

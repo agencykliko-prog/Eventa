@@ -1,61 +1,89 @@
 import 'dart:math' as math;
-import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/i18n/tr.dart';
 import '../../../core/sound/sounds.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/mascot.dart';
 
-/// En-tête d'accueil : ciel doux, grande salutation et trois mascottes qui
-/// dépassent du bas de l'écran. Le regard des mascottes suit le pointeur.
+/// En-tête d'accueil : lumière chaude, confettis qui flottent, grande
+/// salutation et la mascotte du profil, en pied, qui suit le pointeur et
+/// saute quand on la touche.
 class GreetingHero extends ConsumerStatefulWidget {
   const GreetingHero({
     super.key,
     required this.header,
     this.question,
-    this.colors = const (
-      MascotColor.lagoon,
-      MascotColor.orange,
-      MascotColor.candy,
-    ),
+    this.mascot = MascotColor.organizer,
+    this.action,
   });
 
   /// Barre du haut (photo, notifications).
   final Widget header;
 
-  /// Petite ligne sous la salutation (en capitales).
+  /// Petite ligne sous la salutation.
   final String? question;
 
-  /// Mascottes gauche, centre (principale) et droite.
-  final (MascotColor, MascotColor, MascotColor) colors;
+  /// Mascotte du profil : rouge (organisateur) ou verte (créateur).
+  final MascotColor mascot;
+
+  /// Action principale facultative (ex. créer un événement).
+  final Widget? action;
 
   @override
   ConsumerState<GreetingHero> createState() => _GreetingHeroState();
 }
 
-class _GreetingHeroState extends ConsumerState<GreetingHero> {
+class _GreetingHeroState extends ConsumerState<GreetingHero>
+    with SingleTickerProviderStateMixin {
+  late final Ticker _ticker;
+  Duration _t = Duration.zero;
   Offset? _pointer;
+  bool _reduced = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _ticker = createTicker((t) => setState(() => _t = t))..start();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _reduced = MediaQuery.maybeDisableAnimationsOf(context) ?? false;
+    if (_reduced && _ticker.isActive) _ticker.stop();
+  }
+
+  @override
+  void dispose() {
+    _ticker.dispose();
+    super.dispose();
+  }
 
   Offset? _lookFrom(Offset mascot) {
     final p = _pointer;
     if (p == null) return null;
     final d = p - mascot;
     final len = math.max(d.distance, 1);
-    return Offset(d.dx / len, d.dy / len) * math.min(1, len / 120);
+    return Offset(d.dx / len, d.dy / len) * math.min(1, len / 140);
   }
 
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
-    final h = width < 720 ? 372.0 : 400.0;
+    final compact = width < 400;
+    final h = compact ? 300.0 : 320.0;
     final dark = Confetti.dark;
-    final (left, middle, right) = widget.colors;
-    final side = width < 720 ? 132.0 : 150.0;
-    final main = width < 720 ? 168.0 : 190.0;
+    final mascotSize = compact ? 132.0 : 168.0;
+    final creator = widget.mascot == MascotColor.creator;
+    final warm = creator
+        ? const [Color(0xFFD5F6EE), Color(0xFFEAF8F2)]
+        : const [Color(0xFFFFDCCB), Color(0xFFFFF0DA)];
 
     return MouseRegion(
       onHover: (e) => setState(() => _pointer = e.localPosition),
@@ -63,122 +91,105 @@ class _GreetingHeroState extends ConsumerState<GreetingHero> {
       child: LayoutBuilder(
         builder: (context, box) {
           final w = box.maxWidth;
+          final mascotCenter = Offset(
+            w - 16 - mascotSize / 2,
+            h - 12 - mascotSize / 2,
+          );
           return SizedBox(
             height: h,
-            child: ClipRect(
-              child: Stack(
-                clipBehavior: Clip.hardEdge,
-                children: [
-                  // Ciel : halo lavande en haut, rayons très légers.
-                  Positioned.fill(
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: dark
-                              ? const [Color(0xFF2B1A5C), Color(0x00110722)]
-                              : const [Color(0xFFDCD5FF), Color(0x00F7F5F2)],
-                          stops: const [0, 0.62],
-                        ),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                // Lumière chaude qui se fond dans le fond de page.
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: dark
+                            ? const [Color(0xFF34195A), Color(0x00110722)]
+                            : [warm[0], warm[1], Confetti.cream],
+                        stops: dark ? const [0, 1] : const [0, 0.55, 1],
                       ),
                     ),
                   ),
-                  Positioned.fill(
-                    child: CustomPaint(painter: _RaysPainter(dark: dark)),
+                ),
+                Positioned.fill(
+                  child: CustomPaint(
+                    painter: _ConfettiPainter(
+                      t: _t.inMicroseconds / 1e6,
+                      dark: dark,
+                    ),
                   ),
-                  Positioned(left: 0, right: 0, top: 0, child: widget.header),
-                  // Salutation.
-                  Positioned(
-                    left: 20,
-                    right: 20,
-                    top: h * 0.33,
-                    child: Column(
-                      children: [
-                        ShaderMask(
-                          blendMode: BlendMode.srcIn,
-                          shaderCallback: (r) => LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [
-                              Confetti.ink,
-                              Confetti.ink.withValues(alpha: 0.82),
-                              Confetti.inkFaint,
-                            ],
-                          ).createShader(r),
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              greeting(),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontSize: width < 380 ? 52 : 60,
-                                height: 1,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: -2.4,
-                                color: Confetti.ink,
-                              ),
+                ),
+                Positioned(left: 0, right: 0, top: 0, child: widget.header),
+                // Salutation à gauche, mascotte à droite.
+                Positioned(
+                  left: 20,
+                  right: mascotSize * 0.7,
+                  bottom: 26,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _Rise(
+                        delay: 0,
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '${greeting()} !',
+                            style: TextStyle(
+                              fontFamily: AppTheme.font,
+                              fontSize: compact ? 44 : 54,
+                              height: 1,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: -1,
+                              color: Confetti.ink,
                             ),
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        Text(
+                      ),
+                      const SizedBox(height: 6),
+                      _Rise(
+                        delay: 120,
+                        child: Text(
+                          // Espace insécable : le « ? » ne part jamais seul.
                           (widget.question ??
                                   'Qu’est-ce qu’on célèbre aujourd’hui ?'.tr)
-                              .toUpperCase(),
-                          textAlign: TextAlign.center,
+                              .replaceAll(' ?', ' ?'),
                           style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontSize: 12.5,
+                            fontFamily: AppTheme.font,
+                            fontSize: compact ? 15.5 : 17,
+                            height: 1.25,
                             fontWeight: FontWeight.w600,
-                            letterSpacing: 1.1,
-                            color: Confetti.inkFaint,
+                            color: Confetti.inkMuted,
                           ),
                         ),
+                      ),
+                      if (widget.action != null) ...[
+                        const SizedBox(height: 14),
+                        _Rise(delay: 240, child: widget.action!),
                       ],
-                    ),
+                    ],
                   ),
-                  // Mascottes qui dépassent du bas, floutées sur les côtés.
-                  Positioned(
-                    left: -side * 0.42,
-                    bottom: -side * 0.38,
-                    child: _Peek(
-                      color: left,
-                      size: side,
-                      blur: 1.4,
-                      angle: 0.32,
-                      look: _lookFrom(Offset(side * 0.2, h - side * 0.3)),
-                      onTap: () =>
-                          ref.read(soundProvider).play(Sfx.notification),
-                    ),
-                  ),
-                  Positioned(
-                    right: -side * 0.42,
-                    bottom: -side * 0.2,
-                    child: _Peek(
-                      color: right,
-                      size: side,
-                      blur: 1.4,
-                      angle: -0.36,
-                      mood: MascotMood.wink,
-                      look: _lookFrom(Offset(w - side * 0.2, h - side * 0.4)),
-                      onTap: () =>
-                          ref.read(soundProvider).play(Sfx.notification),
-                    ),
-                  ),
-                  Positioned(
-                    left: (w - main * 100 / 128) / 2,
-                    bottom: -main * 0.42,
-                    child: _Peek(
-                      color: middle,
-                      size: main,
-                      look: _lookFrom(Offset(w / 2, h - main * 0.3)),
+                ),
+                Positioned(
+                  right: 8,
+                  bottom: 6,
+                  child: _Rise(
+                    delay: 180,
+                    distance: 60,
+                    child: Mascot(
+                      size: mascotSize,
+                      color: widget.mascot,
+                      mood: MascotMood.happy,
+                      look: _lookFrom(mascotCenter),
                       onTap: () => ref.read(soundProvider).play(Sfx.success),
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           );
         },
@@ -187,85 +198,88 @@ class _GreetingHeroState extends ConsumerState<GreetingHero> {
   }
 }
 
-class _Peek extends StatelessWidget {
-  const _Peek({
-    required this.color,
-    required this.size,
-    this.blur = 0,
-    this.angle = 0,
-    this.mood = MascotMood.happy,
-    this.look,
-    this.onTap,
-  });
+/// Apparition en montée douce, décalée de [delay] millisecondes.
+class _Rise extends StatelessWidget {
+  const _Rise({required this.child, this.delay = 0, this.distance = 18});
 
-  final MascotColor color;
-  final double size;
-  final double blur;
-  final double angle;
-  final MascotMood mood;
-  final Offset? look;
-  final VoidCallback? onTap;
+  final Widget child;
+  final int delay;
+  final double distance;
 
   @override
   Widget build(BuildContext context) {
-    Widget m = Mascot(
-      size: size,
-      color: color,
-      mood: mood,
-      look: look,
-      arms: false,
-      legs: false,
-      onTap: onTap,
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: Duration(milliseconds: 620 + delay),
+      curve: Interval(delay / (620 + delay), 1, curve: Curves.easeOutBack),
+      builder: (context, v, child) => Opacity(
+        opacity: v.clamp(0, 1),
+        child: Transform.translate(
+          offset: Offset(0, (1 - v) * distance),
+          child: child,
+        ),
+      ),
+      child: child,
     );
-    if (blur > 0) {
-      m = ImageFiltered(
-        imageFilter: ui.ImageFilter.blur(sigmaX: blur, sigmaY: blur),
-        child: m,
-      );
-    }
-    return Transform.rotate(angle: angle, child: m);
   }
 }
 
-/// Rayons de lumière partant du haut, à peine visibles.
-class _RaysPainter extends CustomPainter {
-  _RaysPainter({required this.dark});
+/// Confettis qui flottent lentement : rubans, pastilles et petites étoiles.
+class _ConfettiPainter extends CustomPainter {
+  _ConfettiPainter({required this.t, required this.dark});
 
+  final double t;
   final bool dark;
+
+  static const _colors = [
+    Color(0xFFE5484D),
+    Color(0xFF6246EA),
+    Color(0xFFE5A21A),
+    Color(0xFF0E9F8E),
+    Color(0xFFDB4F9E),
+  ];
 
   @override
   void paint(Canvas canvas, Size size) {
-    final origin = Offset(size.width / 2, -size.height * 0.15);
-    final paint = Paint()
-      ..shader = ui.Gradient.linear(
-        origin,
-        Offset(size.width / 2, size.height * 0.55),
-        [
-          Colors.white.withValues(alpha: dark ? 0.06 : 0.45),
-          Colors.white.withValues(alpha: 0),
-        ],
-      );
-    for (var i = -4; i <= 4; i++) {
-      final a = math.pi / 2 + i * 0.16;
-      final spread = 0.035;
-      final r = size.height * 1.2;
-      canvas.drawPath(
-        Path()
-          ..moveTo(origin.dx, origin.dy)
-          ..lineTo(
-            origin.dx + math.cos(a - spread) * r,
-            origin.dy + math.sin(a - spread) * r,
-          )
-          ..lineTo(
-            origin.dx + math.cos(a + spread) * r,
-            origin.dy + math.sin(a + spread) * r,
-          )
-          ..close(),
-        paint,
-      );
+    final rnd = math.Random(7);
+    for (var i = 0; i < 18; i++) {
+      final x0 = rnd.nextDouble(), y0 = rnd.nextDouble();
+      final speed = 0.012 + rnd.nextDouble() * 0.02;
+      final phase = rnd.nextDouble() * math.pi * 2;
+      final kind = i % 3;
+      final y = ((y0 + t * speed) % 1.1 - 0.05) * size.height;
+      final x = x0 * size.width + math.sin(t * 0.8 + phase) * 10;
+      final a = (dark ? 0.35 : 0.5) * (0.6 + 0.4 * math.sin(t + phase));
+      final paint = Paint()
+        ..color = _colors[i % _colors.length].withValues(alpha: a);
+      canvas.save();
+      canvas.translate(x, y);
+      canvas.rotate(t * (0.6 + rnd.nextDouble()) + phase);
+      switch (kind) {
+        case 0:
+          canvas.drawRRect(
+            RRect.fromRectAndRadius(
+              const Rect.fromLTWH(-6, -2, 12, 4),
+              const Radius.circular(2),
+            ),
+            paint,
+          );
+        case 1:
+          canvas.drawCircle(Offset.zero, 3.2, paint);
+        default:
+          final p = Path();
+          for (var k = 0; k < 8; k++) {
+            final r = k.isEven ? 5.0 : 2.0;
+            final ang = k * math.pi / 4;
+            final pt = Offset(math.cos(ang) * r, math.sin(ang) * r);
+            k == 0 ? p.moveTo(pt.dx, pt.dy) : p.lineTo(pt.dx, pt.dy);
+          }
+          canvas.drawPath(p..close(), paint);
+      }
+      canvas.restore();
     }
   }
 
   @override
-  bool shouldRepaint(_RaysPainter old) => old.dark != dark;
+  bool shouldRepaint(_ConfettiPainter old) => old.t != t || old.dark != dark;
 }

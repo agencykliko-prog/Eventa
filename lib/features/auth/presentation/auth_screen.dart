@@ -12,6 +12,8 @@ import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/avatars.dart';
+import '../../../core/widgets/brand.dart';
+import '../../../core/widgets/entrance.dart';
 import '../../../core/sound/sounds.dart';
 import '../../../core/widgets/forms.dart';
 import '../../../core/widgets/mascot.dart';
@@ -37,107 +39,211 @@ class AuthScreen extends ConsumerStatefulWidget {
   ConsumerState<AuthScreen> createState() => _AuthScreenState();
 }
 
-class _AuthScreenState extends ConsumerState<AuthScreen> {
+class _AuthScreenState extends ConsumerState<AuthScreen>
+    with SingleTickerProviderStateMixin {
   late bool _signUp = widget.signUp;
   late UserRole _role = widget.role;
+  late final AnimationController _glow = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 9),
+  )..repeat(reverse: true);
+
+  @override
+  void dispose() {
+    _glow.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final creator = _role == UserRole.creator;
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 480),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                  child: Row(
-                    children: [
-                      RoundIconButton(
-                        icon: AppIcons.back,
-                        tooltip: 'Retour',
-                        onTap: () => context.canPop()
-                            ? context.pop()
-                            : context.go(Routes.onboarding),
-                      ),
-                    ],
-                  ),
+      body: Stack(
+        children: [
+          // Halos de couleur qui dérivent lentement derrière le formulaire.
+          Positioned.fill(
+            child: AnimatedBuilder(
+              animation: _glow,
+              builder: (context, _) => CustomPaint(
+                painter: _GlowPainter(
+                  t: Curves.easeInOut.transform(_glow.value),
+                  accent: creator ? Confetti.lagoon : Confetti.coral,
+                  dark: Confetti.dark,
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 480),
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                      child: Row(
                         children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  _signUp
-                                      ? 'Créer un compte'.tr
-                                      : 'Bon retour'.tr,
-                                  style: context.text.headlineMedium,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  _signUp
-                                      ? 'Choisissez votre profil pour commencer.'
-                                            .tr
-                                      : 'Connectez-vous à votre espace.'.tr,
-                                  style: context.text.bodyMedium?.copyWith(
-                                    color: context.eventa.muted,
-                                  ),
-                                ),
-                              ],
-                            ),
+                          RoundIconButton(
+                            icon: AppIcons.back,
+                            tooltip: 'Retour',
+                            onTap: () => context.canPop()
+                                ? context.pop()
+                                : context.go(Routes.onboarding),
                           ),
-                          AuthMascot(
-                            color: _role == UserRole.creator
-                                ? MascotColor.violet
-                                : MascotColor.orange,
+                          const Spacer(),
+                          const Entrance(child: EventaWordmark(size: 26)),
+                          const Spacer(),
+                          const SizedBox(width: 42),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Entrance(
+                                      index: 1,
+                                      offset: 16,
+                                      child: AnimatedSwitcher(
+                                        duration: Motion.base,
+                                        child: Text(
+                                          _signUp
+                                              ? 'Créer un compte'.tr
+                                              : 'Bon retour'.tr,
+                                          key: ValueKey(_signUp),
+                                          style: context.text.headlineMedium
+                                              ?.copyWith(
+                                                fontSize: 32,
+                                                fontWeight: FontWeight.w800,
+                                              ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Entrance(
+                                      index: 2,
+                                      offset: 16,
+                                      child: Text(
+                                        _signUp
+                                            ? 'Choisissez votre profil pour commencer.'
+                                                  .tr
+                                            : 'Connectez-vous à votre espace.'
+                                                  .tr,
+                                        style: context.text.bodyLarge?.copyWith(
+                                          color: context.eventa.muted,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              AuthMascot(
+                                color: creator
+                                    ? MascotColor.creator
+                                    : MascotColor.organizer,
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 14),
+                          Entrance(
+                            index: 3,
+                            child: RolePicker(
+                              value: _role,
+                              onChanged: (r) => setState(() => _role = r),
+                            ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 14),
-                      RolePicker(
-                        value: _role,
-                        onChanged: (r) => setState(() => _role = r),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: AnimatedSwitcher(
-                    duration: Motion.base,
-                    switchInCurve: Motion.easeOut,
-                    child: KeyedSubtree(
-                      key: ValueKey('$_signUp-$_role'),
-                      child: !_signUp
-                          ? _SignInForm(
-                              role: _role,
-                              onSwitch: () => setState(() => _signUp = true),
-                            )
-                          : _role == UserRole.organizer
-                          ? _OrganizerSignUp(
-                              onSwitch: () => setState(() => _signUp = false),
-                            )
-                          : _CreatorSignUp(
-                              onSwitch: () => setState(() => _signUp = false),
-                            ),
                     ),
-                  ),
+                    Expanded(
+                      child: AnimatedSwitcher(
+                        duration: Motion.base,
+                        switchInCurve: Motion.easeOut,
+                        transitionBuilder: (child, a) => FadeTransition(
+                          opacity: a,
+                          child: SlideTransition(
+                            position: Tween(
+                              begin: const Offset(0, 0.04),
+                              end: Offset.zero,
+                            ).animate(a),
+                            child: child,
+                          ),
+                        ),
+                        child: KeyedSubtree(
+                          key: ValueKey('$_signUp-$_role'),
+                          child: !_signUp
+                              ? _SignInForm(
+                                  role: _role,
+                                  onSwitch: () =>
+                                      setState(() => _signUp = true),
+                                )
+                              : _role == UserRole.organizer
+                              ? _OrganizerSignUp(
+                                  onSwitch: () =>
+                                      setState(() => _signUp = false),
+                                )
+                              : _CreatorSignUp(
+                                  onSwitch: () =>
+                                      setState(() => _signUp = false),
+                                ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
+}
+
+/// Deux halos flous (couleur du profil et violet) qui glissent lentement.
+class _GlowPainter extends CustomPainter {
+  _GlowPainter({required this.t, required this.accent, required this.dark});
+
+  final double t;
+  final Color accent;
+  final bool dark;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    void blob(Offset c, double r, Color color) {
+      canvas.drawCircle(
+        c,
+        r,
+        Paint()
+          ..shader = RadialGradient(colors: [color, color.withValues(alpha: 0)])
+              .createShader(Rect.fromCircle(center: c, radius: r)),
+      );
+    }
+
+    final a = dark ? 0.22 : 0.16;
+    blob(
+      Offset(size.width * (0.85 - 0.1 * t), size.height * (0.08 + 0.05 * t)),
+      size.width * 0.6,
+      accent.withValues(alpha: a),
+    );
+    blob(
+      Offset(size.width * (0.05 + 0.12 * t), size.height * (0.55 - 0.06 * t)),
+      size.width * 0.55,
+      Confetti.violet.withValues(alpha: a * 0.7),
+    );
+  }
+
+  @override
+  bool shouldRepaint(_GlowPainter old) =>
+      old.t != t || old.accent != accent || old.dark != dark;
 }
 
 /// Choix du profil : deux tuiles symétriques.
@@ -163,42 +269,60 @@ class RolePicker extends StatelessWidget {
             HapticFeedback.selectionClick();
             onChanged(r);
           },
-          child: AnimatedContainer(
-            duration: Motion.fast,
-            curve: Motion.easeOut,
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              color: on ? Confetti.ink : Confetti.surface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: on ? Confetti.ink : Confetti.line),
-            ),
-            child: Row(
-              children: [
-                Icon(icon, size: 20, color: on ? Confetti.onInk : Confetti.ink),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        r.label,
-                        style: context.text.titleSmall?.copyWith(
-                          color: on ? Confetti.onInk : Confetti.ink,
+          child: AnimatedScale(
+            duration: Motion.base,
+            curve: Curves.easeOutBack,
+            scale: on ? 1 : 0.97,
+            child: AnimatedContainer(
+              duration: Motion.fast,
+              curve: Motion.easeOut,
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: on ? Confetti.ink : Confetti.surface,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: on ? Confetti.ink : Confetti.line),
+                boxShadow: on
+                    ? [
+                        BoxShadow(
+                          color: Confetti.ink.withValues(alpha: 0.18),
+                          blurRadius: 16,
+                          offset: const Offset(0, 6),
                         ),
-                      ),
-                      Text(
-                        r.pitch,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: context.text.labelSmall?.copyWith(
-                          color: on ? Colors.white70 : Confetti.inkMuted,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ],
+                      ]
+                    : null,
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    icon,
+                    size: 20,
+                    color: on ? Confetti.onInk : Confetti.ink,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          r.label,
+                          style: context.text.titleSmall?.copyWith(
+                            color: on ? Confetti.onInk : Confetti.ink,
+                          ),
+                        ),
+                        Text(
+                          r.pitch,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.text.labelSmall?.copyWith(
+                            color: on ? Colors.white70 : Confetti.inkMuted,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -305,12 +429,14 @@ class _SignInFormState extends ConsumerState<_SignInForm> {
             textAlign: TextAlign.center,
             style: context.text.bodySmall,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 22),
           _SwitchLine(
             text: 'Pas encore de compte ?'.tr,
             action: 'Créer un compte'.tr,
             onTap: widget.onSwitch,
           ),
+          const SizedBox(height: 26),
+          const AuthFooter(),
         ],
       ),
     );
@@ -481,35 +607,8 @@ class _OrganizerSignUpState extends ConsumerState<_OrganizerSignUp> {
             onPressed: _submit,
           ),
           const SizedBox(height: 10),
-          Text(
-            'En créant un compte, vous acceptez les conditions d’utilisation et la politique de confidentialité.'
-                .tr,
-            textAlign: TextAlign.center,
-            style: context.text.bodySmall,
-          ),
-          Wrap(
-            alignment: WrapAlignment.center,
-            children: [
-              TextButton(
-                onPressed: () => context.push(Routes.terms),
-                child: Text(
-                  'Conditions générales'.tr,
-                  style: context.text.labelMedium?.copyWith(
-                    color: Confetti.coralDeep,
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed: () => context.push(Routes.privacy),
-                child: Text(
-                  'Politique de confidentialité'.tr,
-                  style: context.text.labelMedium?.copyWith(
-                    color: Confetti.coralDeep,
-                  ),
-                ),
-              ),
-            ],
-          ),
+          const SizedBox(height: 18),
+          const AuthFooter(),
           const SizedBox(height: 8),
           _SwitchLine(
             text: 'Déjà inscrit ?'.tr,
@@ -1071,7 +1170,7 @@ final authMascotKey = GlobalKey<MascotState>();
 /// La mascotte suit la saisie du regard, se cache les yeux pendant la
 /// saisie d'un mot de passe masqué, et salue à l'arrivée.
 class AuthMascot extends ConsumerStatefulWidget {
-  const AuthMascot({super.key, this.color = MascotColor.orange});
+  const AuthMascot({super.key, this.color = MascotColor.organizer});
 
   final MascotColor color;
 
@@ -1144,6 +1243,124 @@ class _AuthMascotState extends ConsumerState<AuthMascot> {
         waving: _waving,
         onTap: () => ref.read(soundProvider).play(Sfx.success),
       ),
+    );
+  }
+}
+
+/// Pied des formulaires d'accès : mentions légales, communauté et pays à
+/// venir. Apparaît en cascade.
+class AuthFooter extends StatelessWidget {
+  const AuthFooter({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final link = context.text.bodySmall?.copyWith(
+      color: Confetti.coralDeep,
+      fontWeight: FontWeight.w700,
+    );
+    return Column(
+      children: [
+        Entrance(
+          index: 4,
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(12, 10, 16, 10),
+            decoration: BoxDecoration(
+              color: Confetti.surface,
+              borderRadius: BorderRadius.circular(99),
+              border: Border.all(color: Confetti.line),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: 74,
+                  height: 28,
+                  child: Stack(
+                    children: [
+                      for (var i = 0; i < 4; i++)
+                        Positioned(
+                          left: i * 15.0,
+                          child: Avatar(
+                            image: 'assets/images/avatar_${i + 1}.jpg',
+                            initials: '',
+                            size: 28,
+                            ring: Confetti.surface,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Flexible(
+                  child: Text(
+                    'Déjà plus de 1 000 utilisateurs nous font confiance.'.tr,
+                    style: context.text.labelMedium,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        Entrance(
+          index: 5,
+          child: Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(text: 'En continuant, vous acceptez nos '.tr),
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.baseline,
+                  baseline: TextBaseline.alphabetic,
+                  child: Pressable(
+                    onTap: () => context.push(Routes.terms),
+                    child: Text('Conditions d’utilisation'.tr, style: link),
+                  ),
+                ),
+                TextSpan(text: ' et notre '.tr),
+                WidgetSpan(
+                  alignment: PlaceholderAlignment.baseline,
+                  baseline: TextBaseline.alphabetic,
+                  child: Pressable(
+                    onTap: () => context.push(Routes.privacy),
+                    child: Text('Politique de confidentialité'.tr, style: link),
+                  ),
+                ),
+                const TextSpan(text: '.'),
+              ],
+            ),
+            textAlign: TextAlign.center,
+            style: context.text.bodySmall,
+          ),
+        ),
+        const SizedBox(height: 14),
+        Entrance(
+          index: 6,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+            decoration: BoxDecoration(
+              color: Confetti.lavender,
+              borderRadius: BorderRadius.circular(99),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(AppIcons.globe, size: 14, color: Confetti.violet),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    'Bientôt disponible au Mali, au Burkina Faso et au Togo.'
+                        .tr,
+                    textAlign: TextAlign.center,
+                    style: context.text.labelSmall?.copyWith(
+                      color: Confetti.ink,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

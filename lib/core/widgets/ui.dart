@@ -41,6 +41,11 @@ class PillButton extends StatelessWidget {
       ButtonTone.light => (Confetti.surface, Confetti.ink, Colors.transparent),
       ButtonTone.gold => (Confetti.gold, Confetti.inkFixed, Colors.transparent),
     };
+    final lip = switch (tone) {
+      ButtonTone.ghost || ButtonTone.light => Confetti.line,
+      ButtonTone.dark => Color.lerp(bg, Colors.black, 0.55)!,
+      _ => Color.lerp(bg, Colors.black, 0.28)!,
+    };
 
     final content = Row(
       mainAxisSize: expand ? MainAxisSize.max : MainAxisSize.min,
@@ -55,7 +60,11 @@ class PillButton extends StatelessWidget {
             label,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
-            style: context.text.labelLarge?.copyWith(color: fg),
+            style: context.text.labelLarge?.copyWith(
+              color: fg,
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
+            ),
           ),
         ),
         if (trailingIcon != null) ...[
@@ -77,14 +86,25 @@ class PillButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: bg,
             borderRadius: BorderRadius.circular(height),
-            border: Border.all(color: border),
-            boxShadow: tone == ButtonTone.primary && enabled
+            border: Border.all(color: border, width: 1.5),
+            // Reflet doux en haut : volume « bonbon » sans effet plastique.
+            gradient: tone == ButtonTone.ghost || tone == ButtonTone.light
+                ? null
+                : LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Color.lerp(bg, Colors.white, 0.14)!, bg],
+                  ),
+            // Relief net sous le bouton, plus une ombre colorée pour l'action.
+            boxShadow: enabled
                 ? [
-                    BoxShadow(
-                      color: Confetti.coral.withValues(alpha: 0.28),
-                      blurRadius: 16,
-                      offset: const Offset(0, 6),
-                    ),
+                    BoxShadow(color: lip, offset: const Offset(0, 3.5)),
+                    if (tone == ButtonTone.primary)
+                      BoxShadow(
+                        color: Confetti.coral.withValues(alpha: 0.26),
+                        blurRadius: 18,
+                        offset: const Offset(0, 8),
+                      ),
                   ]
                 : null,
           ),
@@ -149,6 +169,14 @@ class RoundIconButton extends StatelessWidget {
           border: background == Confetti.surface
               ? Border.all(color: Confetti.line)
               : null,
+          boxShadow: [
+            BoxShadow(
+              color: background == Confetti.surface
+                  ? Confetti.line
+                  : Color.lerp(background, Colors.black, 0.3)!,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
         child: Stack(
           clipBehavior: Clip.none,
@@ -598,10 +626,29 @@ class IconTile extends StatelessWidget {
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: solid ? hue.base : hue.tint,
-        borderRadius: BorderRadius.circular(size * 0.32),
+        borderRadius: BorderRadius.circular(size * 0.34),
+        // Dégradé à peine perceptible : la tuile gagne du volume.
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: solid
+              ? [Color.lerp(hue.base, Colors.white, 0.18)!, hue.base]
+              : [hue.tint, Color.lerp(hue.tint, hue.base, 0.16)!],
+        ),
+        border: Border(
+          bottom: BorderSide(
+            color: solid
+                ? Color.lerp(hue.base, Colors.black, 0.25)!
+                : Color.lerp(hue.tint, hue.base, 0.28)!,
+            width: 2,
+          ),
+        ),
       ),
-      child: Icon(icon, size: size * 0.5, color: solid ? hue.onBase : hue.text),
+      child: Icon(
+        icon,
+        size: size * 0.48,
+        color: solid ? hue.onBase : hue.text,
+      ),
     );
   }
 }

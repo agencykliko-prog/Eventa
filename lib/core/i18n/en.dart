@@ -119,11 +119,9 @@ const en = <String, String>{
   'Après une demande de devis': 'After a quote request',
   '{0} défini par défaut': '{0} set as default',
   'Mes paiements sont-ils sécurisés ?': 'Are my payments secure?',
-  'Les fonds sont conservés jusqu’à la validation de la prestation, puis reversés au prestataire.':
-      'Funds are held until you approve the service, then paid out to the vendor.',
+  'Les fonds sont conservés jusqu’à la validation de la prestation, puis reversés au prestataire.': 'Funds are held until you approve the service, then paid out to the vendor.',
   'Puis-je annuler une réservation ?': 'Can I cancel a booking?',
-  'Oui, selon les conditions du devis. L’annulation est gratuite jusqu’à J-30 en général.':
-      'Yes, according to the quote terms. Cancellation is usually free until D-30.',
+  'Oui, selon les conditions du devis. L’annulation est gratuite jusqu’à J-30 en général.': 'Yes, according to the quote terms. Cancellation is usually free until D-30.',
   'Comment inviter un co-organisateur ?': 'How do I invite a co-organizer?',
   'Depuis l’événement, touchez l’icône Partager. Deux collaborateurs sont offerts.':
       'From the event, tap the Share icon. Two collaborators are free.',
@@ -152,25 +150,20 @@ const en = <String, String>{
   'Utiliser cette photo': 'Use this photo',
 
   // ─── Agent IA ──────────────────────────────────────────────────────────
-  'Voici une répartition de {0} adaptée à {1} invités, en conservant vos {2} déjà engagés.':
-      'Here is a {0} breakdown tailored to {1} guests, keeping the {2} you’ve already committed.',
+  'Voici une répartition de {0} adaptée à {1} invités, en conservant vos {2} déjà engagés.': 'Here is a {0} breakdown tailored to {1} guests, keeping the {2} you’ve already committed.',
   'Appliquer au budget': 'Apply to budget',
   'Budget mis à jour par l’IA': 'Budget updated by AI',
-  'Aucun devis en attente. Dès qu’un prestataire répond, je compare son prix au marché et je négocie pour vous.':
-      'No pending quotes. As soon as a vendor replies, I’ll compare their price with the market and negotiate for you.',
-  'J’ai analysé {0} devis en attente. Le prix de {1} est 9 % au-dessus de la moyenne observée pour sa catégorie.':
-      'I analysed {0} pending quotes. {1}’s price is 9% above the average for its category.',
+  'Aucun devis en attente. Dès qu’un prestataire répond, je compare son prix au marché et je négocie pour vous.': 'No pending quotes. As soon as a vendor replies, I’ll compare their price with the market and negotiate for you.',
+  'J’ai analysé {0} devis en attente. Le prix de {1} est 9 % au-dessus de la moyenne observée pour sa catégorie.': 'I analysed {0} pending quotes. {1}’s price is 9% above the average for its category.',
   'Proposition : {0} au lieu de {1}': 'Proposal: {0} instead of {1}',
   'Argument : réservation ferme sous 48 h et acompte immédiat':
       'Leverage: firm booking within 48 h and immediate deposit',
   'Trois pistes d’économies sans toucher à l’essentiel :':
       'Three ways to save without touching the essentials:',
-  'Boissons : forfait « softs + jus locaux » chez le traiteur, environ {0} économisés':
-      'Drinks: “soft drinks + local juices” package from the caterer, about {0} saved',
+  'Boissons : forfait « softs + jus locaux » chez le traiteur, environ {0} économisés': 'Drinks: “soft drinks + local juices” package from the caterer, about {0} saved',
   'Décoration : réutiliser l’arche de la cérémonie pour la réception, environ {0}':
       'Decor: reuse the ceremony arch for the reception, about {0}',
-  'Papeterie : faire-part digital + 30 cartons imprimés pour les aînés, environ 120 000 FCFA':
-      'Stationery: digital invitation + 30 printed cards for elders, about 120,000 FCFA',
+  'Papeterie : faire-part digital + 30 cartons imprimés pour les aînés, environ 120 000 FCFA': 'Stationery: digital invitation + 30 printed cards for elders, about 120,000 FCFA',
   'Planning des 3 prochaines semaines, jalons critiques en premier :':
       'Plan for the next 3 weeks, critical milestones first:',
   'Pour {0} invités confirmés : {1} tables rondes de 10, plus une table d’honneur.':
@@ -191,8 +184,7 @@ const en = <String, String>{
   'Version imprimée pour les aînés': 'Printed version for elders',
   'Message prêt pour les {0} invités qui n’ont pas répondu :':
       'Message ready for the {0} guests who haven’t replied:',
-  'Bonjour, nous serions ravis de vous compter parmi nous le {0} pour {1}. Merci de confirmer votre présence avant le {2}.':
-      'Hello, we would be delighted to have you with us on {0} for {1}. Please confirm your attendance before {2}.',
+  'Bonjour, nous serions ravis de vous compter parmi nous le {0} pour {1}. Merci de confirmer votre présence avant le {2}.': 'Hello, we would be delighted to have you with us on {0} for {1}. Please confirm your attendance before {2}.',
   'Envoyer sur WhatsApp': 'Send on WhatsApp',
   'Relance envoyée à {0} invités': 'Reminder sent to {0} guests',
   'Où en est l’argent :': 'Where the money stands:',
@@ -223,8 +215,7 @@ const en = <String, String>{
   'Confirmation du mot de passe': 'Confirm password',
   'Les mots de passe ne correspondent pas': 'Passwords don’t match',
   'Créer mon compte': 'Create my account',
-  'En créant un compte, vous acceptez les conditions d’utilisation et la politique de confidentialité.':
-      'By creating an account, you accept the terms of use and the privacy policy.',
+  'En créant un compte, vous acceptez les conditions d’utilisation et la politique de confidentialité.': 'By creating an account, you accept the terms of use and the privacy policy.',
   'Déjà inscrit ?': 'Already registered?',
   'Choisir une photo de profil': 'Choose a profile photo',
   'Ajouter une photo': 'Add a photo',
@@ -368,8 +359,7 @@ const en = <String, String>{
   'Devis Studio Lumière.pdf': 'Quote Studio Lumière.pdf',
   'Devis Maison Inès Déco.pdf': 'Quote Maison Inès Déco.pdf',
   'Reçu acompte salle EVT-0412.pdf': 'Venue deposit receipt EVT-0412.pdf',
-  'Reçu acompte traiteur EVT-0498.pdf':
-      'Catering deposit receipt EVT-0498.pdf',
+  'Reçu acompte traiteur EVT-0498.pdf': 'Catering deposit receipt EVT-0498.pdf',
   'Essayage robe — 12 photos': 'Dress fitting — 12 photos',
   'Certificat de publication des bans.pdf': 'Banns certificate.pdf',
   'Pièces d’identité des témoins.pdf': 'Witnesses’ ID documents.pdf',
@@ -398,8 +388,7 @@ const en = <String, String>{
       'Date held as soon as the deposit is paid.',
   'Fonds reversés au prestataire après validation de la prestation.':
       'Funds paid to the vendor after the service is approved.',
-  'Merci pour votre demande ! Voici notre devis détaillé, valable 7 jours. N’hésitez pas si vous avez des questions.':
-      'Thanks for your request! Here is our detailed quote, valid for 7 days. Feel free to ask any questions.',
+  'Merci pour votre demande ! Voici notre devis détaillé, valable 7 jours. N’hésitez pas si vous avez des questions.': 'Thanks for your request! Here is our detailed quote, valid for 7 days. Feel free to ask any questions.',
   'L’agent IA a proposé une remise de 7 % au regard des tarifs du marché.':
       'The AI agent proposed a 7% discount based on market rates.',
   'C’est d’accord pour nous, devis mis à jour.':
@@ -410,8 +399,7 @@ const en = <String, String>{
       'Noted, I’ll get back to you very soon.',
   'Bénéficiaire : {0}': 'Payee: {0}',
   'Moyen de paiement': 'Payment method',
-  'Paiement sécurisé, conservé jusqu’à la validation de la prestation, puis reversé au prestataire. Démonstration : aucun débit réel.':
-      'Secure payment, held until the service is approved, then paid to the vendor. Demo: no real charge.',
+  'Paiement sécurisé, conservé jusqu’à la validation de la prestation, puis reversé au prestataire. Démonstration : aucun débit réel.': 'Secure payment, held until the service is approved, then paid to the vendor. Demo: no real charge.',
   'Payer {0}': 'Pay {0}',
   'Mobile Money': 'Mobile Money',
   'Paiement confirmé': 'Payment confirmed',
@@ -435,7 +423,8 @@ const en = <String, String>{
   'On prépare la checklist et la répartition du budget selon le type.':
       'We prepare the checklist and budget breakdown based on the type.',
   'Changer de type': 'Change type',
-  'Précisez (plusieurs choix possibles)': 'Be specific (several choices allowed)',
+  'Précisez (plusieurs choix possibles)':
+      'Be specific (several choices allowed)',
   'Continuer sans préciser': 'Continue without specifying',
   'Les essentiels': 'The essentials',
   'Tout reste modifiable ensuite.': 'Everything can be changed later.',
@@ -446,8 +435,7 @@ const en = <String, String>{
   'Soit {0} par invité.': 'That’s {0} per guest.',
   'Générer mon plan': 'Generate my plan',
   'Votre plan est prêt': 'Your plan is ready',
-  '{0} tâches planifiées à rebours jusqu’au {1} et {2} postes de budget répartis sur {3}.':
-      '{0} tasks scheduled back from {1} and {2} budget items spread across {3}.',
+  '{0} tâches planifiées à rebours jusqu’au {1} et {2} postes de budget répartis sur {3}.': '{0} tasks scheduled back from {1} and {2} budget items spread across {3}.',
   '+ {0} autres étapes': '+ {0} more steps',
   'Ouvrir le dashboard': 'Open the dashboard',
 
@@ -468,8 +456,7 @@ const en = <String, String>{
   'Mariage Awa & Kouassi': 'Awa & Kouassi’s wedding',
   'Livraison & installation': 'Delivery & set-up',
   'Arche florale': 'Floral arch',
-  'Bonjour, nous cherchons une scénographie complète blanc et or pour la réception.':
-      'Hello, we’re looking for a complete white and gold set design for the reception.',
+  'Bonjour, nous cherchons une scénographie complète blanc et or pour la réception.': 'Hello, we’re looking for a complete white and gold set design for the reception.',
   'Les 30 ans de Yasmine': 'Yasmine’s 30th',
   'Déco rooftop thème Gold & Rose, c’est une surprise !':
       'Rooftop decor, Gold & Rose theme, it’s a surprise!',
@@ -499,8 +486,7 @@ const en = <String, String>{
   'Partager l’événement': 'Share the event',
   'Collaborateurs selon votre offre. Chacun a ses propres droits.':
       'Collaborators depend on your plan. Each has their own rights.',
-  '{0} collaborateurs offerts, Premium à partir du 3ᵉ. Chacun a ses propres droits.':
-      '{0} collaborators free, Premium from the 3rd. Each has their own rights.',
+  '{0} collaborateurs offerts, Premium à partir du 3ᵉ. Chacun a ses propres droits.': '{0} collaborators free, Premium from the 3rd. Each has their own rights.',
   'Inviter un collaborateur': 'Invite a collaborator',
   'Lien d’invitation copié': 'Invitation link copied',
   'Invitation envoyée': 'Invitation sent',
@@ -577,8 +563,7 @@ const en = <String, String>{
   'Poste, libellé, montant, date': 'Line item, label, amount, date',
   'Nom, catégorie, statut, montant, contacts':
       'Name, category, status, amount, contacts',
-  'Référence, bénéficiaire, moyen, montant':
-      'Reference, payee, method, amount',
+  'Référence, bénéficiaire, moyen, montant': 'Reference, payee, method, amount',
 
   // ─── Accueil ───────────────────────────────────────────────────────────
   'Prochaines échéances': 'Upcoming deadlines',
@@ -608,8 +593,7 @@ const en = <String, String>{
   'Solde Lagune Sound demain': 'Lagune Sound balance tomorrow',
   '+8 réponses RSVP': '+8 RSVP replies',
   'Rappel': 'Reminder',
-  'Valider le menu de dégustation à 11:00':
-      'Approve the tasting menu at 11:00',
+  'Valider le menu de dégustation à 11:00': 'Approve the tasting menu at 11:00',
 
   // ─── Explorer et fiche prestataire ─────────────────────────────────────
   'Filtres': 'Filters',
@@ -698,8 +682,7 @@ const en = <String, String>{
   '{0} activité': '{0} activity',
   '{0} activités': '{0} activities',
   'Rien de prévu': 'Nothing planned',
-  'Profitez-en, ou planifiez une activité.':
-      'Enjoy it, or plan an activity.',
+  'Profitez-en, ou planifiez une activité.': 'Enjoy it, or plan an activity.',
   'Ajoutez un titre': 'Add a title',
   'Activité modifiée': 'Activity updated',
   'Activité ajoutée à {0}': 'Activity added at {0}',
@@ -715,16 +698,14 @@ const en = <String, String>{
   // ─── Offres ────────────────────────────────────────────────────────────
   'Votre agence événementielle, dans une seule app.':
       'Your event agency, in a single app.',
-  'Clients, devis, contrats, facturation et équipe. En marque blanche, avec API et automatisations.':
-      'Clients, quotes, contracts, invoicing and team. White-label, with API and automations.',
+  'Clients, devis, contrats, facturation et équipe. En marque blanche, avec API et automatisations.': 'Clients, quotes, contracts, invoicing and team. White-label, with API and automations.',
   '29 900 FCFA': '29,900 FCFA',
   'Demander une démo': 'Request a demo',
   'Demande envoyée, un conseiller vous rappelle sous 24 h':
       'Request sent, an advisor will call you back within 24 h',
   'Pour qui': 'Who it’s for',
   'Tout est inclus': 'Everything included',
-  'Réservée aux professionnels : gagnez en visibilité auprès des organisateurs qui préparent leur événement.':
-      'For professionals only: get seen by organizers who are planning their event.',
+  'Réservée aux professionnels : gagnez en visibilité auprès des organisateurs qui préparent leur événement.': 'For professionals only: get seen by organizers who are planning their event.',
   'Booster ma visibilité': 'Boost my visibility',
   'Un conseiller Publicité vous contacte bientôt':
       'An Ads advisor will contact you soon',
@@ -922,14 +903,10 @@ const en = <String, String>{
   'Laissez l’IA construire votre budget idéal.':
       'Let AI build your ideal budget.',
   'Plus besoin de relancer un par un.': 'No more reminding guests one by one.',
-  'Budget optimisé en 10 secondes, rappels automatiques et jusqu’à 5 collaborateurs.':
-      'A budget optimised in 10 seconds, automatic reminders and up to 5 collaborators.',
-  'Le coffre-fort chiffré garde vos contrats, devis et reçus, et l’agent IA négocie vos prochains devis.':
-      'The encrypted vault keeps your contracts, quotes and receipts, and the AI agent negotiates your next quotes.',
-  'Répartition selon le type, la ville et le nombre d’invités, en gardant ce que vous avez déjà engagé.':
-      'A breakdown based on type, city and number of guests, keeping what you’ve already committed.',
-  'Rappels WhatsApp et SMS programmés, QR code RSVP à partager en un geste.':
-      'Scheduled WhatsApp and SMS reminders, an RSVP QR code to share in one tap.',
+  'Budget optimisé en 10 secondes, rappels automatiques et jusqu’à 5 collaborateurs.': 'A budget optimised in 10 seconds, automatic reminders and up to 5 collaborators.',
+  'Le coffre-fort chiffré garde vos contrats, devis et reçus, et l’agent IA négocie vos prochains devis.': 'The encrypted vault keeps your contracts, quotes and receipts, and the AI agent negotiates your next quotes.',
+  'Répartition selon le type, la ville et le nombre d’invités, en gardant ce que vous avez déjà engagé.': 'A breakdown based on type, city and number of guests, keeping what you’ve already committed.',
+  'Rappels WhatsApp et SMS programmés, QR code RSVP à partager en un geste.': 'Scheduled WhatsApp and SMS reminders, an RSVP QR code to share in one tap.',
   'Coffre-fort chiffré 5 Go': 'Encrypted 5 GB vault',
   'Agent IA dédié': 'Dedicated AI agent',
   'Négociation de devis': 'Quote negotiation',
@@ -1069,13 +1046,13 @@ const en = <String, String>{
   'Bougies et photophores': 'Candles and holders',
 
   // B. Disponibilités
-  'Votre calendrier ouvert à la réservation. Les jours complets ou bloqués ne reçoivent plus de demandes.':
-      'Your calendar open for booking. Full or blocked days no longer receive requests.',
+  'Votre calendrier ouvert à la réservation. Les jours complets ou bloqués ne reçoivent plus de demandes.': 'Your calendar open for booking. Full or blocked days no longer receive requests.',
   'Partiel': 'Partly booked',
   'Bloqué': 'Blocked',
   'Capacité de production': 'Production capacity',
   'Prestations par jour': 'Services per day',
-  'Selon votre équipe et votre matériel': 'Depending on your team and equipment',
+  'Selon votre équipe et votre matériel':
+      'Depending on your team and equipment',
   'Empêcher les doubles réservations': 'Prevent double bookings',
   'Un jour complet est fermé automatiquement dans Explorer':
       'A full day is closed automatically in Explore',
@@ -1112,7 +1089,8 @@ const en = <String, String>{
       'Yes, part of it is covered. Access possible from 2 pm.',
   '{0} (option)': '{0} (option)',
   'Acompte ({0} %)': 'Deposit ({0}%)',
-  'Vous recevrez (après commission 8 %)': 'You’ll receive (after 8% commission)',
+  'Vous recevrez (après commission 8 %)':
+      'You’ll receive (after 8% commission)',
   'Valable jusqu’au': 'Valid until',
   'Refusée : {0}': 'Declined: {0}',
   'Établir le devis': 'Prepare the quote',
@@ -1183,8 +1161,7 @@ const en = <String, String>{
   'Clôturée': 'Closed',
 
   // E. Revenus & reversements
-  'Eventa encaisse les paiements de vos clients et vous reverse le net après chaque prestation.':
-      'Eventa collects your clients’ payments and pays you the net amount after each service.',
+  'Eventa encaisse les paiements de vos clients et vous reverse le net après chaque prestation.': 'Eventa collects your clients’ payments and pays you the net amount after each service.',
   'Commandes payées': 'Paid orders',
   'Commissions prélevées': 'Commissions deducted',
   '{0} % par prestation': '{0}% per service',
@@ -1259,4 +1236,15 @@ const en = <String, String>{
       'Beautiful result. Slight delay at set-up, but made up for.',
   'Les ballons pastel étaient parfaits, nos invités ont adoré.':
       'The pastel balloons were perfect, our guests loved them.',
+
+  // ─── Accueil et accès (refonte) ────────────────────────────────────────
+  'Afficher {0}': 'Show {0}',
+  'Prestataires à la une': 'Featured vendors',
+  'Conditions d’utilisation': 'Terms of use',
+  'En continuant, vous acceptez nos ': 'By continuing, you accept our ',
+  ' et notre ': ' and our ',
+  'Bientôt disponible au Mali, au Burkina Faso et au Togo.':
+      'Coming soon to Mali, Burkina Faso and Togo.',
+  'Déjà plus de 1 000 utilisateurs nous font confiance.':
+      'Over 1,000 users already trust us.',
 };

@@ -71,7 +71,7 @@ class AboutScreen extends StatelessWidget {
       (
         bi('Pour les organisateurs', 'For organizers'),
         Hue.coral,
-        MascotColor.orange,
+        MascotColor.organizer,
         [
           bi(
             'Un budget lisible en un coup d’œil, mis à jour à chaque paiement',
@@ -94,7 +94,7 @@ class AboutScreen extends StatelessWidget {
       (
         bi('Pour les invités et participants', 'For guests and attendees'),
         Hue.lagoon,
-        MascotColor.lagoon,
+        MascotColor.creator,
         [
           bi(
             'Une invitation claire, avec réponse en un geste',
@@ -113,7 +113,7 @@ class AboutScreen extends StatelessWidget {
       (
         bi('Pour les prestataires et agences', 'For vendors and agencies'),
         Hue.violet,
-        MascotColor.violet,
+        MascotColor.creator,
         [
           bi(
             'Des demandes de devis qualifiées, avec budget et date',

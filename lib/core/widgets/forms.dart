@@ -10,10 +10,11 @@ import 'ui.dart';
 
 /// Libellé de champ : petit, au-dessus, aligné à gauche.
 class FieldLabel extends StatelessWidget {
-  const FieldLabel(this.text, {super.key, this.optional = false});
+  const FieldLabel(this.text, {super.key, this.optional = false, this.color});
 
   final String text;
   final bool optional;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +34,7 @@ class FieldLabel extends StatelessWidget {
               ),
           ],
         ),
-        style: context.text.labelMedium,
+        style: context.text.labelMedium?.copyWith(color: color),
       ),
     );
   }
@@ -82,53 +83,128 @@ class AppField extends StatefulWidget {
 
 class _AppFieldState extends State<AppField> {
   bool _hidden = true;
+  final _focus = FocusNode();
+  bool _focused = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _focus.addListener(() {
+      if (_focus.hasFocus != _focused) {
+        setState(() => _focused = _focus.hasFocus);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _focus.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final hint = widget.hint;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        FieldLabel(widget.label, optional: widget.optional),
-        TextFormField(
-          controller: widget.controller,
-          keyboardType: widget.keyboard,
-          obscureText: widget.password && _hidden,
-          maxLines: widget.password ? 1 : widget.maxLines,
-          minLines: widget.maxLines > 1 ? 3 : 1,
-          autofocus: widget.autofocus,
-          inputFormatters: widget.formatters,
-          textInputAction: widget.maxLines > 1
-              ? TextInputAction.newline
-              : widget.textInputAction,
-          validator: widget.validator,
-          onChanged: widget.onChanged,
-          onFieldSubmitted: widget.onSubmitted,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          style: context.text.bodyLarge,
-          decoration: InputDecoration(
-            hintText: widget.hint,
-            prefixIcon: widget.prefix,
-            suffixText: widget.suffixText,
-            errorStyle: TextStyle(color: Confetti.danger, fontSize: 12),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: Confetti.danger),
+        // Le libellé se colore et glisse à peine quand le champ est actif.
+        AnimatedSlide(
+          duration: Motion.fast,
+          curve: Motion.easeOut,
+          offset: Offset(_focused ? 0.012 : 0, 0),
+          child: TweenAnimationBuilder<Color?>(
+            duration: Motion.fast,
+            tween: ColorTween(
+              end: _focused ? Confetti.coralDeep : Confetti.ink,
             ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: Confetti.danger, width: 1.4),
-            ),
-            suffixIcon: widget.password
-                ? IconButton(
-                    tooltip: _hidden ? 'Afficher'.tr : 'Masquer'.tr,
-                    onPressed: () => setState(() => _hidden = !_hidden),
-                    icon: Icon(
-                      _hidden ? AppIcons.eye : AppIcons.eyeOff,
-                      size: 19,
-                      color: Confetti.inkMuted,
+            builder: (context, c, _) =>
+                FieldLabel(widget.label, optional: widget.optional, color: c),
+          ),
+        ),
+        // Halo coloré et léger soulèvement au focus.
+        AnimatedContainer(
+          duration: Motion.base,
+          curve: Motion.easeOut,
+          transform: Matrix4.translationValues(0, _focused ? -1.5 : 0, 0),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Confetti.coral.withValues(alpha: _focused ? 0.16 : 0),
+                blurRadius: _focused ? 18 : 0,
+                spreadRadius: _focused ? 1 : 0,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: TextFormField(
+            controller: widget.controller,
+            focusNode: _focus,
+            keyboardType: widget.keyboard,
+            obscureText: widget.password && _hidden,
+            maxLines: widget.password ? 1 : widget.maxLines,
+            minLines: widget.maxLines > 1 ? 3 : 1,
+            autofocus: widget.autofocus,
+            inputFormatters: widget.formatters,
+            textInputAction: widget.maxLines > 1
+                ? TextInputAction.newline
+                : widget.textInputAction,
+            validator: widget.validator,
+            onChanged: widget.onChanged,
+            onFieldSubmitted: widget.onSubmitted,
+            autovalidateMode: AutovalidateMode.onUserInteraction,
+            style: context.text.bodyLarge,
+            decoration: InputDecoration(
+              // Le texte d'exemple s'estompe et glisse quand on entre.
+              hint: hint == null
+                  ? null
+                  : AnimatedSlide(
+                      duration: Motion.base,
+                      curve: Motion.easeOut,
+                      offset: Offset(_focused ? 0.04 : 0, 0),
+                      child: AnimatedOpacity(
+                        duration: Motion.base,
+                        opacity: _focused ? 0.45 : 1,
+                        child: Text(
+                          hint,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.text.bodyLarge?.copyWith(
+                            color: Confetti.inkFaint,
+                          ),
+                        ),
+                      ),
                     ),
-                  )
-                : null,
+              prefixIcon: widget.prefix,
+              suffixText: widget.suffixText,
+              errorStyle: TextStyle(color: Confetti.danger, fontSize: 12),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(color: Confetti.danger),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(14),
+                borderSide: BorderSide(color: Confetti.danger, width: 1.4),
+              ),
+              suffixIcon: widget.password
+                  ? IconButton(
+                      tooltip: _hidden ? 'Afficher'.tr : 'Masquer'.tr,
+                      onPressed: () => setState(() => _hidden = !_hidden),
+                      icon: AnimatedSwitcher(
+                        duration: Motion.fast,
+                        transitionBuilder: (c, a) =>
+                            ScaleTransition(scale: a, child: c),
+                        child: Icon(
+                          _hidden ? AppIcons.eye : AppIcons.eyeOff,
+                          key: ValueKey(_hidden),
+                          size: 19,
+                          color: Confetti.inkMuted,
+                        ),
+                      ),
+                    )
+                  : null,
+            ),
           ),
         ),
       ],
@@ -230,11 +306,7 @@ class AppSelect<T> extends StatelessWidget {
                       child: Text(labelOf(o), style: ctx.text.titleSmall),
                     ),
                     if (o == value)
-                      Icon(
-                        AppIcons.check,
-                        size: 17,
-                        color: Confetti.coral,
-                      ),
+                      Icon(AppIcons.check, size: 17, color: Confetti.coral),
                   ],
                 ),
               ),
@@ -277,11 +349,7 @@ class AppSelect<T> extends StatelessWidget {
                     ),
                   ),
                 ),
-                Icon(
-                  AppIcons.chevronDown,
-                  size: 16,
-                  color: Confetti.inkMuted,
-                ),
+                Icon(AppIcons.chevronDown, size: 16, color: Confetti.inkMuted),
               ],
             ),
           ),

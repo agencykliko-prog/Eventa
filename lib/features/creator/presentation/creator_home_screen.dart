@@ -45,11 +45,7 @@ class CreatorHomeScreen extends ConsumerWidget {
             GreetingHero(
               header: HomeHeader(subtitle: 'Espace Creator'.tr),
               question: 'Prêt à faire briller de belles fêtes ?'.tr,
-              colors: const (
-                MascotColor.mango,
-                MascotColor.violet,
-                MascotColor.lagoon,
-              ),
+              mascot: MascotColor.creator,
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),

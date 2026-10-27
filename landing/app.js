@@ -3,56 +3,63 @@
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const fcfa = (n) => Math.round(n).toLocaleString('fr-FR').replace(/ | /g, ' ');
 
-  /* ── Mascottes ───────────────────────────────────────── */
-  const tpl = document.getElementById('mascot-tpl');
-  const shade = (hex, amt) => {
-    const n = parseInt(hex.slice(1), 16);
-    const mix = (c) => Math.round(amt < 0 ? c * (1 + amt) : c + (255 - c) * amt);
-    const r = mix(n >> 16), g = mix((n >> 8) & 255), b = mix(n & 255);
-    return `rgb(${r},${g},${b})`;
+  /* ── Mascottes ─────────────────────────────────────────
+     data-mascot="red_jump" : rouge = organisateurs, verte = créateurs. */
+  const poses = {
+    red: ['red_jump', 'red_thumbs', 'red_peace', 'red_cheeks'],
+    green: ['green_jump', 'green_thumbs', 'green_peace', 'green_wave'],
   };
+  const src = (name) => `img/mascots/${name}.webp`;
   const mascots = [];
   document.querySelectorAll('[data-mascot]').forEach((host) => {
-    const svg = tpl.content.firstElementChild.cloneNode(true);
-    const c = host.dataset.mascot || '#FF8A3D';
-    svg.style.setProperty('--mc', c);
-    svg.style.setProperty('--ml', shade(c, .4));
-    svg.style.setProperty('--md', shade(c, -.28));
-    host.appendChild(svg);
-    const m = { host, svg, pupils: svg.querySelectorAll('.m-pupil') };
+    const name = host.dataset.mascot;
+    const img = new Image();
+    img.className = 'm-img';
+    img.src = src(name);
+    img.alt = '';
+    img.draggable = false;
+    img.style.animationDelay = `${-Math.random() * 3}s`;
+    host.appendChild(img);
+    const m = { host, img, name, team: name.split('_')[0] };
     mascots.push(m);
-    if (host.hasAttribute('data-interactive')) {
-      host.setAttribute('role', 'button');
-      host.tabIndex = 0;
-      const jump = (e) => {
-        svg.classList.remove('jump');
-        void svg.offsetWidth;
-        svg.classList.add('jump');
-        const r = host.getBoundingClientRect();
-        burst(r.left + r.width / 2, r.top + r.height * .3, 70);
-      };
-      host.addEventListener('click', jump);
-      host.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); jump(); } });
-      svg.addEventListener('animationend', () => svg.classList.remove('jump'));
-    }
+    if (!host.hasAttribute('data-interactive')) return;
+    host.setAttribute('role', 'button');
+    host.setAttribute('aria-label', 'Mascotte Eventa');
+    host.tabIndex = 0;
+    const jump = () => {
+      // Saut, nouvelle pose, pluie de confettis.
+      const list = poses[m.team];
+      const next = list[(list.indexOf(m.img.src.split('/').pop().replace('.webp', '')) + 1) % list.length];
+      m.img.classList.remove('jump');
+      void m.img.offsetWidth;
+      m.img.classList.add('jump');
+      setTimeout(() => { m.img.src = src(next); }, 220);
+      const r = host.getBoundingClientRect();
+      burst(r.left + r.width / 2, r.top + r.height * .35, 60);
+    };
+    host.addEventListener('click', jump);
+    host.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); jump(); } });
+    img.addEventListener('animationend', () => img.classList.remove('jump', 'swap'));
   });
+  // Toutes les poses en cache : les changements sont instantanés.
+  Object.values(poses).flat().forEach((n) => { const i = new Image(); i.src = src(n); });
 
-  // Les yeux suivent le pointeur.
-  let px = innerWidth / 2, py = innerHeight / 3, eyeQueued = false;
-  const lookAt = () => {
-    eyeQueued = false;
-    mascots.forEach(({ svg, pupils }) => {
-      const r = svg.getBoundingClientRect();
+  // Les mascottes se penchent vers le pointeur.
+  let px = innerWidth / 2, py = innerHeight / 3, leanQueued = false;
+  const lean = () => {
+    leanQueued = false;
+    mascots.forEach(({ host }) => {
+      const r = host.getBoundingClientRect();
       if (r.bottom < 0 || r.top > innerHeight) return;
-      const dx = px - (r.left + r.width / 2), dy = py - (r.top + r.height * .44);
-      const d = Math.hypot(dx, dy) || 1, k = Math.min(1, d / 260) * 2.6;
-      pupils.forEach((p) => p.setAttribute('transform', `translate(${(dx / d * k).toFixed(2)} ${(dy / d * k).toFixed(2)})`));
+      const dx = px - (r.left + r.width / 2);
+      const k = Math.max(-1, Math.min(1, dx / 400));
+      host.style.setProperty('--lean', `${(k * 8).toFixed(1)}deg`);
     });
   };
   if (!reduce) {
     addEventListener('pointermove', (e) => {
       px = e.clientX; py = e.clientY;
-      if (!eyeQueued) { eyeQueued = true; requestAnimationFrame(lookAt); }
+      if (!leanQueued) { leanQueued = true; requestAnimationFrame(lean); }
     }, { passive: true });
   }
 
@@ -141,12 +148,27 @@
     el.classList.add('in');
     el.querySelectorAll('[data-count]').forEach((c) => countTo(c, +c.dataset.count));
     if (el.matches('[data-chat]')) playChat(el);
+    if (el.matches('[data-duo]')) setTimeout(() => {
+      // Le duo se retrouve au centre puis saute de joie.
+      el.querySelectorAll('.m-img').forEach((img) => { img.classList.add('jump'); });
+      const r = el.getBoundingClientRect();
+      burst(r.left + r.width / 2, r.top + r.height * .4, 110);
+    }, reduce ? 0 : 950);
     io.unobserve(el);
   }), { threshold: .2, rootMargin: '0px 0px -8% 0px' });
-  document.querySelectorAll('.reveal, .split, [data-chat]').forEach((el, i) => {
+  document.querySelectorAll('.reveal, .split, [data-chat], [data-duo]').forEach((el, i) => {
     if (el.matches('.reveal')) el.style.transitionDelay = `${(i % 4) * 70}ms`;
     io.observe(el);
   });
+
+  // Mascottes des bordures : déclenchées par l'arrivée de leur section
+  // (elles-mêmes démarrent hors champ).
+  const peekIO = new IntersectionObserver((entries) => entries.forEach((en) => {
+    if (!en.isIntersecting) return;
+    en.target.querySelectorAll(':scope > [data-peek]').forEach((p) => p.classList.add('in'));
+    peekIO.unobserve(en.target);
+  }), { threshold: .15 });
+  document.querySelectorAll('[data-peek]').forEach((p) => peekIO.observe(p.parentElement));
 
   /* ── Conversation WhatsApp ───────────────────────────── */
   function playChat(chat) {
@@ -184,6 +206,42 @@
       });
     }, { passive: true });
   }
+
+  /* ── Compagnon de défilement ────────────────────────────
+     Il descend avec la lecture, change d'équipe dans l'espace pro, et
+     saute en arrivant en bas. */
+  const buddy = document.querySelector('.buddy');
+  const buddyImg = buddy && buddy.querySelector('.buddy-img');
+  const pro = document.getElementById('creators');
+  const heroPeek = document.querySelector('.hero-peek');
+  let buddyPose = 'red_thumbs', lastY = scrollY, arrived = false, bq = false;
+  const setBuddy = (pose) => {
+    if (pose === buddyPose) return;
+    buddyPose = pose;
+    buddyImg.src = src(pose);
+    buddyImg.classList.remove('swap'); void buddyImg.offsetWidth; buddyImg.classList.add('swap');
+  };
+  const onScroll = () => {
+    bq = false;
+    const max = document.documentElement.scrollHeight - innerHeight;
+    const k = max > 0 ? Math.min(1, scrollY / max) : 0;
+    if (heroPeek) heroPeek.style.setProperty('--peek-x', `${Math.min(80, scrollY * .25)}px`);
+    if (!buddy) return;
+    buddy.style.setProperty('--p', `${(k * 100).toFixed(2)}%`);
+    const v = scrollY - lastY; lastY = scrollY;
+    buddyImg.style.setProperty('--tilt', `${Math.max(-14, Math.min(14, v * .6)).toFixed(1)}deg`);
+    const r = pro.getBoundingClientRect();
+    const inPro = r.top < innerHeight / 2 && r.bottom > innerHeight / 2;
+    if (k > .985) {
+      setBuddy(inPro ? 'green_jump' : 'red_jump');
+      if (!arrived) { arrived = true; const b = buddyImg.getBoundingClientRect(); burst(b.left + 32, b.top + 20, 40); }
+    } else {
+      arrived = false;
+      setBuddy(inPro ? 'green_thumbs' : Math.abs(v) > 18 ? 'red_jump' : 'red_thumbs');
+    }
+  };
+  if (!reduce) addEventListener('scroll', () => { if (!bq) { bq = true; requestAnimationFrame(onScroll); } }, { passive: true });
+  onScroll();
 
   /* ── Liens vers l'application de démo ────────────────── */
   // En ligne, l'application est servie sous /app/ ; en local, par le serveur de démo (port 8080).

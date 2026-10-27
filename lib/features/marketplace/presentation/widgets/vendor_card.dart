@@ -5,14 +5,16 @@ import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/eventa_colors.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/pressable.dart';
-import '../../../../core/widgets/ui.dart';
 import '../../../events/domain/models.dart';
 
-String priceLabel(Vendor v) =>
-    'dès {0}{1}'.trf([fcfa(v.priceFrom), v.unit == 'forfait' ? '' : ' / ${v.unit}']);
+String priceLabel(Vendor v) => 'dès {0}{1}'.trf([
+  fcfa(v.priceFrom),
+  v.unit == 'forfait' ? '' : ' / ${v.unit}',
+]);
 
-/// Carte prestataire orientée conversion : photo, puis nom et prix en
-/// premier plan, catégorie, et coordonnées directement lisibles.
+/// Carte prestataire : grande photo qui porte la note et la catégorie,
+/// puis nom, accroche, zone et délai de réponse, et le prix en évidence.
+/// Les coordonnées restent à portée de main.
 class VendorCard extends StatelessWidget {
   const VendorCard({super.key, required this.vendor, required this.onTap});
 
@@ -22,21 +24,29 @@ class VendorCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final v = vendor;
+    final muted = context.text.labelMedium?.copyWith(color: Confetti.inkMuted);
     return Pressable(
       onTap: onTap,
       semanticLabel: v.name,
       child: Container(
         decoration: BoxDecoration(
           color: Confetti.surface,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(26),
           border: Border.all(color: Confetti.line),
+          boxShadow: [
+            BoxShadow(
+              color: Confetti.ink.withValues(alpha: 0.06),
+              blurRadius: 22,
+              offset: const Offset(0, 10),
+            ),
+          ],
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AspectRatio(
-              aspectRatio: 16 / 9,
+              aspectRatio: 16 / 10,
               child: Stack(
                 fit: StackFit.expand,
                 children: [
@@ -44,119 +54,127 @@ class VendorCard extends StatelessWidget {
                     tag: 'vendor-${v.id}',
                     child: Image.asset(v.image, fit: BoxFit.cover),
                   ),
+                  const _Veil(stops: [0, 0.45, 1]),
                   if (v.sponsor != null)
                     Positioned(
-                      left: 10,
-                      top: 10,
+                      left: 12,
+                      top: 12,
                       child: SponsorTag(sponsor: v.sponsor!),
                     ),
-                  if (!v.available)
-                    Positioned(
-                      right: 10,
-                      top: 10,
-                      child: AvailabilityPill(vendor: v),
+                  Positioned(right: 12, top: 12, child: RatingChip(vendor: v)),
+                  Positioned(
+                    left: 12,
+                    bottom: 12,
+                    child: _GlassChip(
+                      icon: v.category.icon,
+                      label: v.category.label,
                     ),
+                  ),
+                  Positioned(
+                    right: 12,
+                    bottom: 12,
+                    child: AvailabilityPill(vendor: v),
+                  ),
                 ],
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Flexible(
+                    child: Text(
+                      v.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: context.text.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                        fontSize: 19,
+                      ),
+                    ),
+                  ),
+                  if (v.verified) ...[
+                    const SizedBox(width: 5),
+                    Icon(AppIcons.verified, size: 17, color: Confetti.violet),
+                  ],
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 0),
+              child: Text(
+                v.tagline,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: context.text.bodyMedium?.copyWith(
+                  color: Confetti.inkMuted,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 6, 16, 0),
+              child: Row(
+                children: [
+                  Icon(AppIcons.place, size: 14, color: Confetti.inkFaint),
+                  const SizedBox(width: 4),
+                  Flexible(
+                    child: Text(
+                      v.zone,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: muted,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Icon(AppIcons.clock, size: 14, color: Confetti.inkFaint),
+                  const SizedBox(width: 4),
+                  Flexible(
+                    child: Text(
+                      'Répond en {0}'.trf([v.responseTime]),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: muted,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 12, 14),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Flexible(
-                              child: Text(
-                                v.name,
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: context.text.titleLarge?.copyWith(
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                            if (v.verified) ...[
-                              const SizedBox(width: 5),
-                              Icon(
-                                AppIcons.verified,
-                                size: 16,
-                                color: Confetti.violet,
-                              ),
-                            ],
-                          ],
+                        Text(
+                          'à partir de'.tr,
+                          style: context.text.labelSmall?.copyWith(
+                            color: Confetti.inkFaint,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                        const SizedBox(height: 3),
-                        Row(
-                          children: [
-                            Icon(
-                              v.category.icon,
-                              size: 13,
-                              color: Confetti.inkMuted,
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            v.unit == 'forfait'
+                                ? fcfa(v.priceFrom)
+                                : '${fcfa(v.priceFrom)} / ${v.unit}',
+                            style: context.text.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: Confetti.coralDeep,
                             ),
-                            const SizedBox(width: 4),
-                            Flexible(
-                              child: Text(
-                                '${v.category.label} · ${v.zone}',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: context.text.bodySmall,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Stars(rating: v.rating, size: 12),
-                          ],
+                          ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'à partir de'.tr,
-                        style: context.text.labelSmall?.copyWith(
-                          color: Confetti.inkFaint,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                      Text(
-                        fcfa(v.priceFrom),
-                        style: context.text.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      if (v.unit != 'forfait')
-                        Text(
-                          '/ ${v.unit}',
-                          style: context.text.labelSmall?.copyWith(
-                            color: Confetti.inkMuted,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(16, 12, 16, 0),
-              child: Divider(height: 1),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 10, 16, 14),
-              child: Wrap(
-                spacing: 14,
-                runSpacing: 6,
-                children: [
-                  _Contact(icon: AppIcons.phone, text: v.phoneNumber),
-                  _Contact(icon: AppIcons.mail, text: v.email),
-                  _Contact(icon: AppIcons.globe, text: v.website),
+                  _ContactDot(icon: AppIcons.phone, label: v.phoneNumber),
+                  _ContactDot(icon: AppIcons.mail, label: v.email),
+                  _ContactDot(icon: AppIcons.globe, label: v.website),
                 ],
               ),
             ),
@@ -167,27 +185,194 @@ class VendorCard extends StatelessWidget {
   }
 }
 
-class _Contact extends StatelessWidget {
-  const _Contact({required this.icon, required this.text});
+/// Carte vitrine (carrousel horizontal de l'accueil) : photo plein cadre,
+/// texte posé sur un voile sombre.
+class VendorSpotlight extends StatelessWidget {
+  const VendorSpotlight({super.key, required this.vendor, required this.onTap});
 
-  final IconData icon;
-  final String text;
+  final Vendor vendor;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 13, color: Confetti.inkMuted),
-        const SizedBox(width: 5),
-        Text(
-          text,
-          style: context.text.labelSmall?.copyWith(
-            color: Confetti.ink,
-            fontWeight: FontWeight.w500,
-          ),
+    final v = vendor;
+    return Pressable(
+      onTap: onTap,
+      semanticLabel: v.name,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(v.image, fit: BoxFit.cover),
+            const _Veil(stops: [0, 0.3, 1]),
+            Positioned(right: 10, top: 10, child: RatingChip(vendor: v)),
+            Positioned(
+              left: 12,
+              right: 12,
+              bottom: 12,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _GlassChip(icon: v.category.icon, label: v.category.label),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          v.name,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.text.titleMedium?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            height: 1.15,
+                          ),
+                        ),
+                      ),
+                      if (v.verified) ...[
+                        const SizedBox(width: 4),
+                        const Icon(
+                          AppIcons.verified,
+                          size: 14,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    priceLabel(v),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.text.labelMedium?.copyWith(
+                      color: const Color(0xFFFFC233),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
+    );
+  }
+}
+
+/// Voile sombre en bas de photo, pour que le texte blanc reste lisible.
+class _Veil extends StatelessWidget {
+  const _Veil({required this.stops});
+
+  final List<double> stops;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: const [
+            Color(0x26000000),
+            Colors.transparent,
+            Color(0xD91A0637),
+          ],
+          stops: stops,
+        ),
+      ),
+    );
+  }
+}
+
+/// Note du prestataire et nombre d'avis, sur une pastille blanche.
+class RatingChip extends StatelessWidget {
+  const RatingChip({super.key, required this.vendor});
+
+  final Vendor vendor;
+
+  @override
+  Widget build(BuildContext context) {
+    final r = vendor.rating.toStringAsFixed(1).replaceAll('.', ',');
+    return Container(
+      padding: const EdgeInsets.fromLTRB(7, 4, 9, 4),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.95),
+        borderRadius: BorderRadius.circular(99),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(AppIcons.star, size: 12, color: Color(0xFFE5A21A)),
+          const SizedBox(width: 3),
+          Text(
+            '$r · ${vendor.reviews}',
+            style: context.text.labelSmall?.copyWith(
+              color: Confetti.inkFixed,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Pastille translucide (catégorie) posée sur une photo.
+class _GlassChip extends StatelessWidget {
+  const _GlassChip({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(8, 4, 10, 4),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(99),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.35)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: Colors.white),
+          const SizedBox(width: 5),
+          Text(
+            label,
+            style: context.text.labelSmall?.copyWith(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Coordonnée affichée en pastille ronde ; le détail est dans l'infobulle.
+class _ContactDot extends StatelessWidget {
+  const _ContactDot({required this.icon, required this.label});
+
+  final IconData icon;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: label,
+      child: Container(
+        width: 34,
+        height: 34,
+        margin: const EdgeInsets.only(left: 6),
+        decoration: BoxDecoration(
+          color: Confetti.lavender,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, size: 15, color: Confetti.ink),
+      ),
     );
   }
 }
@@ -245,7 +430,7 @@ class AvailabilityPill extends StatelessWidget {
           Text(
             ok ? 'Disponible'.tr : (vendor.nextAvailable ?? 'Complet'.tr),
             style: context.text.labelSmall?.copyWith(
-              color: Confetti.ink,
+              color: Confetti.inkFixed,
               fontSize: 10.5,
             ),
           ),

@@ -107,7 +107,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
               Row(
                 children: [
                   Expanded(
-                    child: Text('Filtres'.tr, style: context.text.headlineSmall),
+                    child: Text(
+                      'Filtres'.tr,
+                      style: context.text.headlineSmall,
+                    ),
                   ),
                   TextButton(
                     onPressed: () => set(() {
@@ -267,9 +270,10 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 child: Row(
                   children: [
                     Text(
-                      (results.length > 1 ? '{0} prestataires' : '{0} prestataire').trf([
-                        results.length,
-                      ]),
+                      (results.length > 1
+                              ? '{0} prestataires'
+                              : '{0} prestataire')
+                          .trf([results.length]),
                       style: context.text.labelMedium?.copyWith(
                         color: Confetti.inkMuted,
                       ),
@@ -329,7 +333,7 @@ class _ExploreScreenState extends State<ExploreScreen> {
                         crossAxisCount: cols,
                         crossAxisSpacing: 14,
                         mainAxisSpacing: 16,
-                        mainAxisExtent: colW * 9 / 16 + 176,
+                        mainAxisExtent: colW * 10 / 16 + 162,
                       ),
                       itemCount: results.length,
                       itemBuilder: (context, i) => Entrance(

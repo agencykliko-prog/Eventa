@@ -20,18 +20,20 @@ import '../../../core/widgets/ui.dart';
 import '../../auth/presentation/session_provider.dart';
 import '../../commerce/domain/commerce_models.dart';
 import '../../commerce/presentation/commerce_providers.dart';
+import '../../commerce/data/catalog.dart';
 import '../../commerce/presentation/payment_sheet.dart';
 import '../../dashboard/presentation/widgets/budget_overview.dart';
 import '../../events/domain/models.dart';
 import '../../events/presentation/events_providers.dart';
-import '../../events/presentation/widgets/event_card.dart';
+import '../../marketplace/presentation/widgets/vendor_card.dart';
 import '../../premium/presentation/premium_nudge.dart';
+import 'event_carousel.dart';
 import 'greeting_hero.dart';
 import 'notifications_sheet.dart';
 
-/// Accueil Organisateur. Ordre de lecture : l'événement qui arrive, son
-/// budget, les prochaines échéances, ce qui demande une action, puis les
-/// autres événements.
+/// Accueil Organisateur. Ordre de lecture : le diaporama des événements
+/// (le prochain en premier), son budget, les prochaines échéances, ce qui
+/// demande une action, puis les prestataires à la une.
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -52,6 +54,13 @@ class HomeScreen extends ConsumerWidget {
               SliverToBoxAdapter(
                 child: GreetingHero(
                   header: HomeHeader(subtitle: _today()),
+                  action: PillButton(
+                    label: 'Créer un événement'.tr,
+                    icon: AppIcons.add,
+                    expand: false,
+                    height: 46,
+                    onPressed: () => context.push(Routes.newEvent),
+                  ),
                 ),
               ),
               ...events.when(
@@ -88,7 +97,9 @@ class HomeScreen extends ConsumerWidget {
       (e) => daysUntil(e.date) >= 0,
       orElse: () => sorted.first,
     );
-    final others = sorted.where((e) => e.id != next.id).toList();
+    final upcoming = [next, ...sorted.where((e) => e.id != next.id)];
+    final featured = [...Catalog.vendors]
+      ..sort((a, b) => b.rating.compareTo(a.rating));
 
     final deadlines = [
       for (final e in sorted)
@@ -109,17 +120,12 @@ class HomeScreen extends ConsumerWidget {
     final pendingRsvp = next.guests.pending;
 
     return [
-      SliverPadding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-        sliver: SliverToBoxAdapter(
-          child: Entrance(
-            child: SizedBox(
-              height: 300,
-              child: EventCard(
-                event: next,
-                onTap: () => context.push(Routes.event(next.id)),
-              ),
-            ),
+      SliverToBoxAdapter(child: SectionTitle('Mes événements'.tr)),
+      SliverToBoxAdapter(
+        child: Entrance(
+          child: EventCarousel(
+            events: upcoming,
+            height: MediaQuery.sizeOf(context).width < 400 ? 280 : 320,
           ),
         ),
       ),
@@ -230,31 +236,35 @@ class HomeScreen extends ConsumerWidget {
           ],
         ),
       ),
-      if (others.isNotEmpty) ...[
-        SliverToBoxAdapter(
-          child: SectionTitle(
-            'Mes événements'.tr,
-            action: 'Nouveau'.tr,
-            onAction: () => context.push(Routes.newEvent),
-          ),
+      SliverToBoxAdapter(
+        child: SectionTitle(
+          'Prestataires à la une'.tr,
+          action: 'Tout voir'.tr,
+          onAction: () => context.go(Routes.explore),
         ),
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          sliver: SliverToBoxAdapter(
-            child: Panel(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-              child: Column(
-                children: [
-                  for (final (i, e) in others.indexed) ...[
-                    if (i > 0) const Divider(height: 1),
-                    _EventRow(event: e),
-                  ],
-                ],
+      ),
+      SliverToBoxAdapter(
+        child: SizedBox(
+          height: 236,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            physics: const BouncingScrollPhysics(),
+            itemCount: math.min(8, featured.length),
+            separatorBuilder: (_, _) => const SizedBox(width: 12),
+            itemBuilder: (context, i) => Entrance(
+              index: i.clamp(0, 4),
+              child: SizedBox(
+                width: 176,
+                child: VendorSpotlight(
+                  vendor: featured[i],
+                  onTap: () => context.push(Routes.vendor(featured[i].id)),
+                ),
               ),
             ),
           ),
         ),
-      ],
+      ),
     ];
   }
 
@@ -442,10 +452,7 @@ class _DeadlineRow extends StatelessWidget {
                 height: 24,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Confetti.border,
-                    width: 1.6,
-                  ),
+                  border: Border.all(color: Confetti.border, width: 1.6),
                 ),
               ),
             ),
@@ -510,62 +517,6 @@ class _ActionRow extends StatelessWidget {
   }
 }
 
-class _EventRow extends StatelessWidget {
-  const _EventRow({required this.event});
-
-  final Event event;
-
-  @override
-  Widget build(BuildContext context) {
-    return Pressable(
-      scale: 0.99,
-      onTap: () => context.push(Routes.event(event.id)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Row(
-          children: [
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                event.cover,
-                width: 48,
-                height: 48,
-                fit: BoxFit.cover,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    event.name,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: context.text.titleSmall,
-                  ),
-                  Text(
-                    '${mediumDate(event.date)} · ${timeOf(event.date)}',
-                    style: context.text.bodySmall,
-                  ),
-                ],
-              ),
-            ),
-            Text(
-              countdownLabel(event.date),
-              style: context.text.titleSmall?.copyWith(
-                color: event.category.hue.text,
-              ),
-            ),
-            const SizedBox(width: 6),
-            Icon(AppIcons.chevron, size: 14, color: Confetti.inkFaint),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
 class _Loading extends StatelessWidget {
   const _Loading();
 
@@ -592,7 +543,8 @@ class _Empty extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          'Créez un événement : on prépare la checklist et le budget selon son type.'.tr,
+          'Créez un événement : on prépare la checklist et le budget selon son type.'
+              .tr,
           textAlign: TextAlign.center,
           style: context.text.bodyMedium?.copyWith(color: Confetti.inkMuted),
         ),

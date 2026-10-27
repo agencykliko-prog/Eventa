@@ -15,14 +15,14 @@ abstract final class AdminDemo {
   static final team = [
     const AdminMember(
       id: 'adm1',
-      name: 'Kader Bamba',
-      email: 'kader@eventa.demo',
+      name: 'Jean-Jacques Djipro',
+      email: 'jean-jacques@eventa.demo',
       role: AdminRole.superAdmin,
     ),
     const AdminMember(
       id: 'adm2',
-      name: 'Nadia Coulibaly',
-      email: 'nadia@eventa.demo',
+      name: 'Karen Akablan',
+      email: 'karen@eventa.demo',
       role: AdminRole.finance,
     ),
     const AdminMember(
@@ -630,7 +630,7 @@ abstract final class AdminDemo {
       priority: TicketPriority.high,
       status: TicketStatus.progress,
       created: _ago(h: 7),
-      assignee: 'Nadia Coulibaly',
+      assignee: 'Karen Akablan',
       messages: [
         'J’ai été débité deux fois de 180 000 FCFA.',
         'Nous vérifions avec Wave, réponse sous 24 h.',
@@ -676,13 +676,13 @@ abstract final class AdminDemo {
     ),
     AuditEntry(
       at: _ago(h: 3),
-      actor: 'Nadia Coulibaly',
+      actor: 'Karen Akablan',
       action: 'Rapprochement validé',
       target: 'Relevé Wave du jour',
     ),
     AuditEntry(
       at: _ago(d: 1),
-      actor: 'Kader Bamba',
+      actor: 'Jean-Jacques Djipro',
       action: 'Rôle modifié',
       target: 'Marc Gnahoré → Marketing',
     ),
@@ -694,7 +694,7 @@ abstract final class AdminDemo {
     ),
     AuditEntry(
       at: _ago(d: 9),
-      actor: 'Kader Bamba',
+      actor: 'Jean-Jacques Djipro',
       action: 'Compte suspendu',
       target: 'U-1063 · Fatou Konaté',
     ),
