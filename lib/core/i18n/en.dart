@@ -1247,8 +1247,7 @@ const en = <String, String>{
   'Cochez la case pour continuer.': 'Tick the box to continue.',
   'Le budget parfait\npour ': 'The perfect budget\nto ',
   'célébrer': 'celebrate',
-  'Des prestataires vérifiés, vos invités et votre équipe : tout votre événement au même endroit.':
-      'Verified vendors, your guests and your team: your whole event in one place.',
+  'Des prestataires vérifiés, vos invités et votre équipe : tout votre événement au même endroit.': 'Verified vendors, your guests and your team: your whole event in one place.',
   '{0} Go': '{0} GB',
   '{0} sur {1}': '{0} of {1}',
 
@@ -1279,8 +1278,7 @@ const en = <String, String>{
       'Active subscription · 29,900 FCFA/month',
   'Bienvenue dans l’offre Creator': 'Welcome to the Creator plan',
   'Résilier l’offre Creator ?': 'Cancel the Creator plan?',
-  'Vos avantages restent actifs jusqu’à la fin de la période payée. Aucun prélèvement ensuite.':
-      'Your benefits stay active until the end of the paid period. No further charges.',
+  'Vos avantages restent actifs jusqu’à la fin de la période payée. Aucun prélèvement ensuite.': 'Your benefits stay active until the end of the paid period. No further charges.',
   'Résilier': 'Cancel',
   'Garder mon abonnement': 'Keep my subscription',
   'Résiliation enregistrée': 'Cancellation saved',
@@ -1290,8 +1288,7 @@ const en = <String, String>{
       'No commitment · cancel anytime',
   'Offre Creator résiliée': 'Creator plan cancelled',
   'Offre Creator active': 'Creator plan active',
-  'Active jusqu’au {0}, sans renouvellement.':
-      'Active until {0}, no renewal.',
+  'Active jusqu’au {0}, sans renouvellement.': 'Active until {0}, no renewal.',
   'Prochain renouvellement le {0} · {1}': 'Next renewal on {0} · {1}',
   'Reçu {0}': 'Receipt {0}',
   'Réactiver': 'Reactivate',
@@ -1328,14 +1325,14 @@ const en = <String, String>{
   'Facturation': 'Invoicing',
   'Facturer': 'Invoice',
   'Facture {0} envoyée': 'Invoice {0} sent',
-  'Aucune prestation confirmée à facturer.':
-      'No confirmed booking to invoice.',
+  'Aucune prestation confirmée à facturer.': 'No confirmed booking to invoice.',
   'Payée · {0}': 'Paid · {0}',
   'Échéance {0} · {1}': 'Due {0} · {1}',
   'Payée': 'Paid',
   'Encaisser': 'Mark as paid',
   'Inviter un membre': 'Invite a member',
-  'Nom manquant ou membre déjà invité': 'Name missing or member already invited',
+  'Nom manquant ou membre déjà invité':
+      'Name missing or member already invited',
   'Inviter': 'Invite',
   'Invitez vos chefs de projet et votre équipe terrain.':
       'Invite your project managers and your field team.',
@@ -1364,9 +1361,90 @@ const en = <String, String>{
   'Votre marque': 'Your brand',
   'DEVIS': 'QUOTE',
   'API & intégrations': 'API & integrations',
-  'Connectez votre site ou votre outil de gestion pour recevoir les demandes automatiquement.':
-      'Connect your website or management tool to receive requests automatically.',
+  'Connectez votre site ou votre outil de gestion pour recevoir les demandes automatiquement.': 'Connect your website or management tool to receive requests automatically.',
   'Générer une clé d’API': 'Generate an API key',
   'Copier la clé': 'Copy key',
   'Clé copiée': 'Key copied',
+
+  // ─── Messagerie ────────────────────────────────────────────────────────
+  'Messages': 'Messages',
+  'à l’instant': 'just now',
+  'Vos échanges avec les clients, par demande.':
+      'Your conversations with clients, by request.',
+  'Vos échanges avec les prestataires, par réservation.':
+      'Your conversations with vendors, by booking.',
+  'Aucun message pour l’instant': 'No messages yet',
+  'Vous : {0}': 'You: {0}',
+  'Pas encore de conversation': 'No conversations yet',
+  'Les messages de vos clients arriveront ici.':
+      'Messages from your clients will appear here.',
+  'Demandez un devis à un prestataire : vos échanges apparaîtront ici.':
+      'Request a quote from a vendor: your conversations will appear here.',
+  'Trouver un prestataire': 'Find a vendor',
+  'Conversation introuvable.': 'Conversation not found.',
+  'Écrivez le premier message.': 'Write the first message.',
+  'Écrire un message…': 'Write a message…',
+  'Voir le dossier': 'View file',
+  'Bonjour ! Merci pour votre message, je vous réponds au plus vite.':
+      'Hello! Thanks for your message, I’ll get back to you as soon as I can.',
+  'Merci pour votre message, je regarde et je reviens vers vous.':
+      'Thanks for your message, I’ll look into it and get back to you.',
+
+  // ─── Notifications ─────────────────────────────────────────────────────
+  'Rien de nouveau pour le moment.': 'Nothing new for now.',
+  '{0} · valable 7 jours': '{0} · valid for 7 days',
+  'Nouveau message': 'New message',
+  '{0} : {1}': '{0}: {1}',
+  'Yasmine Ouattara : {0}': 'Yasmine Ouattara: {0}',
+  'Profil vérifié': 'Profile verified',
+  'Le badge « Vérifié » apparaît sur votre fiche.':
+      'The “Verified” badge now shows on your profile.',
+  'Informations demandées': 'Information requested',
+  'Complétez votre dossier de vérification.':
+      'Complete your verification file.',
+  'Vérification refusée': 'Verification declined',
+  'Contactez l’équipe pour en savoir plus.':
+      'Contact the team to find out more.',
+
+  // ─── Vérification du prestataire ───────────────────────────────────────
+  'Vérification': 'Verification',
+  'Identité, existence légale et compte de reversement.':
+      'Identity, legal registration and payout account.',
+  'Pièce d’identité du gérant': 'Manager’s ID',
+  'CNI, passeport ou carte consulaire':
+      'National ID, passport or consular card',
+  'Registre du commerce (RCCM)': 'Trade register (RCCM)',
+  'Ou attestation d’auto-entrepreneur': 'Or sole-trader certificate',
+  'Justificatif d’adresse': 'Proof of address',
+  'Facture CIE, SODECI ou bail': 'CIE or SODECI bill, or lease',
+  'Photos de réalisations': 'Photos of past work',
+  'Au moins 3 prestations récentes': 'At least 3 recent jobs',
+  'Numéro Mobile Money ou RIB au nom de l’entreprise':
+      'Mobile Money number or bank details in the company’s name',
+  'À compléter': 'To complete',
+  'En cours de vérification': 'Under review',
+  'Refusé': 'Declined',
+  'Faites vérifier votre profil': 'Get your profile verified',
+  'Les organisateurs réservent plus volontiers un prestataire vérifié. Déposez vos pièces puis envoyez le dossier.': 'Organisers are more likely to book a verified vendor. Upload your documents, then send your file.',
+  'Dossier en cours de vérification': 'File under review',
+  'Envoyé le {0}. Notre équipe contrôle vos pièces ; vous recevrez une notification dès la décision.': 'Sent on {0}. Our team is checking your documents; you’ll be notified as soon as a decision is made.',
+  'Complétez votre dossier puis renvoyez-le.':
+      'Complete your file, then send it again.',
+  'Le badge « Vérifié » apparaît sur votre fiche et dans les résultats de recherche.':
+      'The “Verified” badge shows on your profile and in search results.',
+  'Pièces justificatives': 'Supporting documents',
+  '{0}/{1}': '{0}/{1}',
+  'Document retiré': 'Document removed',
+  'Document ajouté': 'Document added',
+  'Vos pièces ne servent qu’à la vérification et ne sont jamais affichées sur votre fiche.': 'Your documents are only used for verification and never shown on your profile.',
+  'Renvoyer le dossier': 'Send the file again',
+  'Envoyer le dossier': 'Send the file',
+  'Encore {0} pièce(s) à déposer': '{0} more document(s) to upload',
+  'Dossier envoyé à l’équipe Eventa': 'File sent to the Eventa team',
+  'Retirer': 'Remove',
+
+  // ─── Mesure d'audience ─────────────────────────────────────────────────
+  'Mesure d’audience anonyme': 'Anonymous audience measurement',
+  'Écrans vus, sans identifiant, pour améliorer Eventa':
+      'Screens viewed, with no identifier, to improve Eventa',
 };

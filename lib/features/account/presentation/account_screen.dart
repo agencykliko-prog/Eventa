@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/analytics/analytics.dart';
 import '../../../core/i18n/tr.dart';
 import '../../../core/prefs/prefs_provider.dart';
 import '../../../core/router/app_router.dart';
@@ -257,7 +258,7 @@ class AccountScreen extends ConsumerWidget {
                   AppIcons.shield,
                   'Confidentialité'.tr,
                   'Visibilité du profil et des données'.tr,
-                  () => _privacySheet(context),
+                  () => _privacySheet(context, ref),
                 ),
                 _Row(
                   AppIcons.help,
@@ -362,25 +363,30 @@ class AccountScreen extends ConsumerWidget {
     ),
   );
 
-  void _privacySheet(BuildContext context) => showEventaSheet<void>(
-    context,
-    builder: (_) => _ToggleSheet(
-      title: 'Confidentialité'.tr,
-      items: [
-        ('Profil visible des collaborateurs'.tr, 'Nom et photo'.tr, true),
-        (
-          'Partager mes statistiques anonymes'.tr,
-          'Pour améliorer Eventa'.tr,
-          false,
+  void _privacySheet(BuildContext context, WidgetRef ref) =>
+      showEventaSheet<void>(
+        context,
+        builder: (_) => _ToggleSheet(
+          title: 'Confidentialité'.tr,
+          // La mesure d'audience suit réellement ce réglage.
+          onChanged: (i, v) {
+            if (i == 1) ref.read(audienceConsentProvider.notifier).set(v);
+          },
+          items: [
+            ('Profil visible des collaborateurs'.tr, 'Nom et photo'.tr, true),
+            (
+              'Mesure d’audience anonyme'.tr,
+              'Écrans vus, sans identifiant, pour améliorer Eventa'.tr,
+              ref.read(audienceConsentProvider),
+            ),
+            (
+              'Afficher mon numéro aux prestataires'.tr,
+              'Après une demande de devis'.tr,
+              true,
+            ),
+          ],
         ),
-        (
-          'Afficher mon numéro aux prestataires'.tr,
-          'Après une demande de devis'.tr,
-          true,
-        ),
-      ],
-    ),
-  );
+      );
 
   void _paymentSheet(BuildContext context) {
     var method = PayMethod.wave;
@@ -521,10 +527,17 @@ class _Group extends StatelessWidget {
 }
 
 class _ToggleSheet extends StatefulWidget {
-  const _ToggleSheet({required this.title, required this.items});
+  const _ToggleSheet({
+    required this.title,
+    required this.items,
+    this.onChanged,
+  });
 
   final String title;
   final List<(String, String, bool)> items;
+
+  /// Appelé à chaque bascule (index de la ligne, nouvelle valeur).
+  final void Function(int index, bool value)? onChanged;
 
   @override
   State<_ToggleSheet> createState() => _ToggleSheetState();
@@ -562,7 +575,10 @@ class _ToggleSheetState extends State<_ToggleSheet> {
                   ),
                   Switch(
                     value: _values[i],
-                    onChanged: (v) => setState(() => _values[i] = v),
+                    onChanged: (v) {
+                      setState(() => _values[i] = v);
+                      widget.onChanged?.call(i, v);
+                    },
                   ),
                 ],
               ),

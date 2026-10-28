@@ -166,7 +166,9 @@ class _GreetingHeroState extends ConsumerState<GreetingHero>
                       // Bulle de dialogue : la salutation stylisée.
                       Positioned(
                         left: textLeft,
-                        right: 16,
+                        // Sur grand écran, la bulle garde une largeur de
+                        // bulle au lieu de traverser toute la carte.
+                        right: math.max(16, box.maxWidth - textLeft - 340),
                         top: 20,
                         child: _Rise(
                           delay: 260,

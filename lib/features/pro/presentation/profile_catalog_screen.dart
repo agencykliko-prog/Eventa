@@ -16,6 +16,8 @@ import '../../marketplace/presentation/explore_screen.dart';
 import '../domain/pro_models.dart';
 import 'pro_providers.dart';
 import 'pro_widgets.dart';
+import 'verification_providers.dart';
+import 'verification_screen.dart';
 
 /// A. Profil & catalogue : présentation, portfolio, coordonnées, zone,
 /// catégories, forfaits, options et conditions de vente.
@@ -54,6 +56,7 @@ class ProfileCatalogScreen extends ConsumerWidget {
     final c = profile.creator;
     final cat = ref.watch(proProvider.select((s) => s.catalog));
     final n = ref.read(proProvider.notifier);
+    final verification = ref.watch(verificationProvider.select((v) => v.step));
 
     return ProPage(
       title: 'Profil & catalogue'.tr,
@@ -86,9 +89,9 @@ class ProfileCatalogScreen extends ConsumerWidget {
                     ),
                   ),
                   Tag(
-                    label: 'Vérifié'.tr,
-                    hue: Hue.lagoon,
-                    icon: AppIcons.verified,
+                    label: verification.label,
+                    hue: verification.hue,
+                    icon: verification.icon,
                   ),
                 ],
               ),

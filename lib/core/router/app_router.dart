@@ -23,6 +23,7 @@ import '../../features/creator/presentation/requests_screen.dart';
 import '../../features/dashboard/presentation/event_dashboard_screen.dart';
 import '../../features/events/domain/models.dart';
 import '../../features/home/presentation/home_screen.dart';
+import '../../features/inbox/inbox_screen.dart';
 import '../../features/home/presentation/home_shell.dart';
 import '../../features/marketplace/presentation/explore_screen.dart';
 import '../../features/marketplace/presentation/vendor_screen.dart';
@@ -36,9 +37,11 @@ import '../../features/pro/presentation/profile_catalog_screen.dart';
 import '../../features/pro/presentation/reputation_screen.dart';
 import '../../features/pro/presentation/request_detail_screen.dart';
 import '../../features/pro/presentation/revenue_screen.dart';
+import '../../features/pro/presentation/verification_screen.dart';
 import '../../features/premium/presentation/premium_screen.dart';
 import '../../features/tasks/presentation/tasks_screen.dart';
 import '../../features/vault/presentation/vault_screen.dart';
+import '../analytics/analytics.dart';
 import '../theme/eventa_colors.dart';
 
 abstract final class Routes {
@@ -59,6 +62,8 @@ abstract final class Routes {
   static const privacy = '/confidentialite';
   static const terms = '/conditions';
   static const admin = '/admin';
+  static const messages = '/messages';
+  static String conversation(String id) => '/messages/$id';
   static String event(String id) => '/evenement/$id';
   static String budget(String id) => '/evenement/$id/budget';
   static String tasks(String id) => '/evenement/$id/taches';
@@ -92,7 +97,7 @@ final routerProvider = Provider<GoRouter>((ref) {
   ref.listen(adminSessionProvider, (_, next) => adminSession.value = next);
   ref.onDispose(adminSession.dispose);
 
-  return GoRouter(
+  final router = GoRouter(
     navigatorKey: _rootKey,
     initialLocation: Routes.onboarding,
     refreshListenable: Listenable.merge([session, adminSession]),
@@ -292,6 +297,22 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (c, s) => _bounded(const StudioScreen()),
       ),
       GoRoute(
+        path: '/pro/verification',
+        parentNavigatorKey: _rootKey,
+        builder: (c, s) => _bounded(const VerificationScreen()),
+      ),
+      GoRoute(
+        path: Routes.messages,
+        parentNavigatorKey: _rootKey,
+        builder: (c, s) => _bounded(const InboxScreen()),
+      ),
+      GoRoute(
+        path: '/messages/:id',
+        parentNavigatorKey: _rootKey,
+        builder: (c, s) =>
+            _bounded(ConversationScreen(id: s.pathParameters['id']!)),
+      ),
+      GoRoute(
         path: '/pro/reputation',
         parentNavigatorKey: _rootKey,
         builder: (c, s) => _bounded(const ReputationScreen()),
@@ -351,6 +372,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
     ],
   );
+
+  // Mesure d'audience : chaque écran, par modèle de chemin (sans identifiant).
+  // Le centre de contrôle, réservé à l'équipe, n'est pas mesuré.
+  void measure() {
+    final path = router.routerDelegate.currentConfiguration.fullPath;
+    if (path.startsWith(Routes.admin)) return;
+    Future.microtask(() => ref.read(audienceProvider.notifier).screen(path));
+  }
+
+  router.routerDelegate.addListener(measure);
+  ref.onDispose(() => router.routerDelegate.removeListener(measure));
+  return router;
 });
 
 CustomTransitionPage<void> _fade(GoRouterState s, Widget child) =>

@@ -18,6 +18,7 @@ import '../../commerce/domain/commerce_models.dart';
 import '../../commerce/presentation/commerce_providers.dart';
 import '../../events/domain/models.dart';
 import '../../events/presentation/events_providers.dart';
+import '../../inbox/inbox_providers.dart';
 import 'widgets/vendor_card.dart';
 import '../data/vendor_media.dart';
 
@@ -370,7 +371,7 @@ class _ActionBar extends ConsumerWidget {
             AppIcons.message,
             'Message'.tr,
             Confetti.violet,
-            () => _messageSheet(context, v),
+            () => _messageSheet(context, ref, v),
           ),
           contact(
             AppIcons.whatsapp,
@@ -395,7 +396,9 @@ class _ActionBar extends ConsumerWidget {
     );
   }
 
-  void _messageSheet(BuildContext context, Vendor v) {
+  /// Premier message au prestataire : la conversation s'ouvre ensuite dans
+  /// la messagerie, où arrive sa réponse.
+  void _messageSheet(BuildContext context, WidgetRef ref, Vendor v) {
     final c = TextEditingController(
       text: 'Bonjour, êtes-vous disponible à ma date ?'.tr,
     );
@@ -421,12 +424,11 @@ class _ActionBar extends ConsumerWidget {
               icon: AppIcons.send,
               tone: ButtonTone.dark,
               onPressed: () {
+                final text = c.text.trim();
+                if (text.isEmpty) return;
+                ref.read(directThreadsProvider.notifier).send(v, text);
                 Navigator.of(ctx).pop();
-                toast(
-                  context,
-                  'Message envoyé à {0}'.trf([v.name]),
-                  icon: AppIcons.send,
-                );
+                context.push(Routes.conversation(directConversationId(v)));
               },
             ),
           ],

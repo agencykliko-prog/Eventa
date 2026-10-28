@@ -25,6 +25,9 @@ class OnboardingScreen extends StatelessWidget {
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, c) {
+            if (c.maxWidth >= 900 && c.maxHeight >= 560) {
+              return _Desktop(height: c.maxHeight);
+            }
             final collageH = (c.maxHeight * 0.5).clamp(280.0, 460.0);
             // Défile seulement si l'écran est trop court ; sinon les
             // boutons restent calés en bas.
@@ -118,6 +121,120 @@ class OnboardingScreen extends StatelessWidget {
               ],
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+/// Bienvenue desktop : promesse et boutons à gauche, collage à droite.
+class _Desktop extends StatelessWidget {
+  const _Desktop({required this.height});
+
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    final collageH = (height * 0.74).clamp(420.0, 640.0);
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1200),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(56, 28, 56, 28),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Entrance(child: EventaWordmark(size: 28)),
+              Expanded(
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 5,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Entrance(
+                            index: 6,
+                            child: Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(text: 'Le budget parfait\npour '.tr),
+                                  TextSpan(
+                                    text: 'célébrer'.tr,
+                                    style: TextStyle(color: Confetti.violet),
+                                  ),
+                                  const TextSpan(text: '.'),
+                                ],
+                              ),
+                              style: context.text.displayMedium?.copyWith(
+                                fontSize: 60,
+                                height: 1.04,
+                                letterSpacing: -1.8,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 18),
+                          Entrance(
+                            index: 7,
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 440),
+                              child: Text(
+                                'Des prestataires vérifiés, vos invités et votre équipe : tout votre événement au même endroit.'
+                                    .tr,
+                                style: context.text.bodyLarge?.copyWith(
+                                  fontSize: 19,
+                                  height: 1.45,
+                                  color: context.eventa.muted,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 36),
+                          Entrance(
+                            index: 8,
+                            child: Wrap(
+                              spacing: 12,
+                              runSpacing: 12,
+                              children: [
+                                PillButton(
+                                  label: 'Créer un compte'.tr,
+                                  expand: false,
+                                  onPressed: () => context.push(Routes.signUp),
+                                ),
+                                PillButton(
+                                  label: 'Se connecter'.tr,
+                                  tone: ButtonTone.ghost,
+                                  expand: false,
+                                  onPressed: () => context.push(Routes.signIn),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 40),
+                    Expanded(
+                      flex: 6,
+                      child: SizedBox(
+                        height: collageH,
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
+                              child: CustomPaint(painter: _BlobPainter()),
+                            ),
+                            const Positioned.fill(child: _Collage()),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

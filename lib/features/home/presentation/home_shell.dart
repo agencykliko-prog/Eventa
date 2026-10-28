@@ -86,7 +86,13 @@ class HomeShell extends ConsumerWidget {
             Expanded(
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 760),
+                  // L'accueil Creator, tableau de bord pro, prend plus de
+                  // largeur ; les autres onglets gardent la largeur de lecture.
+                  constraints: BoxConstraints(
+                    maxWidth: creator && shell.currentIndex == Branch.home
+                        ? 1240
+                        : 760,
+                  ),
                   child: shell,
                 ),
               ),

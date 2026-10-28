@@ -241,6 +241,13 @@ class AdminController extends Notifier<AdminState> {
 
   // ─── Vérification ───────────────────────────────────────────────────
 
+  /// Dossier envoyé par un prestataire depuis l'app.
+  void addCheck(VendorCheck c) => state = _log(
+    state.copyWith(checks: [c, ...state.checks]),
+    'Dossier de vérification reçu',
+    '${c.id} · ${c.business}',
+  );
+
   void setDoc(String checkId, int index, DocStatus st) {
     final c = state.checks.firstWhere((c) => c.id == checkId);
     final docs = [...c.docs];

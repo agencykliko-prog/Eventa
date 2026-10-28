@@ -3,6 +3,7 @@ import 'dart:math' as math;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/analytics/analytics.dart';
 import '../../../core/i18n/tr.dart';
 import '../../../core/sound/sounds.dart';
 import '../../events/domain/models.dart';
@@ -206,6 +207,7 @@ class BookingsNotifier extends Notifier<List<Booking>> {
       ],
     );
     state = [b, ...state];
+    ref.read(audienceProvider.notifier).track(Metric.quoteRequest);
     ref
         .read(eventsProvider.notifier)
         .upsertVendor(
@@ -324,6 +326,7 @@ class BookingsNotifier extends Notifier<List<Booking>> {
   void accept(String id) {
     final b = byId(id);
     _set(b.copyWith(step: BookingStep.reserved));
+    ref.read(audienceProvider.notifier).track(Metric.booking);
     ref.read(soundProvider).play(Sfx.booking);
     final events = ref.read(eventsProvider.notifier);
     events.commit(b.eventId, b.vendor.category.budget, b.quote!.subtotal);
@@ -359,6 +362,7 @@ class BookingsNotifier extends Notifier<List<Booking>> {
     _set(
       b.copyWith(step: next, paidAmount: paid, receipts: [...b.receipts, r]),
     );
+    ref.read(audienceProvider.notifier).track(Metric.payment);
 
     final events = ref.read(eventsProvider.notifier);
     events.addExpense(
@@ -406,6 +410,7 @@ class BookingsNotifier extends Notifier<List<Booking>> {
         ],
       ),
     );
+    ref.read(audienceProvider.notifier).track(Metric.messageSent);
     Timer(const Duration(milliseconds: 1500), () {
       if (!state.any((x) => x.id == id)) return;
       final cur = byId(id);

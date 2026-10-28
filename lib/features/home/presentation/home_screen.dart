@@ -30,6 +30,8 @@ import '../../premium/presentation/premium_nudge.dart';
 import 'event_carousel.dart';
 import 'greeting_hero.dart';
 import 'notifications_sheet.dart';
+import '../../inbox/inbox_providers.dart';
+import '../../notifications/notifications_provider.dart';
 
 /// Accueil Organisateur. Ordre de lecture : le diaporama des événements
 /// (le prochain en premier), son budget, les prochaines échéances, ce qui
@@ -366,6 +368,8 @@ class HomeHeader extends ConsumerWidget {
               ],
             ),
           ),
+          const _MessagesButton(),
+          const SizedBox(width: 8),
           const _Bell(),
         ],
       ),
@@ -562,8 +566,22 @@ class _Empty extends StatelessWidget {
   );
 }
 
-/// Cloche des notifications. Une fois par session, une notification
-/// « arrive » peu après l'ouverture : petit son et balancement.
+/// Accès à la messagerie, avec le nombre de messages non lus.
+class _MessagesButton extends ConsumerWidget {
+  const _MessagesButton();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => RoundIconButton(
+    icon: AppIcons.message,
+    tooltip: 'Messages',
+    badgeCount: ref.watch(unreadMessagesProvider),
+    onTap: () => context.push(Routes.messages),
+  );
+}
+
+/// Cloche des notifications, avec le nombre de non lues. Une fois par
+/// session, la cloche sonne peu après l'ouverture ; elle sonne aussi à
+/// chaque nouvelle notification.
 class _Bell extends ConsumerStatefulWidget {
   const _Bell();
 
@@ -589,10 +607,14 @@ class _BellState extends ConsumerState<_Bell>
     _Bell._rang = true;
     _timer = Timer(const Duration(milliseconds: 2600), () {
       if (!mounted) return;
-      ref.read(soundProvider).play(Sfx.notification);
-      setState(() => _fresh = true);
-      _swing.forward(from: 0);
+      _ring();
     });
+  }
+
+  void _ring() {
+    ref.read(soundProvider).play(Sfx.notification);
+    setState(() => _fresh = true);
+    _swing.forward(from: 0);
   }
 
   @override
@@ -604,6 +626,10 @@ class _BellState extends ConsumerState<_Bell>
 
   @override
   Widget build(BuildContext context) {
+    ref.listen(unreadNoticesProvider, (prev, next) {
+      if (prev != null && next > prev) _ring();
+    });
+    final unread = ref.watch(unreadNoticesProvider);
     return AnimatedBuilder(
       animation: _swing,
       builder: (context, child) {
@@ -619,10 +645,10 @@ class _BellState extends ConsumerState<_Bell>
       child: RoundIconButton(
         icon: AppIcons.bell,
         tooltip: 'Notifications',
-        badge: !_fresh,
-        badgeCount: _fresh ? 3 : null,
+        badge: !_fresh && unread > 0,
+        badgeCount: _fresh ? unread : null,
         onTap: () {
-          setState(() => _fresh = false);
+          setState(() => _fresh = true);
           showNotificationsSheet(context);
         },
       ),

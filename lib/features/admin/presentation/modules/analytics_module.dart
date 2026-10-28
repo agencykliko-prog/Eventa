@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/analytics/analytics.dart';
 import '../../../../core/theme/app_icons.dart';
 import '../../../../core/theme/eventa_colors.dart';
 import '../../../../core/widgets/donut.dart';
@@ -265,6 +266,152 @@ class _AnalyticsModuleState extends ConsumerState<AnalyticsModule> {
                     retention,
                   ],
                 ),
+        ),
+        const _LiveAudience(),
+      ],
+    );
+  }
+}
+
+/// Noms lisibles des écrans mesurés (modèles de chemin).
+const _screenNames = {
+  '/bienvenue': 'Bienvenue',
+  '/connexion': 'Connexion',
+  '/inscription': 'Inscription',
+  '/accueil': 'Accueil',
+  '/explorer': 'Explorer',
+  '/demandes': 'Demandes (Creator)',
+  '/agenda': 'Agenda',
+  '/compte': 'Compte',
+  '/messages': 'Messages',
+  '/messages/:id': 'Conversation',
+  '/prestataire/:id': 'Fiche prestataire',
+  '/reservation/:id': 'Réservation',
+  '/evenement/:id': 'Tableau de bord événement',
+  '/evenement/:id/budget': 'Budget',
+  '/evenement/:id/taches': 'Tâches',
+  '/nouvel-evenement': 'Nouvel événement',
+  '/premium': 'Premium',
+  '/business': 'Offre Creator',
+  '/pro/devis/:id': 'Demande de devis (Creator)',
+  '/pro/verification': 'Vérification (Creator)',
+};
+
+/// Mesure d'audience en direct : écrans vus et événements clés enregistrés
+/// sur cet appareil depuis l'ouverture de l'app (anonyme).
+class _LiveAudience extends ConsumerWidget {
+  const _LiveAudience();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final a = ref.watch(audienceSummaryProvider);
+    final consent = ref.watch(audienceConsentProvider);
+    final top = a.topScreens.isEmpty ? 1 : a.topScreens.first.$2;
+    return Column(
+      key: const ValueKey('live-audience'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        BlockTitle(
+          'Mesure d’audience',
+          trailing: consent
+              ? const LiveDot(label: 'Cet appareil')
+              : StatusPill('Désactivée par l’utilisateur', Hue.ink),
+        ),
+        LayoutBuilder(
+          builder: (context, box) {
+            final screens = Panel(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Écrans les plus vus', style: context.text.titleMedium),
+                  Text(
+                    '${a.pageViews} écrans vus · chemins sans identifiant',
+                    style: context.text.bodySmall,
+                  ),
+                  const SizedBox(height: 12),
+                  if (a.topScreens.isEmpty)
+                    Text(
+                      'Aucune visite enregistrée pour l’instant.',
+                      style: context.text.bodySmall,
+                    ),
+                  for (final (path, n) in a.topScreens)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 150,
+                            child: Text(
+                              _screenNames[path] ?? path,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: context.text.bodySmall,
+                            ),
+                          ),
+                          Expanded(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: LinearProgressIndicator(
+                                value: n / top,
+                                minHeight: 8,
+                                color: Confetti.violet,
+                                backgroundColor: Confetti.lavender,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Text('$n', style: context.text.labelMedium),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            );
+            final events = Panel(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Événements clés', style: context.text.titleMedium),
+                  Text(
+                    'Parcours organisateur et Creator',
+                    style: context.text.bodySmall,
+                  ),
+                  const SizedBox(height: 8),
+                  for (final m in Metric.values)
+                    if (m != Metric.pageView)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                m.label,
+                                style: context.text.bodySmall,
+                              ),
+                            ),
+                            Text(
+                              '${a.events[m] ?? 0}',
+                              style: context.text.labelMedium,
+                            ),
+                          ],
+                        ),
+                      ),
+                ],
+              ),
+            );
+            return box.maxWidth >= 860
+                ? Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(child: screens),
+                      const SizedBox(width: 16),
+                      Expanded(child: events),
+                    ],
+                  )
+                : Column(
+                    children: [screens, const SizedBox(height: 12), events],
+                  );
+          },
         ),
       ],
     );

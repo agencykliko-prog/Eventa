@@ -13,8 +13,10 @@ import '../domain/pro_models.dart';
 import '../../commerce/presentation/commerce_providers.dart';
 import 'pro_providers.dart';
 import 'studio_providers.dart';
+import 'verification_providers.dart';
+import 'verification_screen.dart';
 
-/// Accès aux sept sections de l'espace pro, chacune avec son chiffre clé.
+/// Accès aux huit sections de l'espace pro, chacune avec son chiffre clé.
 class ProHub extends ConsumerWidget {
   const ProHub({super.key});
 
@@ -22,6 +24,7 @@ class ProHub extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final pro = ref.watch(proProvider);
     final studio = ref.watch(studioUnlockedProvider);
+    final verification = ref.watch(verificationProvider);
     final requests = ref.watch(requestsProvider);
     final pending = requests
         .where((r) => r.status == RequestStatus.received)
@@ -110,11 +113,23 @@ class ProHub extends ConsumerWidget {
             : 'Offre Creator · {0}/mois'.trf([fcfaCompact(creatorPlanPrice)]),
         '/pro/studio',
       ),
+      (
+        'H',
+        verification.step.icon,
+        verification.step.hue,
+        'Vérification'.tr,
+        verification.step.label,
+        '/pro/verification',
+      ),
     ];
 
     return LayoutBuilder(
       builder: (context, box) {
-        final n = box.maxWidth >= 640 ? 3 : 2;
+        final n = box.maxWidth >= 900
+            ? 4
+            : box.maxWidth >= 640
+            ? 3
+            : 2;
         final w = (box.maxWidth - 8 * (n - 1)) / n;
         return Wrap(
           spacing: 8,

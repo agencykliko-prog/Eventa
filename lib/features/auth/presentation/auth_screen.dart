@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -46,154 +47,165 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     final creator = _role == UserRole.creator;
-    return Scaffold(
-      // Fond blanc épuré (le mode sombre garde son fond).
-      backgroundColor: Confetti.dark ? Confetti.cream : Colors.white,
-      body: Stack(
-        children: [
-          SafeArea(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 480),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                      child: SizedBox(
-                        height: 56,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: RoundIconButton(
-                                icon: AppIcons.back,
-                                tooltip: 'Retour',
-                                onTap: () => context.canPop()
-                                    ? context.pop()
-                                    : context.go(Routes.onboarding),
-                              ),
-                            ),
-                            const Entrance(child: EventaWordmark(size: 30)),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Entrance(
-                                      index: 1,
-                                      offset: 16,
-                                      child: AnimatedSwitcher(
-                                        duration: Motion.base,
-                                        child: Text(
-                                          _signUp
-                                              ? 'Créer un compte'.tr
-                                              : 'Bon retour'.tr,
-                                          key: ValueKey(_signUp),
-                                          style: context.text.headlineMedium
-                                              ?.copyWith(
-                                                fontSize: 32,
-                                                fontWeight: FontWeight.w800,
-                                              ),
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Entrance(
-                                      index: 2,
-                                      offset: 16,
-                                      child: Text(
-                                        _signUp
-                                            ? 'Choisissez votre profil pour commencer.'
-                                                  .tr
-                                            : 'Connectez-vous à votre espace.'
-                                                  .tr,
-                                        style: context.text.bodyLarge?.copyWith(
-                                          color: context.eventa.muted,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              AuthMascot(
-                                color: creator
-                                    ? MascotColor.creator
-                                    : MascotColor.organizer,
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 14),
-                          Entrance(
-                            index: 3,
-                            child: RolePicker(
-                              value: _role,
-                              onChanged: (r) => setState(() => _role = r),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: AnimatedSwitcher(
-                        duration: Motion.base,
-                        switchInCurve: Motion.easeOut,
-                        // L'ancien formulaire s'efface vite, sur place, et le
-                        // nouveau arrive aligné en haut : plus de saut.
-                        switchOutCurve: const Interval(0.5, 1),
-                        layoutBuilder: (current, previous) => Stack(
-                          alignment: Alignment.topCenter,
-                          children: [...previous, ?current],
-                        ),
-                        transitionBuilder: (child, a) => FadeTransition(
-                          opacity: a,
-                          child: SlideTransition(
-                            position: Tween(
-                              begin: const Offset(0, 0.04),
-                              end: Offset.zero,
-                            ).animate(a),
-                            child: child,
-                          ),
-                        ),
-                        child: KeyedSubtree(
-                          // En connexion, le formulaire reste le même : seul le
-                          // profil change, sans fondu.
-                          key: ValueKey(_signUp ? 'up-$_role' : 'in'),
-                          child: !_signUp
-                              ? _SignInForm(
-                                  role: _role,
-                                  onSwitch: () =>
-                                      setState(() => _signUp = true),
-                                )
-                              : _role == UserRole.organizer
-                              ? _OrganizerSignUp(
-                                  onSwitch: () =>
-                                      setState(() => _signUp = false),
-                                )
-                              : _CreatorSignUp(
-                                  onSwitch: () =>
-                                      setState(() => _signUp = false),
-                                ),
-                        ),
-                      ),
-                    ),
-                  ],
+    final size = MediaQuery.sizeOf(context);
+    // Desktop : le formulaire devient une carte centrée sur fond crème.
+    final desktop = size.width >= 900 && size.height >= 640;
+    final content = Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+          child: SizedBox(
+            height: 56,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: RoundIconButton(
+                    icon: AppIcons.back,
+                    tooltip: 'Retour',
+                    onTap: () => context.canPop()
+                        ? context.pop()
+                        : context.go(Routes.onboarding),
+                  ),
                 ),
-              ),
+                const Entrance(child: EventaWordmark(size: 30)),
+              ],
             ),
           ),
-        ],
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Entrance(
+                          index: 1,
+                          offset: 16,
+                          child: AnimatedSwitcher(
+                            duration: Motion.base,
+                            child: Text(
+                              _signUp ? 'Créer un compte'.tr : 'Bon retour'.tr,
+                              key: ValueKey(_signUp),
+                              style: context.text.headlineMedium?.copyWith(
+                                fontSize: 32,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Entrance(
+                          index: 2,
+                          offset: 16,
+                          child: Text(
+                            _signUp
+                                ? 'Choisissez votre profil pour commencer.'.tr
+                                : 'Connectez-vous à votre espace.'.tr,
+                            style: context.text.bodyLarge?.copyWith(
+                              color: context.eventa.muted,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  AuthMascot(
+                    color: creator
+                        ? MascotColor.creator
+                        : MascotColor.organizer,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              Entrance(
+                index: 3,
+                child: RolePicker(
+                  value: _role,
+                  onChanged: (r) => setState(() => _role = r),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Expanded(
+          child: AnimatedSwitcher(
+            duration: Motion.base,
+            switchInCurve: Motion.easeOut,
+            // L'ancien formulaire s'efface vite, sur place, et le
+            // nouveau arrive aligné en haut : plus de saut.
+            switchOutCurve: const Interval(0.5, 1),
+            layoutBuilder: (current, previous) => Stack(
+              alignment: Alignment.topCenter,
+              children: [...previous, ?current],
+            ),
+            transitionBuilder: (child, a) => FadeTransition(
+              opacity: a,
+              child: SlideTransition(
+                position: Tween(
+                  begin: const Offset(0, 0.04),
+                  end: Offset.zero,
+                ).animate(a),
+                child: child,
+              ),
+            ),
+            child: KeyedSubtree(
+              // En connexion, le formulaire reste le même : seul le
+              // profil change, sans fondu.
+              key: ValueKey(_signUp ? 'up-$_role' : 'in'),
+              child: !_signUp
+                  ? _SignInForm(
+                      role: _role,
+                      onSwitch: () => setState(() => _signUp = true),
+                    )
+                  : _role == UserRole.organizer
+                  ? _OrganizerSignUp(
+                      onSwitch: () => setState(() => _signUp = false),
+                    )
+                  : _CreatorSignUp(
+                      onSwitch: () => setState(() => _signUp = false),
+                    ),
+            ),
+          ),
+        ),
+      ],
+    );
+    return Scaffold(
+      // Fond blanc épuré (le mode sombre garde son fond).
+      backgroundColor: Confetti.dark || desktop ? Confetti.cream : Colors.white,
+      body: SafeArea(
+        child: Center(
+          child: desktop
+              ? Container(
+                  width: 480,
+                  height: math.min(size.height - 48, _signUp ? 880.0 : 640.0),
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: Confetti.dark ? Confetti.surface : Colors.white,
+                    borderRadius: BorderRadius.circular(32),
+                    border: Border.all(color: Confetti.line),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Confetti.ink.withValues(alpha: 0.08),
+                        blurRadius: 40,
+                        offset: const Offset(0, 18),
+                      ),
+                    ],
+                  ),
+                  child: content,
+                )
+              : ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 480),
+                  child: content,
+                ),
+        ),
       ),
     );
   }

@@ -1,106 +1,125 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/tr.dart';
-import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/eventa_colors.dart';
+import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/ui.dart';
-import '../../auth/presentation/session_provider.dart';
+import '../../notifications/notifications_provider.dart';
 
 Future<void> showNotificationsSheet(BuildContext context) =>
     showEventaSheet<void>(context, builder: (_) => const _Notifications());
 
-class _Notifications extends ConsumerWidget {
+String _ago(DateTime at) {
+  final d = DateTime.now().difference(at);
+  if (d.inMinutes < 1) return 'à l’instant'.tr;
+  if (d.inMinutes < 60) return 'il y a {0} min'.trf([d.inMinutes]);
+  if (d.inHours < 24) return 'il y a {0} h'.trf([d.inHours]);
+  if (d.inDays == 1) return 'Hier'.tr;
+  return shortDate(at);
+}
+
+/// Liste des notifications. Les non lues à l'ouverture restent signalées
+/// (point violet) pendant la consultation, puis tout passe en lu.
+class _Notifications extends ConsumerStatefulWidget {
   const _Notifications();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final creator = ref.watch(profileProvider).isCreator;
-    final items = creator
-        ? [
-            (
-              AppIcons.inbox,
-              Hue.mango,
-              'Nouvelle demande de devis'.tr,
-              'Awa Traoré · Mariage du 7 déc.'.tr,
-              'il y a 35 min'.tr,
-            ),
-            (
-              AppIcons.checkCircle,
-              Hue.lagoon,
-              'Prestation confirmée'.tr,
-              'Baby shower de Mariam · acompte reçu'.tr,
-              'hier',
-            ),
-            (
-              AppIcons.star,
-              Hue.violet,
-              'Nouvel avis 5 étoiles'.tr,
-              'Fondation Lumière'.tr,
-              'il y a 3 j'.tr,
-            ),
-          ]
-        : [
-            (
-              AppIcons.file,
-              Hue.mango,
-              'Devis reçu'.tr,
-              'Studio Lumière · valable 7 jours'.tr,
-              'il y a 1 h'.tr,
-            ),
-            (
-              AppIcons.coins,
-              Hue.lagoon,
-              'Paiement à venir'.tr,
-              'Solde Lagune Sound demain'.tr,
-              'il y a 3 h'.tr,
-            ),
-            (
-              AppIcons.guests,
-              Hue.coral,
-              '+8 réponses RSVP'.tr,
-              'Mariage Awa & Kouassi'.tr,
-              'aujourd’hui'.tr,
-            ),
-            (
-              AppIcons.reminder,
-              Hue.violet,
-              'Rappel'.tr,
-              'Valider le menu de dégustation à 11:00'.tr,
-              'aujourd’hui'.tr,
-            ),
-          ];
+  ConsumerState<_Notifications> createState() => _NotificationsState();
+}
+
+class _NotificationsState extends ConsumerState<_Notifications> {
+  late final Set<String> _fresh = {
+    for (final n in ref.read(noticesProvider))
+      if (!n.read) n.id,
+  };
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) ref.read(noticesProvider.notifier).markAllRead();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final items = ref.watch(noticesProvider);
     return ListView(
       shrinkWrap: true,
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
       children: [
         Text('Notifications'.tr, style: context.text.headlineSmall),
         const SizedBox(height: 12),
-        for (final (i, (icon, hue, title, caption, ago)) in items.indexed) ...[
-          if (i > 0) const Divider(height: 1),
+        if (items.isEmpty)
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Row(
-              children: [
-                IconTile(icon: icon, hue: hue, size: 38),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            padding: const EdgeInsets.symmetric(vertical: 24),
+            child: Text(
+              'Rien de nouveau pour le moment.'.tr,
+              style: context.text.bodyMedium?.copyWith(
+                color: Confetti.inkMuted,
+              ),
+            ),
+          ),
+        for (final (i, n) in items.indexed) ...[
+          if (i > 0) const Divider(height: 1),
+          InkWell(
+            key: ValueKey('notice-${n.id}'),
+            borderRadius: BorderRadius.circular(12),
+            onTap: n.link == null
+                ? null
+                : () {
+                    final router = GoRouter.of(context);
+                    Navigator.of(context).pop();
+                    router.push(n.link!);
+                  },
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Row(
+                children: [
+                  IconTile(icon: n.icon, hue: n.hue, size: 38),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(n.title, style: context.text.titleSmall),
+                        Text(
+                          n.caption,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.text.bodySmall,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(title, style: context.text.titleSmall),
-                      Text(caption, style: context.text.bodySmall),
+                      Text(
+                        _ago(n.at),
+                        style: context.text.labelSmall?.copyWith(
+                          color: Confetti.inkFaint,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      if (_fresh.contains(n.id)) ...[
+                        const SizedBox(height: 6),
+                        Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: Confetti.violet,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ],
                     ],
                   ),
-                ),
-                Text(
-                  ago,
-                  style: context.text.labelSmall?.copyWith(
-                    color: Confetti.inkFaint,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ],

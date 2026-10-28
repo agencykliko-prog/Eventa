@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/analytics/analytics.dart';
 import '../../../core/i18n/tr.dart';
 import '../../events/domain/models.dart';
 
@@ -241,11 +242,14 @@ class RequestsNotifier extends Notifier<List<ClientRequest>> {
   void _set(ClientRequest r) =>
       state = [for (final x in state) x.id == r.id ? r : x];
 
-  void sendQuote(String id, int amount) => _set(
-    state
-        .firstWhere((r) => r.id == id)
-        .copyWith(status: RequestStatus.quoted, quote: amount),
-  );
+  void sendQuote(String id, int amount) {
+    _set(
+      state
+          .firstWhere((r) => r.id == id)
+          .copyWith(status: RequestStatus.quoted, quote: amount),
+    );
+    ref.read(audienceProvider.notifier).track(Metric.quoteSent);
+  }
 
   void confirm(String id) => _set(
     state
@@ -267,6 +271,7 @@ class RequestsNotifier extends Notifier<List<ClientRequest>> {
         thread: [...r.thread, ChatLine(true, question, DateTime.now())],
       ),
     );
+    ref.read(audienceProvider.notifier).track(Metric.messageSent);
     if (simulatedReply == null) return;
     Future<void>.delayed(const Duration(seconds: 2), () {
       final cur = state.where((x) => x.id == id).firstOrNull;
@@ -288,17 +293,20 @@ class RequestsNotifier extends Notifier<List<ClientRequest>> {
     required List<QuoteItem> items,
     required int validityDays,
     required int depositPercent,
-  }) => _set(
-    state
-        .firstWhere((r) => r.id == id)
-        .copyWith(
-          status: RequestStatus.quoted,
-          items: items,
-          quote: items.fold<int>(0, (s, i) => s + i.amount),
-          validUntil: DateTime.now().add(Duration(days: validityDays)),
-          depositPercent: depositPercent,
-        ),
-  );
+  }) {
+    _set(
+      state
+          .firstWhere((r) => r.id == id)
+          .copyWith(
+            status: RequestStatus.quoted,
+            items: items,
+            quote: items.fold<int>(0, (s, i) => s + i.amount),
+            validUntil: DateTime.now().add(Duration(days: validityDays)),
+            depositPercent: depositPercent,
+          ),
+    );
+    ref.read(audienceProvider.notifier).track(Metric.quoteSent);
+  }
 }
 
 final requestsProvider =
