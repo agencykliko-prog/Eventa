@@ -42,7 +42,9 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
         return _receipt('Abonnement {0}'.trf([p.label]), amount, m);
       },
     );
-    if (r != null && mounted) toast(context, 'Bienvenue dans {0}'.trf([p.label]));
+    if (r != null && mounted) {
+      toast(context, 'Bienvenue dans {0}'.trf([p.label]));
+    }
   }
 
   @override
@@ -86,7 +88,8 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                     ),
                     const SizedBox(height: 10),
                     Text(
-                      'IA, coffre-fort, collaboration illimitée. Sans engagement, résiliable à tout moment.'.tr,
+                      'IA, coffre-fort, collaboration illimitée. Sans engagement, résiliable à tout moment.'
+                          .tr,
                       style: context.text.bodyLarge?.copyWith(
                         color: Colors.white70,
                       ),
@@ -230,7 +233,9 @@ class _PlanCard extends StatelessWidget {
             ),
           const SizedBox(height: 10),
           PillButton(
-            label: current ? 'Offre active'.tr : 'Choisir {0}'.trf([plan.label]),
+            label: current
+                ? 'Offre active'.tr
+                : 'Choisir {0}'.trf([plan.label]),
             tone: highlight ? ButtonTone.primary : ButtonTone.light,
             height: 48,
             onPressed: onTap,

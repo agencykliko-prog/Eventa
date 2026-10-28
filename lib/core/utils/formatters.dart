@@ -8,8 +8,10 @@ NumberFormat get _fcfa => NumberFormat.decimalPattern(L10n.intl);
 const _nbsp = '\u00a0';
 
 /// 12 500 000 FCFA
-String fcfa(num amount) =>
-    '{0}{1}FCFA'.trf([_fcfa.format(amount).replaceAll('\u202f', _nbsp).replaceAll(' ', _nbsp), _nbsp]);
+String fcfa(num amount) => '{0}{1}FCFA'.trf([
+  _fcfa.format(amount).replaceAll('\u202f', _nbsp).replaceAll(' ', _nbsp),
+  _nbsp,
+]);
 
 /// 12,5 M — pour les chiffres compacts des cartes.
 String fcfaCompact(num amount) {

@@ -50,11 +50,7 @@ class BudgetOverview extends StatelessWidget {
                   semanticLabel: 'Modifier le budget total'.tr,
                   child: Row(
                     children: [
-                      Icon(
-                        AppIcons.edit,
-                        size: 14,
-                        color: Confetti.coralDeep,
-                      ),
+                      Icon(AppIcons.edit, size: 14, color: Confetti.coralDeep),
                       const SizedBox(width: 4),
                       Text(
                         'Modifier'.tr,
@@ -97,7 +93,11 @@ class BudgetOverview extends StatelessWidget {
           Row(
             children: [
               _Figure(color: c.deep, label: 'Dépensé'.tr, value: event.paid),
-              _Figure(color: c.base, label: 'Engagé'.tr, value: event.committed),
+              _Figure(
+                color: c.base,
+                label: 'Engagé'.tr,
+                value: event.committed,
+              ),
               _Figure(
                 color: over ? Confetti.danger : Confetti.border,
                 label: over ? 'Dépassement'.tr : 'Disponible'.tr,
@@ -187,9 +187,7 @@ class BudgetBar extends StatelessWidget {
               height: height,
               child: Stack(
                 children: [
-                  Positioned.fill(
-                    child: ColoredBox(color: Confetti.lavender),
-                  ),
+                  Positioned.fill(child: ColoredBox(color: Confetti.lavender)),
                   Positioned(
                     left: 0,
                     top: 0,

@@ -166,11 +166,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                   color: Confetti.gold.withValues(alpha: 0.16),
                   borderRadius: BorderRadius.circular(13),
                 ),
-                child: Icon(
-                  AppIcons.sparkle,
-                  color: Confetti.gold,
-                  size: 21,
-                ),
+                child: Icon(AppIcons.sparkle, color: Confetti.gold, size: 21),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -191,7 +187,8 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Répartition optimisée selon le type, la ville et le nombre d’invités.'.tr,
+                      'Répartition optimisée selon le type, la ville et le nombre d’invités.'
+                          .tr,
                       style: context.text.bodySmall?.copyWith(
                         color: Colors.white60,
                       ),
@@ -457,7 +454,9 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
               ),
               if (line != null)
                 Text(
-                  'Payé : {0} (mis à jour par les dépenses)'.trf([fcfa(line.paid)]),
+                  'Payé : {0} (mis à jour par les dépenses)'.trf([
+                    fcfa(line.paid),
+                  ]),
                   style: ctx.text.bodySmall,
                 ),
               const SizedBox(height: 14),
@@ -480,7 +479,9 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                             vertical: 7,
                           ),
                           decoration: BoxDecoration(
-                            color: category == c ? Confetti.ink : Confetti.surface,
+                            color: category == c
+                                ? Confetti.ink
+                                : Confetti.surface,
                             borderRadius: BorderRadius.circular(99),
                             border: Border.all(
                               color: category == c
@@ -528,9 +529,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
               const SizedBox(height: 12),
               TextField(
                 controller: note,
-                decoration: InputDecoration(
-                  hintText: 'Note (facultatif)'.tr,
-                ),
+                decoration: InputDecoration(hintText: 'Note (facultatif)'.tr),
               ),
               const SizedBox(height: 16),
               PillButton(
@@ -642,8 +641,9 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
                 label: 'Payé avec'.tr,
                 value: method,
                 options: PayMethod.values,
-                labelOf: (m) =>
-                    m.mobileMoney ? 'Mobile Money · {0}'.trf([m.label]) : m.label,
+                labelOf: (m) => m.mobileMoney
+                    ? 'Mobile Money · {0}'.trf([m.label])
+                    : m.label,
                 iconOf: (m) => m.icon,
                 onChanged: (m) => set(() => method = m),
               ),
@@ -791,7 +791,9 @@ class _LineTile extends StatelessWidget {
                     Text(line.category.label, style: context.text.titleSmall),
                     Text(
                       line.note ??
-                          'Reste à dépenser {0}'.trf([fcfa(line.estimated - line.paid)]),
+                          'Reste à dépenser {0}'.trf([
+                            fcfa(line.estimated - line.paid),
+                          ]),
                       style: context.text.bodySmall,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

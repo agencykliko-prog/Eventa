@@ -115,6 +115,8 @@ h1, h2, h3, h4, p { margin: 0; }
 .btn-link:hover span { transform: translateX(4px); }
 .btn-cta { background: var(--coral); color: var(--white); }
 .btn-cta:hover { background: var(--coral-press); }
+.btn-violet { background: var(--violet); }
+.btn-violet:hover { background: #4B30C9; }
 .btn-white { background: var(--white); color: var(--ink); }
 .btn-white:hover { background: var(--lavender); }
 .btn-ink-ghost { border: 2px solid var(--ink); color: var(--ink); }
@@ -264,8 +266,6 @@ h1, h2, h3, h4, p { margin: 0; }
 @keyframes swap { from { transform: scale(.82); opacity: .4; } to { transform: none; opacity: 1; } }
 
 /* Mascotte de l'ouverture et sa voisine verte qui pointe le bout du nez */
-.hero-peek { position: absolute; right: -36px; top: 40px; width: 120px; z-index: 0; rotate: -14deg;
-  }
 
 /* Mascottes qui surgissent sur la bordure haute quand la section arrive */
 .edge-peek { position: absolute; top: -84px; width: 140px; z-index: 3; opacity: 0;
@@ -291,10 +291,6 @@ h1, h2, h3, h4, p { margin: 0; }
 .ci-flag i:nth-child(3) { background: #009E60; }
 
 /* Bouton de partage */
-.share-btn { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px; border-radius: 99px; cursor: pointer;
-  font: inherit; font-weight: 700; font-size: 14px; color: var(--white); background: rgba(255, 255, 255, .12); border: 1px solid rgba(255, 255, 255, .4); }
-.share-btn:hover { background: rgba(255, 255, 255, .22); }
-.share-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
 .toast { position: fixed; left: 50%; bottom: 26px; translate: -50% 0; z-index: 80; background: var(--ink); color: var(--white); padding: 12px 18px; border-radius: 99px;
   font-weight: 600; font-size: 14px; opacity: 0; transform: translateY(10px); transition: opacity .25s, transform .3s var(--spring); pointer-events: none; }
 .toast.show { opacity: 1; transform: none; }
@@ -565,8 +561,7 @@ h1, h2, h3, h4, p { margin: 0; }
 
 /* ── Adaptations ────────────────────────────────────────── */
 @media (max-width: 980px) {
-  .hero-peek { display: none; }
-  .edge-peek { width: 104px; top: -64px; }
+    .edge-peek { width: 104px; top: -64px; }
   .nav-links, .nav-cta .ghost { display: none; }
   .hero-grid, .split-2, .pay-row { grid-template-columns: 1fr; }
   .split-2.reverse > :first-child { order: 0; }

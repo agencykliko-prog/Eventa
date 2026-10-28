@@ -95,7 +95,9 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
       _draft = EventTemplates.create(
         category: _category!,
         subcategories: _subs.toList(),
-        name: _name.text.trim().isEmpty ? 'Mon événement'.tr : _name.text.trim(),
+        name: _name.text.trim().isEmpty
+            ? 'Mon événement'.tr
+            : _name.text.trim(),
         date: DateTime(_date.year, _date.month, _date.day, 16),
         city: _city.text.trim().isEmpty ? 'Abidjan'.tr : _city.text.trim(),
         guests: _guests.round(),
@@ -198,7 +200,8 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         Text('Que célébrez-vous ?'.tr, style: context.text.headlineMedium),
         const SizedBox(height: 6),
         Text(
-          'On prépare la checklist et la répartition du budget selon le type.'.tr,
+          'On prépare la checklist et la répartition du budget selon le type.'
+              .tr,
           style: context.text.bodyMedium?.copyWith(color: context.eventa.muted),
         ),
         const SizedBox(height: 20),
@@ -526,7 +529,13 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
         Entrance(
           index: 2,
           child: Text(
-            '{0} tâches planifiées à rebours jusqu’au {1} et {2} postes de budget répartis sur {3}.'.trf([e.tasks.length, mediumDate(e.date), e.budget.length, fcfa(e.targetBudget)]),
+            '{0} tâches planifiées à rebours jusqu’au {1} et {2} postes de budget répartis sur {3}.'
+                .trf([
+                  e.tasks.length,
+                  mediumDate(e.date),
+                  e.budget.length,
+                  fcfa(e.targetBudget),
+                ]),
             style: context.text.bodyMedium?.copyWith(
               color: context.eventa.muted,
             ),

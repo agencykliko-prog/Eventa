@@ -149,6 +149,13 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                       child: AnimatedSwitcher(
                         duration: Motion.base,
                         switchInCurve: Motion.easeOut,
+                        // L'ancien formulaire s'efface vite, sur place, et le
+                        // nouveau arrive aligné en haut : plus de saut.
+                        switchOutCurve: const Interval(0.5, 1),
+                        layoutBuilder: (current, previous) => Stack(
+                          alignment: Alignment.topCenter,
+                          children: [...previous, ?current],
+                        ),
                         transitionBuilder: (child, a) => FadeTransition(
                           opacity: a,
                           child: SlideTransition(
@@ -160,7 +167,9 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                           ),
                         ),
                         child: KeyedSubtree(
-                          key: ValueKey('$_signUp-$_role'),
+                          // En connexion, le formulaire reste le même : seul le
+                          // profil change, sans fondu.
+                          key: ValueKey(_signUp ? 'up-$_role' : 'in'),
                           child: !_signUp
                               ? _SignInForm(
                                   role: _role,
@@ -205,80 +214,103 @@ class RolePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final left = value == UserRole.organizer;
     Widget tile(UserRole r, IconData icon) {
       final on = r == value;
+      final fg = on ? Confetti.onInk : Confetti.ink;
       return Expanded(
         child: Pressable(
           onTap: () {
+            if (on) return;
             HapticFeedback.selectionClick();
             onChanged(r);
           },
-          child: AnimatedScale(
-            duration: Motion.base,
-            curve: Curves.easeOutBack,
-            scale: on ? 1 : 0.97,
-            child: AnimatedContainer(
-              duration: Motion.fast,
-              curve: Motion.easeOut,
-              padding: const EdgeInsets.all(14),
-              decoration: BoxDecoration(
-                color: on ? Confetti.ink : Confetti.surface,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: on ? Confetti.ink : Confetti.line),
-                boxShadow: on
-                    ? [
-                        BoxShadow(
-                          color: Confetti.ink.withValues(alpha: 0.18),
-                          blurRadius: 16,
-                          offset: const Offset(0, 6),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                TweenAnimationBuilder<Color?>(
+                  tween: ColorTween(end: fg),
+                  duration: Motion.base,
+                  builder: (context, c, _) => Icon(icon, size: 20, color: c),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AnimatedDefaultTextStyle(
+                        duration: Motion.base,
+                        curve: Motion.easeOut,
+                        style: context.text.titleSmall!.copyWith(color: fg),
+                        child: Text(r.label),
+                      ),
+                      AnimatedDefaultTextStyle(
+                        duration: Motion.base,
+                        curve: Motion.easeOut,
+                        style: context.text.labelSmall!.copyWith(
+                          color: on ? Colors.white70 : Confetti.inkMuted,
+                          fontWeight: FontWeight.w500,
                         ),
-                      ]
-                    : null,
-              ),
-              child: Row(
-                children: [
-                  Icon(
-                    icon,
-                    size: 20,
-                    color: on ? Confetti.onInk : Confetti.ink,
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          r.label,
-                          style: context.text.titleSmall?.copyWith(
-                            color: on ? Confetti.onInk : Confetti.ink,
-                          ),
-                        ),
-                        Text(
+                        child: Text(
                           r.pitch,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: context.text.labelSmall?.copyWith(
-                            color: on ? Colors.white70 : Confetti.inkMuted,
-                            fontWeight: FontWeight.w500,
-                          ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
       );
     }
 
-    return Row(
-      children: [
-        tile(UserRole.organizer, AppIcons.confetti),
-        const SizedBox(width: 10),
-        tile(UserRole.creator, AppIcons.vendors),
-      ],
+    // Une seule pastille sombre qui glisse d'un profil à l'autre : la
+    // transition reste continue au lieu de deux cartes qui clignotent.
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Confetti.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Confetti.line),
+      ),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: AnimatedAlign(
+              duration: const Duration(milliseconds: 380),
+              curve: Curves.easeOutCubic,
+              alignment: left ? Alignment.centerLeft : Alignment.centerRight,
+              child: FractionallySizedBox(
+                widthFactor: 0.5,
+                heightFactor: 1,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: Confetti.ink,
+                    borderRadius: BorderRadius.circular(14),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Confetti.ink.withValues(alpha: 0.18),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Row(
+            children: [
+              tile(UserRole.organizer, AppIcons.confetti),
+              tile(UserRole.creator, AppIcons.vendors),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -1186,7 +1218,9 @@ class _AuthMascotState extends ConsumerState<AuthMascot> {
   Offset? _look;
   bool _cover = false;
   bool _waving = true;
+  bool _pop = false;
   Timer? _timer;
+  Timer? _popTimer;
 
   @override
   void initState() {
@@ -1198,8 +1232,23 @@ class _AuthMascotState extends ConsumerState<AuthMascot> {
   }
 
   @override
+  void didUpdateWidget(AuthMascot old) {
+    super.didUpdateWidget(old);
+    // Changement de profil : la nouvelle mascotte arrive d'un petit bond.
+    if (old.color != widget.color) {
+      _pop = true;
+      authMascotKey.currentState?.jump();
+      _popTimer?.cancel();
+      _popTimer = Timer(const Duration(milliseconds: 60), () {
+        if (mounted) setState(() => _pop = false);
+      });
+    }
+  }
+
+  @override
   void dispose() {
     _timer?.cancel();
+    _popTimer?.cancel();
     FocusManager.instance.removeListener(_onFocus);
     _watched?.removeListener(_onText);
     super.dispose();
@@ -1237,14 +1286,20 @@ class _AuthMascotState extends ConsumerState<AuthMascot> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 8, bottom: 2),
-      child: Mascot(
-        key: authMascotKey,
-        size: 104,
-        color: widget.color,
-        look: _look,
-        cover: _cover,
-        waving: _waving,
-        onTap: () => ref.read(soundProvider).play(Sfx.success),
+      child: AnimatedScale(
+        scale: _pop ? 0.82 : 1,
+        duration: Duration(milliseconds: _pop ? 60 : 420),
+        curve: _pop ? Curves.easeIn : Curves.easeOutBack,
+        alignment: Alignment.bottomCenter,
+        child: Mascot(
+          key: authMascotKey,
+          size: 104,
+          color: widget.color,
+          look: _look,
+          cover: _cover,
+          waving: _waving,
+          onTap: () => ref.read(soundProvider).play(Sfx.success),
+        ),
       ),
     );
   }

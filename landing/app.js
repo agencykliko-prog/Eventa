@@ -277,16 +277,6 @@
     t._h = setTimeout(() => t.classList.remove('show'), 2600);
   };
 
-  /* ── Partage : feuille native, sinon copie du lien ───── */
-  document.querySelectorAll('[data-share]').forEach((b) => b.addEventListener('click', async () => {
-    const data = { title: 'Eventa', text: 'Le budget parfait pour célébrer, en Côte d’Ivoire.', url: document.querySelector('link[rel=canonical]')?.href || location.href };
-    try {
-      if (navigator.share) { await navigator.share(data); return; }
-      await navigator.clipboard.writeText(data.url);
-      toast('Lien copié, il ne reste qu’à le partager !');
-    } catch (e) { /* partage annulé */ }
-  }));
-
   /* ── Accès anticipé : envoi à Netlify Forms ──────────── */
   const early = document.querySelector('[data-early]');
   if (early) {

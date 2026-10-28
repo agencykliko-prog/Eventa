@@ -11,9 +11,9 @@ import '../../../core/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/mascot.dart';
 
-/// En-tête d'accueil : fond blanc, confettis animés derrière une très grande
-/// salutation (« BONSOIR »), et la mascotte du profil qui suit le pointeur et
-/// saute quand on la touche.
+/// En-tête d'accueil : une carte encre et violet où la mascotte du profil
+/// entre par la gauche en saluant, avec une bulle « Bonjour ! », un halo qui
+/// respire et des confettis. Elle suit le pointeur et saute au toucher.
 class GreetingHero extends ConsumerStatefulWidget {
   const GreetingHero({
     super.key,
@@ -29,7 +29,7 @@ class GreetingHero extends ConsumerStatefulWidget {
   /// Petite ligne sous la salutation.
   final String? question;
 
-  /// Mascotte du profil : rouge (organisateur) ou verte (créateur).
+  /// Mascotte du profil : bleue (organisateur) ou orange (créateur).
   final MascotColor mascot;
 
   /// Action principale facultative (ex. créer un événement).
@@ -79,111 +79,262 @@ class _GreetingHeroState extends ConsumerState<GreetingHero>
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
     final compact = width < 400;
-    final h = compact ? 330.0 : 360.0;
+    final cardH = compact ? 286.0 : 300.0;
+    final mascotSize = compact ? 220.0 : 260.0;
     final dark = Confetti.dark;
-    final mascotSize = compact ? 132.0 : 168.0;
 
-    return MouseRegion(
-      onHover: (e) => setState(() => _pointer = e.localPosition),
-      onExit: (_) => setState(() => _pointer = null),
-      child: LayoutBuilder(
-        builder: (context, box) {
-          final w = box.maxWidth;
-          final mascotCenter = Offset(
-            w - 16 - mascotSize / 2,
-            h - 12 - mascotSize / 2,
-          );
-          return SizedBox(
-            height: h,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                // Fond blanc ; confettis animés derrière la salutation.
-                Positioned.fill(
-                  child: ColoredBox(
-                    color: dark ? Colors.transparent : Colors.white,
-                  ),
-                ),
-                Positioned.fill(
-                  child: RepaintBoundary(
-                    child: CustomPaint(
-                      painter: _ConfettiPainter(time: _time, dark: dark),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        widget.header,
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 4),
+          child: MouseRegion(
+            onHover: (e) => setState(() => _pointer = e.localPosition),
+            onExit: (_) => setState(() => _pointer = null),
+            child: LayoutBuilder(
+              builder: (context, box) {
+                // La mascotte dépasse du bord gauche, comme si elle entrait
+                // dans la carte pour dire bonjour.
+                final mLeft = -mascotSize * 0.36;
+                final mCenter = Offset(
+                  mLeft + mascotSize / 2,
+                  cardH - mascotSize * 0.45,
+                );
+                final textLeft = mascotSize * 0.52;
+                return Container(
+                  height: cardH,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(32),
+                    gradient: const LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [Color(0xFF2A1366), Color(0xFF1A0637)],
                     ),
+                    boxShadow: dark
+                        ? null
+                        : [
+                            BoxShadow(
+                              color: const Color(0xFF1A0637)
+                                  .withValues(alpha: 0.22),
+                              blurRadius: 30,
+                              offset: const Offset(0, 14),
+                            ),
+                          ],
                   ),
-                ),
-                Positioned(left: 0, right: 0, top: 0, child: widget.header),
-                // Salutation à gauche, mascotte à droite.
-                Positioned(
-                  left: 20,
-                  right: mascotSize * 0.7,
-                  bottom: 26,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Stack(
+                    clipBehavior: Clip.hardEdge,
                     children: [
-                      _Rise(
-                        delay: 0,
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            greeting().toUpperCase(),
-                            style: TextStyle(
-                              fontFamily: AppTheme.font,
-                              fontSize: compact ? 66 : 84,
-                              height: .92,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: compact ? -2.4 : -3.2,
-                              color: Confetti.ink,
+                      // Halo lumineux derrière la mascotte.
+                      Positioned.fill(
+                        child: RepaintBoundary(
+                          child: CustomPaint(
+                            painter: _GlowPainter(
+                              time: _time,
+                              center: mCenter,
+                              color: widget.mascot == MascotColor.creator
+                                  ? const Color(0xFFFF9A3C)
+                                  : const Color(0xFF6E6BFF),
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(height: 6),
-                      _Rise(
-                        delay: 120,
-                        child: Text(
-                          // Espace insécable : le « ? » ne part jamais seul.
-                          (widget.question ??
-                                  'Qu’est-ce qu’on célèbre aujourd’hui ?'.tr)
-                              .replaceAll(' ?', ' ?'),
-                          style: TextStyle(
-                            fontFamily: AppTheme.font,
-                            fontSize: compact ? 15.5 : 17,
-                            height: 1.25,
-                            fontWeight: FontWeight.w600,
-                            color: Confetti.inkMuted,
+                      Positioned.fill(
+                        child: RepaintBoundary(
+                          child: CustomPaint(
+                            painter: _ConfettiPainter(time: _time, dark: true),
                           ),
                         ),
                       ),
-                      if (widget.action != null) ...[
-                        const SizedBox(height: 14),
-                        _Rise(delay: 240, child: widget.action!),
-                      ],
+                      Positioned(
+                        left: mLeft,
+                        bottom: -mascotSize * 0.10,
+                        child: _Rise(
+                          delay: 120,
+                          distance: 70,
+                          child: AnimatedBuilder(
+                            animation: _time,
+                            builder: (context, child) {
+                              // Balancement lent et continu (mouvement fluide).
+                              final t = _reduced ? 0.0 : _time.value;
+                              return Transform.translate(
+                                offset: Offset(0, math.sin(t * 1.6) * 5),
+                                child: Transform.rotate(
+                                  angle: 0.10 + math.sin(t * 1.1) * 0.035,
+                                  alignment: Alignment.bottomCenter,
+                                  child: child,
+                                ),
+                              );
+                            },
+                            child: Mascot(
+                              size: mascotSize,
+                              color: widget.mascot,
+                              waving: true,
+                              look: _lookFrom(mCenter),
+                              onTap: () =>
+                                  ref.read(soundProvider).play(Sfx.success),
+                            ),
+                          ),
+                        ),
+                      ),
+                      // Bulle de dialogue : la salutation stylisée.
+                      Positioned(
+                        left: textLeft,
+                        right: 16,
+                        top: 20,
+                        child: _Rise(
+                          delay: 260,
+                          child: _SpeechBubble(
+                            text: '${greeting()} !',
+                            compact: compact,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: textLeft,
+                        right: 16,
+                        bottom: 18,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _Rise(
+                              delay: 380,
+                              child: Text(
+                                // Espace insécable : le « ? » ne part jamais
+                                // seul en fin de ligne.
+                                (widget.question ??
+                                        'Qu’est-ce qu’on célèbre aujourd’hui ?'
+                                            .tr)
+                                    .replaceAll(' ?', ' ?'),
+                                style: TextStyle(
+                                  fontFamily: AppTheme.font,
+                                  fontSize: compact ? 15 : 16.5,
+                                  height: 1.3,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white.withValues(alpha: 0.82),
+                                ),
+                              ),
+                            ),
+                            if (widget.action != null) ...[
+                              const SizedBox(height: 12),
+                              _Rise(
+                                delay: 480,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: widget.action!,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
                     ],
                   ),
-                ),
-                Positioned(
-                  right: 8,
-                  bottom: 6,
-                  child: _Rise(
-                    delay: 180,
-                    distance: 60,
-                    child: Mascot(
-                      size: mascotSize,
-                      color: widget.mascot,
-                      mood: MascotMood.happy,
-                      look: _lookFrom(mascotCenter),
-                      onTap: () => ref.read(soundProvider).play(Sfx.success),
-                    ),
-                  ),
-                ),
-              ],
+                );
+              },
             ),
-          );
-        },
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Bulle de dialogue crème, queue tournée vers la mascotte.
+class _SpeechBubble extends StatelessWidget {
+  const _SpeechBubble({required this.text, required this.compact});
+
+  final String text;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      painter: _BubblePainter(),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(18, 12, 18, 14),
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            text,
+            style: TextStyle(
+              fontFamily: AppTheme.font,
+              fontSize: compact ? 34 : 40,
+              height: 1,
+              fontWeight: FontWeight.w800,
+              letterSpacing: -1.2,
+              color: const Color(0xFF1A0637),
+            ),
+          ),
+        ),
       ),
     );
   }
+}
+
+class _BubblePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final r = RRect.fromRectAndRadius(
+      Offset.zero & size,
+      Radius.circular(size.height / 2),
+    );
+    final tail = Path()
+      ..moveTo(18, size.height * 0.62)
+      ..quadraticBezierTo(-6, size.height + 10, -14, size.height + 14)
+      ..quadraticBezierTo(14, size.height * 0.98, 40, size.height * 0.86)
+      ..close();
+    final paint = Paint()..color = const Color(0xFFF7F2E8);
+    canvas.drawRRect(r, paint);
+    canvas.drawPath(tail, paint);
+  }
+
+  @override
+  bool shouldRepaint(_BubblePainter old) => false;
+}
+
+/// Halo circulaire qui respire derrière la mascotte.
+class _GlowPainter extends CustomPainter {
+  _GlowPainter({required this.time, required this.center, required this.color})
+    : super(repaint: time);
+
+  final ValueNotifier<double> time;
+  final Offset center;
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final pulse = 1 + math.sin(time.value * 1.3) * 0.04;
+    final r = size.height * 0.62 * pulse;
+    canvas.drawCircle(
+      center,
+      r,
+      Paint()
+        ..shader = RadialGradient(
+          colors: [
+            color.withValues(alpha: 0.55),
+            color.withValues(alpha: 0.16),
+            color.withValues(alpha: 0),
+          ],
+          stops: const [0, 0.6, 1],
+        ).createShader(Rect.fromCircle(center: center, radius: r)),
+    );
+    canvas.drawCircle(
+      center,
+      r * 0.78,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 18
+        ..color = color.withValues(alpha: 0.12),
+    );
+  }
+
+  @override
+  bool shouldRepaint(_GlowPainter old) =>
+      old.center != center || old.color != color;
 }
 
 /// Apparition en montée douce, décalée de [delay] millisecondes.

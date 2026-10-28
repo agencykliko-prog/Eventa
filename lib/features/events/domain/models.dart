@@ -67,13 +67,19 @@ enum EventCategory {
     Hues.violet,
     ['Remise de diplôme', 'Réussite à un examen', 'Promotion', 'Pot de départ'],
   ),
-  family('Familiaux & communautaires', 'Famille', AppIcons.family, Hues.lagoon, [
-    'Réunion familiale',
-    'Fête communautaire',
-    'Retrouvailles',
-    'Célébration religieuse',
-    'Hommage & funérailles',
-  ]),
+  family(
+    'Familiaux & communautaires',
+    'Famille',
+    AppIcons.family,
+    Hues.lagoon,
+    [
+      'Réunion familiale',
+      'Fête communautaire',
+      'Retrouvailles',
+      'Célébration religieuse',
+      'Hommage & funérailles',
+    ],
+  ),
   charity(
     'Associatifs & solidaires',
     'Associatif',

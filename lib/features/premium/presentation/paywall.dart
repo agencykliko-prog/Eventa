@@ -63,7 +63,8 @@ class _Paywall extends ConsumerWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'Disponible dès l’abonnement {0}. Sans engagement, résiliable à tout moment.'.trf([plan.label]),
+            'Disponible dès l’abonnement {0}. Sans engagement, résiliable à tout moment.'
+                .trf([plan.label]),
             style: context.text.bodyMedium?.copyWith(color: Colors.white70),
           ),
           const SizedBox(height: 20),
@@ -72,11 +73,7 @@ class _Paywall extends ConsumerWidget {
               padding: const EdgeInsets.only(bottom: 10),
               child: Row(
                 children: [
-                  Icon(
-                    AppIcons.checkCircle,
-                    size: 18,
-                    color: Confetti.gold,
-                  ),
+                  Icon(AppIcons.checkCircle, size: 18, color: Confetti.gold),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
@@ -91,7 +88,10 @@ class _Paywall extends ConsumerWidget {
             ),
           const SizedBox(height: 12),
           PillButton(
-            label: 'Passer à {0} · {1}/mois'.trf([plan.label, fcfa(plan.price)]),
+            label: 'Passer à {0} · {1}/mois'.trf([
+              plan.label,
+              fcfa(plan.price),
+            ]),
             tone: ButtonTone.gold,
             onPressed: () async {
               final r = await showPaymentSheet(

@@ -39,7 +39,7 @@ class PillButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final enabled = onPressed != null && !loading;
     final (bg, fg, border) = switch (tone) {
-      ButtonTone.primary => (Confetti.coral, Colors.white, Colors.transparent),
+      ButtonTone.primary => (Confetti.violet, Colors.white, Colors.transparent),
       ButtonTone.dark => (Confetti.ink, Confetti.onInk, Colors.transparent),
       ButtonTone.ghost => (Confetti.surface, Confetti.ink, Confetti.line),
       ButtonTone.light => (Confetti.surface, Confetti.ink, Colors.transparent),
@@ -106,7 +106,7 @@ class PillButton extends StatelessWidget {
                     BoxShadow(color: lip, offset: const Offset(0, 3.5)),
                     if (tone == ButtonTone.primary)
                       BoxShadow(
-                        color: Confetti.coral.withValues(alpha: 0.26),
+                        color: Confetti.violet.withValues(alpha: 0.28),
                         blurRadius: 18,
                         offset: const Offset(0, 8),
                       ),

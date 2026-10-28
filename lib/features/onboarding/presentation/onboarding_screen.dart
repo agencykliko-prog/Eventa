@@ -1,429 +1,510 @@
 import 'dart:math' as math;
-import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/tr.dart';
 import '../../../core/router/app_router.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/eventa_colors.dart';
+import '../../../core/widgets/avatars.dart';
 import '../../../core/widgets/brand.dart';
 import '../../../core/widgets/entrance.dart';
-import '../../../core/widgets/mascot.dart';
-import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/ui.dart';
 
-/// Bienvenue : fond encre Eventa, halos de couleur qui dérivent et trame de
-/// points façon « tech », les deux mascottes au centre d'une orbite où
-/// tournent les promesses de l'app. Tous les textes sont centrés.
-class OnboardingScreen extends StatefulWidget {
+/// Bienvenue sur fond blanc : collage de cartes d'événements posées sur une
+/// tache douce, indicateurs qui flottent, textes centrés.
+class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
 
   @override
-  State<OnboardingScreen> createState() => _OnboardingScreenState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Confetti.dark ? null : Colors.white,
+      body: SafeArea(
+        child: LayoutBuilder(
+          builder: (context, c) {
+            final collageH = (c.maxHeight * 0.5).clamp(280.0, 460.0);
+            // Défile seulement si l'écran est trop court ; sinon les
+            // boutons restent calés en bas.
+            return CustomScrollView(
+              physics: const ClampingScrollPhysics(),
+              slivers: [
+                SliverFillRemaining(
+                  hasScrollBody: false,
+                  child: Column(
+                    children: [
+                      const Padding(
+                        padding: EdgeInsets.fromLTRB(24, 14, 24, 0),
+                        child: Entrance(child: EventaWordmark(size: 24)),
+                      ),
+                      SizedBox(
+                        height: collageH,
+                        child: Stack(
+                          children: [
+                            Positioned.fill(
+                              child: CustomPaint(painter: _BlobPainter()),
+                            ),
+                            const Positioned.fill(child: _Collage()),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 4, 24, 16),
+                          child: Column(
+                            children: [
+                              Entrance(
+                                index: 6,
+                                child: Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: 'Le budget parfait\npour '.tr,
+                                      ),
+                                      TextSpan(
+                                        text: 'célébrer'.tr,
+                                        style: TextStyle(
+                                          color: Confetti.violet,
+                                        ),
+                                      ),
+                                      const TextSpan(text: '.'),
+                                    ],
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  style: context.text.displaySmall?.copyWith(
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Entrance(
+                                index: 7,
+                                child: Text(
+                                  'Des prestataires vérifiés, vos invités et votre équipe : tout votre événement au même endroit.'
+                                      .tr,
+                                  textAlign: TextAlign.center,
+                                  style: context.text.bodyLarge?.copyWith(
+                                    color: context.eventa.muted,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              const Spacer(),
+                              Entrance(
+                                index: 8,
+                                child: PillButton(
+                                  label: 'Créer un compte'.tr,
+                                  onPressed: () => context.push(Routes.signUp),
+                                ),
+                              ),
+                              const SizedBox(height: 10),
+                              Entrance(
+                                index: 9,
+                                child: PillButton(
+                                  label: 'Se connecter'.tr,
+                                  tone: ButtonTone.ghost,
+                                  onPressed: () => context.push(Routes.signIn),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        ),
+      ),
+    );
+  }
 }
 
-class _OnboardingScreenState extends State<OnboardingScreen>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _c = AnimationController(
+/// Collage de couvertures façon billets posés sur la table, avec les
+/// indicateurs de l'app qui flottent par-dessus.
+class _Collage extends StatefulWidget {
+  const _Collage();
+
+  @override
+  State<_Collage> createState() => _CollageState();
+}
+
+class _CollageState extends State<_Collage> with TickerProviderStateMixin {
+  late final AnimationController _intro = AnimationController(
     vsync: this,
-    duration: const Duration(seconds: 24),
+    duration: const Duration(milliseconds: 1100),
+  )..forward();
+  late final AnimationController _float = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 6),
   )..repeat();
 
   @override
   void dispose() {
-    _c.dispose();
+    _intro.dispose();
+    _float.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    const ink = Color(0xFF1A0637);
-    return Scaffold(
-      backgroundColor: ink,
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: RepaintBoundary(
-              child: CustomPaint(painter: _AuroraPainter(_c)),
-            ),
-          ),
-          SafeArea(
-            child: LayoutBuilder(
-              builder: (context, c) {
-                final orbit = (c.maxHeight * 0.42).clamp(240.0, 380.0);
-                return CustomScrollView(
-                  physics: const ClampingScrollPhysics(),
-                  slivers: [
-                    SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: Center(
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(maxWidth: 460),
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(24, 16, 24, 20),
-                            child: Column(
-                              children: [
-                                const Entrance(
-                                  child: EventaWordmark(
-                                    size: 24,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                const SizedBox(height: 14),
-                                const Entrance(index: 1, child: _Badge()),
-                                SizedBox(
-                                  height: orbit,
-                                  child: _Orbit(controller: _c, size: orbit),
-                                ),
-                                Entrance(
-                                  index: 4,
-                                  offset: 16,
-                                  child: Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: 'Le budget parfait\npour '.tr,
-                                        ),
-                                        TextSpan(
-                                          text: 'célébrer'.tr,
-                                          style: const TextStyle(
-                                            color: Color(0xFFFFC233),
-                                          ),
-                                        ),
-                                        const TextSpan(text: '.'),
-                                      ],
-                                    ),
-                                    textAlign: TextAlign.center,
-                                    style: context.text.displaySmall?.copyWith(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 38,
-                                      height: 1.04,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-                                Entrance(
-                                  index: 5,
-                                  child: Text(
-                                    'Budget en FCFA, prestataires vérifiés, invités et équipe : tout votre événement au même endroit.'
-                                        .tr,
-                                    textAlign: TextAlign.center,
-                                    style: context.text.bodyLarge?.copyWith(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.72,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const Spacer(),
-                                const SizedBox(height: 24),
-                                Entrance(
-                                  index: 6,
-                                  child: PillButton(
-                                    label: 'Créer un compte'.tr,
-                                    onPressed: () =>
-                                        context.push(Routes.signUp),
-                                  ),
-                                ),
-                                const SizedBox(height: 10),
-                                Entrance(
-                                  index: 7,
-                                  child: _GlassButton(
-                                    label: 'Se connecter'.tr,
-                                    onTap: () => context.push(Routes.signIn),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Pastille d'ancrage local, en verre.
-class _Badge extends StatelessWidget {
-  const _Badge();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(99),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (final c in const [
-            Color(0xFFF77F00),
-            Colors.white,
-            Color(0xFF009E60),
-          ])
-            Container(width: 5, height: 12, color: c),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Text(
-              'Côte d’Ivoire · FCFA · Mobile Money'.tr,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: context.text.labelMedium?.copyWith(color: Colors.white),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Les deux mascottes au centre, des pastilles qui tournent en orbite.
-class _Orbit extends StatelessWidget {
-  const _Orbit({required this.controller, required this.size});
-
-  final Animation<double> controller;
-  final double size;
-
-  static const _chips = [
-    (AppIcons.coins, 'FCFA', Color(0xFFFFC233)),
-    (AppIcons.verified, 'Prestataires vérifiés', Color(0xFF2FD4B0)),
-    (AppIcons.mobile, 'Mobile Money', Color(0xFFFF7A82)),
-    (AppIcons.guests, 'RSVP WhatsApp', Color(0xFFB9A8FF)),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    final r = size * 0.42;
-    final mascot = size * 0.34;
+    final reduce = MediaQuery.disableAnimationsOf(context);
     return LayoutBuilder(
-      builder: (context, box) {
-        final cx = box.maxWidth / 2, cy = size / 2;
-        // Rayon horizontal limité : les pastilles restent dans l'écran.
-        final rx = math.min(r * 1.08, cx - 82);
+      builder: (context, c) {
+        final w = c.maxWidth;
+        final h = c.maxHeight;
+        final card = math.min(w * 0.5, h * 0.62);
+
+        Widget piece({
+          required int order,
+          required double x,
+          required double y,
+          required double angle,
+          required double phase,
+          required Widget child,
+        }) {
+          return AnimatedBuilder(
+            animation: Listenable.merge([_intro, _float]),
+            child: child,
+            builder: (context, child) {
+              final start = (order * 0.12).clamp(0.0, 0.6);
+              final t = reduce
+                  ? 1.0
+                  : Motion.easeOut.transform(
+                      ((_intro.value - start) / (1 - start)).clamp(0.0, 1.0),
+                    );
+              final bob = reduce
+                  ? 0.0
+                  : math.sin((_float.value + phase) * 2 * math.pi) * 3.5;
+              return Positioned(
+                left: x,
+                top: y + (1 - t) * 60 + bob,
+                child: Opacity(
+                  opacity: t,
+                  child: Transform.rotate(
+                    angle: angle * (0.4 + 0.6 * t),
+                    child: child,
+                  ),
+                ),
+              );
+            },
+          );
+        }
+
         return Stack(
           clipBehavior: Clip.none,
           children: [
-            // Anneaux de l'orbite.
-            Positioned.fill(child: CustomPaint(painter: _RingsPainter(r, rx))),
-            Positioned(
-              left: cx - mascot * 1.02,
-              top: cy - mascot * 0.52,
-              child: Mascot(size: mascot, mood: MascotMood.cheer),
-            ),
-            Positioned(
-              left: cx + mascot * 0.02,
-              top: cy - mascot * 0.48,
-              child: Mascot(
-                size: mascot,
-                color: MascotColor.creator,
-                mood: MascotMood.happy,
+            piece(
+              order: 0,
+              x: w * 0.05,
+              y: h * 0.12,
+              angle: -0.14,
+              phase: 0,
+              child: _Cover(
+                image: 'assets/images/onboarding_wedding.jpg',
+                width: card,
+                label: 'Mariage'.tr,
+                hue: Hue.coral,
               ),
             ),
-            AnimatedBuilder(
-              animation: controller,
-              builder: (context, _) => Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  for (final (i, (icon, label, color)) in _chips.indexed)
-                    _orbitChip(
-                      context,
-                      angle: controller.value * math.pi * 2 + i * math.pi / 2,
-                      cx: cx,
-                      cy: cy,
-                      r: r,
-                      rx: rx,
-                      icon: icon,
-                      label: label.tr,
-                      color: color,
-                    ),
-                ],
+            piece(
+              order: 1,
+              x: w * 0.47,
+              y: h * 0.02,
+              angle: 0.1,
+              phase: 0.33,
+              child: _Cover(
+                image: 'assets/images/cover_birthday.jpg',
+                width: card * 0.9,
+                label: 'Anniversaire'.tr,
+                hue: Hue.violet,
               ),
+            ),
+            piece(
+              order: 2,
+              x: w * 0.36,
+              y: h * 0.4,
+              angle: -0.03,
+              phase: 0.66,
+              child: _Cover(
+                image: 'assets/images/cover_babyshower.jpg',
+                width: card * 0.92,
+                label: 'Baby shower'.tr,
+                hue: Hue.lagoon,
+              ),
+            ),
+            piece(
+              order: 3,
+              x: w * 0.06,
+              y: h * 0.7,
+              angle: -0.04,
+              phase: 0.2,
+              child: _Chip(
+                hue: Hue.lagoon,
+                icon: AppIcons.wallet,
+                label: 'Budget'.tr,
+                value: '68 %',
+              ),
+            ),
+            piece(
+              order: 4,
+              x: w * 0.6,
+              y: h * 0.3,
+              angle: 0.05,
+              phase: 0.5,
+              child: const _Countdown(),
+            ),
+            piece(
+              order: 5,
+              x: w * 0.58,
+              y: h * 0.86,
+              angle: 0.03,
+              phase: 0.8,
+              child: const _TeamChip(),
             ),
           ],
         );
       },
     );
   }
-
-  Widget _orbitChip(
-    BuildContext context, {
-    required double angle,
-    required double cx,
-    required double cy,
-    required double r,
-    required double rx,
-    required IconData icon,
-    required String label,
-    required Color color,
-  }) {
-    // Orbite elliptique, légèrement aplatie pour l'effet de profondeur.
-    final x = cx + math.cos(angle) * rx;
-    final y = cy + math.sin(angle) * r * 0.62;
-    final depth = (math.sin(angle) + 1) / 2;
-    // Cadre fixe centré sur le point de l'orbite : la pastille s'y réduit
-    // au besoin plutôt que de déborder.
-    return Positioned(
-      left: x - 95,
-      top: y - 18,
-      width: 190,
-      height: 36,
-      child: FittedBox(
-        fit: BoxFit.scaleDown,
-        child: Transform.scale(
-          scale: 0.82 + depth * 0.22,
-          child: Opacity(
-            opacity: 0.6 + depth * 0.4,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(99),
-              child: BackdropFilter(
-                filter: ui.ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(8, 6, 12, 6),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(99),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.25),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(icon, size: 14, color: color),
-                      const SizedBox(width: 6),
-                      Text(
-                        label,
-                        style: context.text.labelMedium?.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
 
-class _RingsPainter extends CustomPainter {
-  _RingsPainter(this.r, this.rx);
+class _Cover extends StatelessWidget {
+  const _Cover({
+    required this.image,
+    required this.width,
+    required this.label,
+    required this.hue,
+  });
 
-  final double r, rx;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final c = Offset(size.width / 2, size.height / 2);
-    final p = Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1;
-    for (final (k, a) in [(1.08, 0.16), (0.82, 0.10)]) {
-      p.color = Colors.white.withValues(alpha: a);
-      canvas.drawOval(
-        Rect.fromCenter(
-          center: c,
-          width: rx * 2 / 1.08 * k,
-          height: r * 1.24 * k,
-        ),
-        p,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_RingsPainter old) => old.r != r || old.rx != rx;
-}
-
-/// Halos corail, violet, mangue et lagon qui dérivent, sur une trame de
-/// points discrète.
-class _AuroraPainter extends CustomPainter {
-  _AuroraPainter(this.anim) : super(repaint: anim);
-
-  final Animation<double> anim;
-
-  static const _blobs = [
-    (Color(0xFFE5484D), 0.15, 0.18, 0.55),
-    (Color(0xFF6246EA), 0.85, 0.22, 0.65),
-    (Color(0xFFE5A21A), 0.20, 0.82, 0.5),
-    (Color(0xFF0E9F8E), 0.85, 0.78, 0.55),
-  ];
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final t = anim.value * math.pi * 2;
-    for (final (i, (color, x, y, r)) in _blobs.indexed) {
-      final c = Offset(
-        size.width * (x + math.sin(t + i) * 0.06),
-        size.height * (y + math.cos(t * 0.8 + i) * 0.05),
-      );
-      final radius = size.shortestSide * r;
-      canvas.drawCircle(
-        c,
-        radius,
-        Paint()
-          ..shader = RadialGradient(
-            colors: [color.withValues(alpha: 0.42), color.withValues(alpha: 0)],
-          ).createShader(Rect.fromCircle(center: c, radius: radius)),
-      );
-    }
-    // Trame de points : le côté « tech ».
-    final dot = Paint()..color = Colors.white.withValues(alpha: 0.07);
-    const step = 22.0;
-    for (var y = step / 2; y < size.height; y += step) {
-      for (var x = step / 2; x < size.width; x += step) {
-        canvas.drawCircle(Offset(x, y), 1, dot);
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(_AuroraPainter old) => old.anim != anim;
-}
-
-/// Bouton secondaire en verre, lisible sur le fond sombre.
-class _GlassButton extends StatelessWidget {
-  const _GlassButton({required this.label, required this.onTap});
-
+  final String image;
+  final double width;
   final String label;
-  final VoidCallback onTap;
+  final Hue hue;
 
   @override
   Widget build(BuildContext context) {
-    return Pressable(
-      onTap: onTap,
-      child: Container(
-        height: 54,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.08),
-          borderRadius: BorderRadius.circular(54),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.35)),
-        ),
-        child: Text(
-          label,
-          style: context.text.labelLarge?.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
-            fontSize: 16,
+    return Container(
+      width: width,
+      height: width * 1.18,
+      padding: const EdgeInsets.all(7),
+      decoration: BoxDecoration(
+        color: Confetti.surface,
+        borderRadius: BorderRadius.circular(26),
+        boxShadow: [
+          BoxShadow(
+            color: Confetti.ink.withValues(alpha: 0.16),
+            blurRadius: 30,
+            offset: const Offset(0, 16),
           ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(image, fit: BoxFit.cover),
+            Positioned(
+              left: 10,
+              top: 10,
+              child: Tag(label: label, hue: hue, solid: true),
+            ),
+          ],
         ),
       ),
     );
   }
+}
+
+class _Chip extends StatelessWidget {
+  const _Chip({
+    required this.hue,
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  final Hue hue;
+  final IconData icon;
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(10, 10, 16, 10),
+      decoration: BoxDecoration(
+        color: hue.tint,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.white, width: 3),
+        boxShadow: [
+          BoxShadow(
+            color: Confetti.ink.withValues(alpha: 0.12),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, size: 19, color: hue.text),
+          ),
+          const SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 11.5,
+                  color: hue.text,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: hue.deep,
+                  fontWeight: FontWeight.w800,
+                  height: 1.1,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Countdown extends StatelessWidget {
+  const _Countdown();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Confetti.coral,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Confetti.coral.withValues(alpha: 0.4),
+            blurRadius: 22,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'J-42'.tr,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 26,
+              fontWeight: FontWeight.w800,
+              height: 1,
+              letterSpacing: -1,
+            ),
+          ),
+          SizedBox(height: 2),
+          Text(
+            'avant la fête'.tr,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _TeamChip extends StatelessWidget {
+  const _TeamChip();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(6, 6, 14, 6),
+      decoration: BoxDecoration(
+        color: Confetti.surface,
+        borderRadius: BorderRadius.circular(99),
+        boxShadow: [
+          BoxShadow(
+            color: Confetti.ink.withValues(alpha: 0.12),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AvatarStack(
+            images: [
+              'assets/images/avatar_2.jpg',
+              'assets/images/avatar_3.jpg',
+              'assets/images/avatar_5.jpg',
+            ],
+            size: 26,
+          ),
+          SizedBox(width: 8),
+          Text(
+            '6 en ligne'.tr,
+            style: TextStyle(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w700,
+              color: Confetti.candyText,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Tache douce derrière le collage : forme organique crème rosée.
+class _BlobPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width, h = size.height;
+    final path = Path()
+      ..moveTo(w * 0.04, h * 0.18)
+      ..cubicTo(w * 0.22, h * 0.02, w * 0.55, h * 0.12, w * 0.74, h * 0.04)
+      ..cubicTo(w * 0.95, -h * 0.02, w * 1.02, h * 0.3, w * 0.97, h * 0.52)
+      ..cubicTo(w * 0.93, h * 0.78, w * 0.98, h * 0.98, w * 0.7, h * 0.97)
+      ..cubicTo(w * 0.45, h * 0.96, w * 0.3, h * 0.86, w * 0.1, h * 0.82)
+      ..cubicTo(-w * 0.04, h * 0.78, -w * 0.02, h * 0.36, w * 0.04, h * 0.18)
+      ..close();
+    canvas.drawPath(
+      path,
+      Paint()
+        ..shader = LinearGradient(
+          colors: Confetti.dark
+              ? const [Color(0xFF241046), Color(0xFF1C0D38)]
+              : const [Color(0xFFF7F3EE), Color(0xFFF3EEFF)],
+        ).createShader(Offset.zero & size),
+    );
+  }
+
+  @override
+  bool shouldRepaint(_BlobPainter old) => false;
 }

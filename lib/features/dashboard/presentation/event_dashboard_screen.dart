@@ -36,7 +36,8 @@ class EventDashboardScreen extends ConsumerWidget {
     return ref
         .watch(eventProvider(id))
         .when(
-          loading: () => const Scaffold(body: Center(child: MascotLoader.party())),
+          loading: () =>
+              const Scaffold(body: Center(child: MascotLoader.party())),
           error: (e, _) => Scaffold(
             body: ErrorState(onRetry: () => ref.invalidate(eventsProvider)),
           ),
@@ -288,7 +289,10 @@ class _DashboardState extends ConsumerState<_Dashboard> {
                                 style: context.text.titleSmall,
                               ),
                               Text(
-                                'Étape {0}/7 · {1}'.trf([b.step.index + 1, b.step.status]),
+                                'Étape {0}/7 · {1}'.trf([
+                                  b.step.index + 1,
+                                  b.step.status,
+                                ]),
                                 style: context.text.bodySmall,
                               ),
                             ],

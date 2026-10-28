@@ -257,9 +257,7 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                       color: _accepted ? Confetti.ink : Confetti.surface,
                       borderRadius: BorderRadius.circular(7),
                       border: Border.all(
-                        color: _accepted
-                            ? Confetti.ink
-                            : Confetti.border,
+                        color: _accepted ? Confetti.ink : Confetti.border,
                         width: 1.6,
                       ),
                     ),
@@ -274,7 +272,8 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      'J’accepte les conditions du devis et la politique d’annulation.'.tr,
+                      'J’accepte les conditions du devis et la politique d’annulation.'
+                          .tr,
                       style: context.text.bodySmall?.copyWith(
                         color: Confetti.ink,
                       ),
@@ -333,8 +332,8 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
               icon: AppIcons.calendarCheck,
               hue: Hue.violet,
               title: 'Date bloquée'.tr,
-              text:
-                  '{0} réserve le {1} pour vous. Réglez l’acompte pour confirmer définitivement.'.trf([b.vendor.name, longDate(b.request.date)]),
+              text: '{0} réserve le {1} pour vous. Réglez l’acompte pour confirmer définitivement.'
+                  .trf([b.vendor.name, longDate(b.request.date)]),
             ),
             const SizedBox(height: 12),
             _QuoteCard(quote: b.quote!, compact: true),
@@ -356,8 +355,13 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
               icon: AppIcons.checkCircle,
               hue: Hue.lagoon,
               title: 'Réservation confirmée'.tr,
-              text:
-                  'Payé {0} sur {1}. {2}'.trf([fcfa(b.paidAmount), fcfa(b.quote!.total), b.balance > 0 ? 'Reste {0} à régler avant J-7.'.trf([fcfa(b.balance)]) : 'Tout est réglé.'.tr]),
+              text: 'Payé {0} sur {1}. {2}'.trf([
+                fcfa(b.paidAmount),
+                fcfa(b.quote!.total),
+                b.balance > 0
+                    ? 'Reste {0} à régler avant J-7.'.trf([fcfa(b.balance)])
+                    : 'Tout est réglé.'.tr,
+              ]),
             ),
             const SizedBox(height: 16),
             Text('Suivi'.tr, style: context.text.titleLarge),
@@ -378,7 +382,9 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                   _FollowRow(
                     icon: AppIcons.message,
                     title: 'Brief final avec le prestataire'.tr,
-                    caption: days > 14 ? 'Programmé à J-14'.tr : 'Cette semaine'.tr,
+                    caption: days > 14
+                        ? 'Programmé à J-14'.tr
+                        : 'Cette semaine'.tr,
                     done: false,
                   ),
                   const Divider(height: 1),
@@ -422,8 +428,8 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
               icon: AppIcons.bank,
               hue: Hue.lagoon,
               title: 'Prestataire payé'.tr,
-              text:
-                  'Reversement automatique de {0} effectué à {1} après votre validation.'.trf([fcfa(b.quote!.subtotal), b.vendor.name]),
+              text: 'Reversement automatique de {0} effectué à {1} après votre validation.'
+                  .trf([fcfa(b.quote!.subtotal), b.vendor.name]),
             ),
             const SizedBox(height: 14),
             Panel(
@@ -461,7 +467,9 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
             ),
             const SizedBox(height: 14),
             PillButton(
-              label: b.archived ? 'Dossier archivé'.tr : 'Archiver le dossier'.tr,
+              label: b.archived
+                  ? 'Dossier archivé'.tr
+                  : 'Archiver le dossier'.tr,
               icon: AppIcons.archive,
               tone: ButtonTone.ghost,
               onPressed: b.archived
@@ -603,7 +611,10 @@ class _WaitingState extends State<_Waiting>
           Text('Demande envoyée'.tr, style: context.text.titleLarge),
           const SizedBox(height: 4),
           Text(
-            '{0} prépare votre devis. Réponse moyenne en {1}.'.trf([widget.vendor, widget.responseTime]),
+            '{0} prépare votre devis. Réponse moyenne en {1}.'.trf([
+              widget.vendor,
+              widget.responseTime,
+            ]),
             textAlign: TextAlign.center,
             style: context.text.bodySmall,
           ),
@@ -672,7 +683,10 @@ class _QuoteCard extends StatelessWidget {
           const SizedBox(height: 12),
           if (!compact) ...[
             for (final l in q.lines)
-              row(l.optional ? 'Option · {0}'.trf([l.label]) : l.label, l.amount),
+              row(
+                l.optional ? 'Option · {0}'.trf([l.label]) : l.label,
+                l.amount,
+              ),
             row('Frais de service'.tr, q.fees, muted: true),
             const Divider(height: 18),
           ],

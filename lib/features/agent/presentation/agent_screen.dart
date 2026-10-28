@@ -79,7 +79,8 @@ class _AgentScreenState extends ConsumerState<AgentScreen> {
         final lines = EventTemplates.aiBudget(e);
         return _Msg(
           true,
-          'Voici une répartition de {0} adaptée à {1} invités, en conservant vos {2} déjà engagés.'.trf([fcfa(e.targetBudget), g.invited, fcfa(e.committed)]),
+          'Voici une répartition de {0} adaptée à {1} invités, en conservant vos {2} déjà engagés.'
+              .trf([fcfa(e.targetBudget), g.invited, fcfa(e.committed)]),
           bullets: [
             for (final l in lines.take(6))
               '${l.category.label} : ${fcfa(l.estimated)}',
@@ -103,11 +104,16 @@ class _AgentScreenState extends ConsumerState<AgentScreen> {
         return _Msg(
           true,
           quoted.isEmpty
-              ? 'Aucun devis en attente. Dès qu’un prestataire répond, je compare son prix au marché et je négocie pour vous.'.tr
-              : 'J’ai analysé {0} devis en attente. Le prix de {1} est 9 % au-dessus de la moyenne observée pour sa catégorie.'.trf([quoted.length, quoted.first.vendor.name]),
+              ? 'Aucun devis en attente. Dès qu’un prestataire répond, je compare son prix au marché et je négocie pour vous.'
+                    .tr
+              : 'J’ai analysé {0} devis en attente. Le prix de {1} est 9 % au-dessus de la moyenne observée pour sa catégorie.'
+                    .trf([quoted.length, quoted.first.vendor.name]),
           bullets: [
             if (quoted.isNotEmpty)
-              'Proposition : {0} au lieu de {1}'.trf([fcfa((quoted.first.amount * 0.93).round()), fcfa(quoted.first.amount)]),
+              'Proposition : {0} au lieu de {1}'.trf([
+                fcfa((quoted.first.amount * 0.93).round()),
+                fcfa(quoted.first.amount),
+              ]),
             if (quoted.isNotEmpty)
               'Argument : réservation ferme sous 48 h et acompte immédiat'.tr,
           ],
@@ -120,10 +126,13 @@ class _AgentScreenState extends ConsumerState<AgentScreen> {
           'Trois pistes d’économies sans toucher à l’essentiel :'.tr,
           bullets: [
             if (drinks > 0)
-              'Boissons : forfait « softs + jus locaux » chez le traiteur, environ {0} économisés'.trf([fcfa((drinks * 0.18).round())]),
+              'Boissons : forfait « softs + jus locaux » chez le traiteur, environ {0} économisés'
+                  .trf([fcfa((drinks * 0.18).round())]),
             if (deco > 0)
-              'Décoration : réutiliser l’arche de la cérémonie pour la réception, environ {0}'.trf([fcfa((deco * 0.12).round())]),
-            'Papeterie : faire-part digital + 30 cartons imprimés pour les aînés, environ 120 000 FCFA'.tr,
+              'Décoration : réutiliser l’arche de la cérémonie pour la réception, environ {0}'
+                  .trf([fcfa((deco * 0.12).round())]),
+            'Papeterie : faire-part digital + 30 cartons imprimés pour les aînés, environ 120 000 FCFA'
+                .tr,
           ],
         );
       case AgentAction.planning:
@@ -131,7 +140,8 @@ class _AgentScreenState extends ConsumerState<AgentScreen> {
           ..sort((a, b) => a.due.compareTo(b.due));
         return _Msg(
           true,
-          'Planning des 3 prochaines semaines, jalons critiques en premier :'.tr,
+          'Planning des 3 prochaines semaines, jalons critiques en premier :'
+              .tr,
           bullets: [
             for (final t in open.take(5)) '${shortDate(t.due)} · ${t.title}',
           ],
@@ -140,7 +150,8 @@ class _AgentScreenState extends ConsumerState<AgentScreen> {
         final tables = (g.confirmed / 10).ceil();
         return _Msg(
           true,
-          'Pour {0} invités confirmés : {1} tables rondes de 10, plus une table d’honneur.'.trf([g.confirmed, tables]),
+          'Pour {0} invités confirmés : {1} tables rondes de 10, plus une table d’honneur.'
+              .trf([g.confirmed, tables]),
           bullets: [
             'Table d’honneur : mariés, témoins, parents'.tr,
             'Tables 1 à 4 : aînés des deux familles, près de la scène'.tr,
@@ -153,7 +164,8 @@ class _AgentScreenState extends ConsumerState<AgentScreen> {
           true,
           'Proposition de faire-part :'.tr,
           bullets: [
-            '« Les familles ont la joie de vous convier à {0}, le {1}, à {2}. »'.trf([e.name, longDate(e.date), e.venue]),
+            '« Les familles ont la joie de vous convier à {0}, le {1}, à {2}. »'
+                .trf([e.name, longDate(e.date), e.venue]),
             'Version WhatsApp courte avec lien RSVP et plan d’accès'.tr,
             'Version imprimée pour les aînés'.tr,
           ],
@@ -161,9 +173,16 @@ class _AgentScreenState extends ConsumerState<AgentScreen> {
       case AgentAction.guestMessage:
         return _Msg(
           true,
-          'Message prêt pour les {0} invités qui n’ont pas répondu :'.trf([g.pending]),
+          'Message prêt pour les {0} invités qui n’ont pas répondu :'.trf([
+            g.pending,
+          ]),
           bullets: [
-            'Bonjour, nous serions ravis de vous compter parmi nous le {0} pour {1}. Merci de confirmer votre présence avant le {2}.'.trf([shortDate(e.date), e.name, shortDate(e.date.subtract(const Duration(days: 21)))]),
+            'Bonjour, nous serions ravis de vous compter parmi nous le {0} pour {1}. Merci de confirmer votre présence avant le {2}.'
+                .trf([
+                  shortDate(e.date),
+                  e.name,
+                  shortDate(e.date.subtract(const Duration(days: 21))),
+                ]),
           ],
           action: (
             'Envoyer sur WhatsApp'.tr,
@@ -180,8 +199,12 @@ class _AgentScreenState extends ConsumerState<AgentScreen> {
           'Où en est l’argent :'.tr,
           bullets: [
             'Payé : {0}'.trf([fcfa(e.paid)]),
-            'Reste à payer aux prestataires : {0}'.trf([fcfa(e.remainingToPay)]),
-            'Reste à dépenser sur le budget cible : {0}'.trf([fcfa(e.remainingToSpend)]),
+            'Reste à payer aux prestataires : {0}'.trf([
+              fcfa(e.remainingToPay),
+            ]),
+            'Reste à dépenser sur le budget cible : {0}'.trf([
+              fcfa(e.remainingToSpend),
+            ]),
             'Disponible non engagé : {0}'.trf([fcfa(e.available)]),
           ],
         );
@@ -271,7 +294,8 @@ class _AgentScreenState extends ConsumerState<AgentScreen> {
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'Je connais votre budget, vos tâches, vos invités et vos devis.'.tr,
+                          'Je connais votre budget, vos tâches, vos invités et vos devis.'
+                              .tr,
                           style: context.text.bodySmall?.copyWith(
                             color: Colors.white54,
                           ),

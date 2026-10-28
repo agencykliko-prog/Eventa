@@ -44,8 +44,10 @@ class _Collaborators extends ConsumerWidget {
           const SizedBox(height: 4),
           Text(
             unlocked
-                ? 'Collaborateurs selon votre offre. Chacun a ses propres droits.'.tr
-                : '{0} collaborateurs offerts, Premium à partir du 3ᵉ. Chacun a ses propres droits.'.trf([freeCollaborators]),
+                ? 'Collaborateurs selon votre offre. Chacun a ses propres droits.'
+                      .tr
+                : '{0} collaborateurs offerts, Premium à partir du 3ᵉ. Chacun a ses propres droits.'
+                      .trf([freeCollaborators]),
             style: context.text.bodySmall,
           ),
           const SizedBox(height: 14),
@@ -91,8 +93,11 @@ class _Collaborators extends ConsumerWidget {
           ),
           const SizedBox(height: 10),
           Pressable(
-            onTap: () =>
-                toast(context, 'Lien d’invitation copié'.tr, icon: AppIcons.share),
+            onTap: () => toast(
+              context,
+              'Lien d’invitation copié'.tr,
+              icon: AppIcons.share,
+            ),
             child: Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
@@ -102,11 +107,7 @@ class _Collaborators extends ConsumerWidget {
               ),
               child: Row(
                 children: [
-                  Icon(
-                    AppIcons.share,
-                    size: 18,
-                    color: Confetti.inkMuted,
-                  ),
+                  Icon(AppIcons.share, size: 18, color: Confetti.inkMuted),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
@@ -190,7 +191,9 @@ class _Collaborators extends ConsumerWidget {
       if (p.guests) 'invités'.tr,
       if (p.payments) 'paiements',
     ];
-    return on.isEmpty ? 'Lecture seule'.tr : 'Modifie : {0}'.trf([on.join(', ')]);
+    return on.isEmpty
+        ? 'Lecture seule'.tr
+        : 'Modifie : {0}'.trf([on.join(', ')]);
   }
 
   void _invite(BuildContext context, WidgetRef ref, Event e) {
@@ -253,8 +256,11 @@ class _Collaborators extends ConsumerWidget {
               ),
               const SizedBox(height: 6),
               Text(switch (role) {
-                TeamRole.admin => 'Tous les droits, y compris les paiements.'.tr,
-                TeamRole.editor => 'Modifie budget, tâches, prestataires et invités. Pas de paiement.'.tr,
+                TeamRole.admin =>
+                  'Tous les droits, y compris les paiements.'.tr,
+                TeamRole.editor =>
+                  'Modifie budget, tâches, prestataires et invités. Pas de paiement.'
+                      .tr,
                 _ => 'Consulte sans rien modifier.'.tr,
               }, style: ctx.text.bodySmall),
               const SizedBox(height: 16),
@@ -359,7 +365,11 @@ class _Collaborators extends ConsumerWidget {
                 const SizedBox(height: 14),
                 row('Budget'.tr, p.budget, (x) => p.copyWith(budget: x)),
                 row('Tâches'.tr, p.tasks, (x) => p.copyWith(tasks: x)),
-                row('Prestataires'.tr, p.vendors, (x) => p.copyWith(vendors: x)),
+                row(
+                  'Prestataires'.tr,
+                  p.vendors,
+                  (x) => p.copyWith(vendors: x),
+                ),
                 row('Invités'.tr, p.guests, (x) => p.copyWith(guests: x)),
                 row('Paiements'.tr, p.payments, (x) => p.copyWith(payments: x)),
                 const SizedBox(height: 12),

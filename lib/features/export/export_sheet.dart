@@ -34,7 +34,14 @@ abstract final class Exporter {
       '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
 
   static String expenses(Event e) => [
-    _row(['Événement'.tr, 'Poste'.tr, 'Libellé'.tr, 'Montant (FCFA)'.tr, 'Date'.tr, 'Moyen'.tr]),
+    _row([
+      'Événement'.tr,
+      'Poste'.tr,
+      'Libellé'.tr,
+      'Montant (FCFA)'.tr,
+      'Date'.tr,
+      'Moyen'.tr,
+    ]),
     for (final x in e.expenses)
       _row([
         e.name,
@@ -154,7 +161,10 @@ class _ExportSheetState extends ConsumerState<_ExportSheet> {
     toast(
       context,
       downloaded
-          ? (_kinds.length > 1 ? '{0} fichiers CSV téléchargés' : '{0} fichier CSV téléchargé').trf([_kinds.length])
+          ? (_kinds.length > 1
+                    ? '{0} fichiers CSV téléchargés'
+                    : '{0} fichier CSV téléchargé')
+                .trf([_kinds.length])
           : 'Données copiées dans le presse-papiers'.tr,
       icon: AppIcons.download,
     );
