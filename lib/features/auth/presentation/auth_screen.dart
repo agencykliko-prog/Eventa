@@ -1218,9 +1218,7 @@ class _AuthMascotState extends ConsumerState<AuthMascot> {
   Offset? _look;
   bool _cover = false;
   bool _waving = true;
-  bool _pop = false;
   Timer? _timer;
-  Timer? _popTimer;
 
   @override
   void initState() {
@@ -1232,23 +1230,8 @@ class _AuthMascotState extends ConsumerState<AuthMascot> {
   }
 
   @override
-  void didUpdateWidget(AuthMascot old) {
-    super.didUpdateWidget(old);
-    // Changement de profil : la nouvelle mascotte arrive d'un petit bond.
-    if (old.color != widget.color) {
-      _pop = true;
-      authMascotKey.currentState?.jump();
-      _popTimer?.cancel();
-      _popTimer = Timer(const Duration(milliseconds: 60), () {
-        if (mounted) setState(() => _pop = false);
-      });
-    }
-  }
-
-  @override
   void dispose() {
     _timer?.cancel();
-    _popTimer?.cancel();
     FocusManager.instance.removeListener(_onFocus);
     _watched?.removeListener(_onText);
     super.dispose();
@@ -1286,20 +1269,14 @@ class _AuthMascotState extends ConsumerState<AuthMascot> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(left: 8, bottom: 2),
-      child: AnimatedScale(
-        scale: _pop ? 0.82 : 1,
-        duration: Duration(milliseconds: _pop ? 60 : 420),
-        curve: _pop ? Curves.easeIn : Curves.easeOutBack,
-        alignment: Alignment.bottomCenter,
-        child: Mascot(
-          key: authMascotKey,
-          size: 104,
-          color: widget.color,
-          look: _look,
-          cover: _cover,
-          waving: _waving,
-          onTap: () => ref.read(soundProvider).play(Sfx.success),
-        ),
+      child: Mascot(
+        key: authMascotKey,
+        size: 104,
+        color: widget.color,
+        look: _look,
+        cover: _cover,
+        waving: _waving,
+        onTap: () => ref.read(soundProvider).play(Sfx.success),
       ),
     );
   }

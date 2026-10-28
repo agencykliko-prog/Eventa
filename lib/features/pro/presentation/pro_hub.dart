@@ -10,15 +10,18 @@ import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/ui.dart';
 import '../../creator/presentation/creator_providers.dart';
 import '../domain/pro_models.dart';
+import '../../commerce/presentation/commerce_providers.dart';
 import 'pro_providers.dart';
+import 'studio_providers.dart';
 
-/// Accès aux six sections de l'espace pro, chacune avec son chiffre clé.
+/// Accès aux sept sections de l'espace pro, chacune avec son chiffre clé.
 class ProHub extends ConsumerWidget {
   const ProHub({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pro = ref.watch(proProvider);
+    final studio = ref.watch(studioUnlockedProvider);
     final requests = ref.watch(requestsProvider);
     final pending = requests
         .where((r) => r.status == RequestStatus.received)
@@ -96,6 +99,16 @@ class ProHub extends ConsumerWidget {
           pro.reviews.length,
         ]),
         '/pro/reputation',
+      ),
+      (
+        'G',
+        AppIcons.crown,
+        Hue.gold,
+        'Studio Creator'.tr,
+        studio
+            ? 'CRM, factures, équipe'.tr
+            : 'Offre Creator · {0}/mois'.trf([fcfaCompact(creatorPlanPrice)]),
+        '/pro/studio',
       ),
     ];
 

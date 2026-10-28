@@ -150,31 +150,16 @@ class _GreetingHeroState extends ConsumerState<GreetingHero>
                       Positioned(
                         left: mLeft,
                         bottom: -mascotSize * 0.10,
-                        child: _Rise(
-                          delay: 120,
-                          distance: 70,
-                          child: AnimatedBuilder(
-                            animation: _time,
-                            builder: (context, child) {
-                              // Balancement lent et continu (mouvement fluide).
-                              final t = _reduced ? 0.0 : _time.value;
-                              return Transform.translate(
-                                offset: Offset(0, math.sin(t * 1.6) * 5),
-                                child: Transform.rotate(
-                                  angle: 0.10 + math.sin(t * 1.1) * 0.035,
-                                  alignment: Alignment.bottomCenter,
-                                  child: child,
-                                ),
-                              );
-                            },
-                            child: Mascot(
-                              size: mascotSize,
-                              color: widget.mascot,
-                              waving: true,
-                              look: _lookFrom(mCenter),
-                              onTap: () =>
-                                  ref.read(soundProvider).play(Sfx.success),
-                            ),
+                        child: Transform.rotate(
+                          angle: 0.10,
+                          alignment: Alignment.bottomCenter,
+                          child: Mascot(
+                            size: mascotSize,
+                            color: widget.mascot,
+                            waving: true,
+                            look: _lookFrom(mCenter),
+                            onTap: () =>
+                                ref.read(soundProvider).play(Sfx.success),
                           ),
                         ),
                       ),
@@ -339,11 +324,11 @@ class _GlowPainter extends CustomPainter {
 
 /// Apparition en montée douce, décalée de [delay] millisecondes.
 class _Rise extends StatelessWidget {
-  const _Rise({required this.child, this.delay = 0, this.distance = 18});
+  const _Rise({required this.child, this.delay = 0});
 
   final Widget child;
   final int delay;
-  final double distance;
+  static const distance = 18.0;
 
   @override
   Widget build(BuildContext context) {

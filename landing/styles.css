@@ -245,7 +245,6 @@ h1, h2, h3, h4, p { margin: 0; }
 .hero .b1 { left: 0; top: 120px; }
 .hero .b2 { right: -10px; top: 270px; animation-delay: -2.5s; }
 @keyframes bob { 50% { transform: translateY(-10px); } }
-.hero-mascot { position: absolute; left: -4%; bottom: 0; width: 170px; z-index: 2; }
 
 /* ── Mascottes illustrées ───────────────────────────────── */
 
@@ -570,7 +569,6 @@ h1, h2, h3, h4, p { margin: 0; }
   .phone-tilt { right: 50%; translate: 50% 0; }
   .ci-badge { left: auto; right: 2%; top: 0; width: 118px; }
   .ci-ring text { font-size: 18px; }
-  .hero-mascot { left: 2%; width: 130px; }
   .vendors, .plans { grid-template-columns: repeat(2, 1fr); }
   .pro-grid { grid-template-columns: repeat(2, 1fr); }
   .steps { grid-template-columns: 1fr; gap: 56px; }
@@ -595,7 +593,6 @@ h1, h2, h3, h4, p { margin: 0; }
   .phone-live { width: 300px; }
   .hero .b1 { top: 40px; max-width: 200px; font-size: 13px; }
   .hero .b2 { top: 220px; right: 0; max-width: 200px; font-size: 13px; }
-  .hero-mascot { width: 112px; }
   .duo { height: 140px; }
   .duo-m { width: 130px; }
   .store { height: 42px; }

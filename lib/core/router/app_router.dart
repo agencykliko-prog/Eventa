@@ -29,6 +29,7 @@ import '../../features/marketplace/presentation/vendor_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
 import '../../features/planning/presentation/planning_screen.dart';
 import '../../features/premium/presentation/business_screen.dart';
+import '../../features/pro/presentation/studio_screen.dart';
 import '../../features/pro/presentation/availability_screen.dart';
 import '../../features/pro/presentation/orders_screen.dart';
 import '../../features/pro/presentation/profile_catalog_screen.dart';
@@ -284,6 +285,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/pro/revenus',
         parentNavigatorKey: _rootKey,
         builder: (c, s) => _bounded(const RevenueScreen()),
+      ),
+      GoRoute(
+        path: '/pro/studio',
+        parentNavigatorKey: _rootKey,
+        builder: (c, s) => _bounded(const StudioScreen()),
       ),
       GoRoute(
         path: '/pro/reputation',

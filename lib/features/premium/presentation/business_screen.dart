@@ -151,17 +151,24 @@ class BusinessScreen extends ConsumerWidget {
                       icon: AppIcons.crown,
                       onPressed: () => _subscribe(context, ref),
                     )
-                  else
+                  else ...[
                     _ActiveSub(
                       sub: sub,
                       onCancel: () => _cancel(context, ref),
                       onResume: () =>
                           ref.read(creatorSubProvider.notifier).resume(),
                     ),
+                    const SizedBox(height: 10),
+                    PillButton(
+                      label: 'Ouvrir mon Studio Creator'.tr,
+                      icon: AppIcons.crown,
+                      tone: ButtonTone.gold,
+                      onPressed: () => context.push('/pro/studio'),
+                    ),
+                  ],
                   const SizedBox(height: 10),
                   Text(
-                    'Sans engagement · Mobile Money ou carte · résiliable à tout moment'
-                        .tr,
+                    'Sans engagement · résiliable à tout moment'.tr,
                     style: context.text.labelSmall?.copyWith(
                       color: Colors.white60,
                     ),
