@@ -1245,4 +1245,128 @@ const en = <String, String>{
   ' et notre ': ' and our ',
   'J’accepte les conditions': 'I accept the terms',
   'Cochez la case pour continuer.': 'Tick the box to continue.',
+  'Le budget parfait\npour ': 'The perfect budget\nto ',
+  'célébrer': 'celebrate',
+  'Des prestataires vérifiés, vos invités et votre équipe : tout votre événement au même endroit.':
+      'Verified vendors, your guests and your team: your whole event in one place.',
+  '{0} Go': '{0} GB',
+  '{0} sur {1}': '{0} of {1}',
+
+  // ─── Contacter l'équipe ────────────────────────────────────────────────
+  'Contacter l’équipe': 'Contact the team',
+  'Support Privilège 7 j/7 : écrivez-nous sur WhatsApp, on vous répond vite.':
+      'Privilège support 7 days a week: message us on WhatsApp, we reply fast.',
+  'Une question, un souci ? Écrivez-nous, on vous répond vite.':
+      'A question or a problem? Write to us, we reply fast.',
+  'WhatsApp · {0}': 'WhatsApp · {0}',
+  'Bonjour Eventa, j’ai besoin d’aide.': 'Hello Eventa, I need some help.',
+
+  // ─── Demande de devis ──────────────────────────────────────────────────
+  'Photo {0} du portfolio': 'Portfolio photo {0}',
+  'Nombre d’invités': 'Number of guests',
+  '{0} (plusieurs choix)': '{0} (several choices)',
+  'Estimation pour {0} invités': 'Estimate for {0} guests',
+  'Estimation de la formule': 'Package estimate',
+  'Essai avant le jour J': 'Trial before the big day',
+  'Dégustation': 'Tasting',
+
+  // ─── Offre Creator ─────────────────────────────────────────────────────
+  'Offre Creator': 'Creator plan',
+  'Abonnement Creator': 'Creator subscription',
+  'CRM, devis, facturation · 29 900 FCFA/mois':
+      'CRM, quotes, invoicing · 29,900 FCFA/month',
+  'Abonnement actif · 29 900 FCFA/mois':
+      'Active subscription · 29,900 FCFA/month',
+  'Bienvenue dans l’offre Creator': 'Welcome to the Creator plan',
+  'Résilier l’offre Creator ?': 'Cancel the Creator plan?',
+  'Vos avantages restent actifs jusqu’à la fin de la période payée. Aucun prélèvement ensuite.':
+      'Your benefits stay active until the end of the paid period. No further charges.',
+  'Résilier': 'Cancel',
+  'Garder mon abonnement': 'Keep my subscription',
+  'Résiliation enregistrée': 'Cancellation saved',
+  'S’abonner · {0} / mois': 'Subscribe · {0} / month',
+  'Ouvrir mon Studio Creator': 'Open my Creator Studio',
+  'Sans engagement · résiliable à tout moment':
+      'No commitment · cancel anytime',
+  'Offre Creator résiliée': 'Creator plan cancelled',
+  'Offre Creator active': 'Creator plan active',
+  'Active jusqu’au {0}, sans renouvellement.':
+      'Active until {0}, no renewal.',
+  'Prochain renouvellement le {0} · {1}': 'Next renewal on {0} · {1}',
+  'Reçu {0}': 'Receipt {0}',
+  'Réactiver': 'Reactivate',
+  'CRM, factures, équipe': 'CRM, invoices, team',
+  'Offre Creator · {0}/mois': 'Creator plan · {0}/month',
+
+  // ─── Studio Creator ────────────────────────────────────────────────────
+  'Studio Creator': 'Creator Studio',
+  'Les outils de votre offre Creator, au même endroit.':
+      'Your Creator plan tools, all in one place.',
+  'Réservé aux abonnés de l’offre Creator.':
+      'For Creator plan subscribers only.',
+  'Débloquer · {0} / mois': 'Unlock · {0} / month',
+  'Accès jusqu’au {0}': 'Access until {0}',
+  'Renouvellement le {0}': 'Renews on {0}',
+  'CRM clients avec notes privées': 'Client CRM with private notes',
+  'Factures en un geste, suivi des paiements':
+      'One-tap invoices, payment tracking',
+  'Automatisations des relances': 'Automated reminders',
+  'Marque blanche sur vos documents': 'White label on your documents',
+  'Clé d’API et intégrations': 'API key and integrations',
+  'Statistiques avancées': 'Advanced statistics',
+  'Taux de conversion': 'Conversion rate',
+  'Panier moyen': 'Average order value',
+  'Facturé': 'Invoiced',
+  'Reste à encaisser': 'Still to collect',
+  'Note privée': 'Private note',
+  'Préférences, contacts, points d’attention…':
+      'Preferences, contacts, things to watch…',
+  'Enregistrer la note': 'Save note',
+  'Note enregistrée': 'Note saved',
+  'CRM clients': 'Client CRM',
+  '{0} demandes · {1} confirmées': '{0} requests · {1} confirmed',
+  'Facturation': 'Invoicing',
+  'Facturer': 'Invoice',
+  'Facture {0} envoyée': 'Invoice {0} sent',
+  'Aucune prestation confirmée à facturer.':
+      'No confirmed booking to invoice.',
+  'Payée · {0}': 'Paid · {0}',
+  'Échéance {0} · {1}': 'Due {0} · {1}',
+  'Payée': 'Paid',
+  'Encaisser': 'Mark as paid',
+  'Inviter un membre': 'Invite a member',
+  'Nom manquant ou membre déjà invité': 'Name missing or member already invited',
+  'Inviter': 'Invite',
+  'Invitez vos chefs de projet et votre équipe terrain.':
+      'Invite your project managers and your field team.',
+  '{0} · invitation envoyée': '{0} · invitation sent',
+  'Retirer {0}': 'Remove {0}',
+  'Administrateur': 'Administrator',
+  'Chef de projet': 'Project manager',
+  'Équipe terrain': 'Field team',
+  'Automatisations': 'Automations',
+  'Réponse automatique': 'Auto-reply',
+  'Accusé de réception envoyé à chaque nouvelle demande.':
+      'Acknowledgement sent for every new request.',
+  'Relance d’acompte': 'Deposit reminder',
+  'Rappel au client 3 jours avant l’échéance d’une facture.':
+      'Reminder to the client 3 days before an invoice is due.',
+  'Demande d’avis': 'Review request',
+  'Message de remerciement et lien d’avis le lendemain de la prestation.':
+      'Thank-you message and review link the day after the booking.',
+  'Rapport hebdomadaire': 'Weekly report',
+  'Synthèse du chiffre et des demandes chaque lundi.':
+      'Summary of revenue and requests every Monday.',
+  'Marque blanche': 'White label',
+  'Nom affiché sur vos devis et factures':
+      'Name shown on your quotes and invoices',
+  'Couleur de marque': 'Brand colour',
+  'Votre marque': 'Your brand',
+  'DEVIS': 'QUOTE',
+  'API & intégrations': 'API & integrations',
+  'Connectez votre site ou votre outil de gestion pour recevoir les demandes automatiquement.':
+      'Connect your website or management tool to receive requests automatically.',
+  'Générer une clé d’API': 'Generate an API key',
+  'Copier la clé': 'Copy key',
+  'Clé copiée': 'Key copied',
 };

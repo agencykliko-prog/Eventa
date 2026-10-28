@@ -707,7 +707,7 @@ class _BrandState extends ConsumerState<_Brand> {
                         style: context.text.titleMedium?.copyWith(color: color),
                       ),
                     ),
-                    Text('DEVIS', style: context.text.labelSmall),
+                    Text('DEVIS'.tr, style: context.text.labelSmall),
                   ],
                 ),
               ),
