@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/tr.dart';
+import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/eventa_colors.dart';
@@ -16,6 +17,7 @@ import '../../events/presentation/events_providers.dart';
 import '../../premium/presentation/paywall.dart';
 import '../../premium/presentation/premium_nudge.dart';
 import '../../marketplace/data/vendor_media.dart';
+import 'quote_compare_screen.dart';
 
 /// Parcours de réservation en 7 étapes, sur un seul écran : chaque étape
 /// affiche son contenu et une seule action principale.
@@ -243,6 +245,18 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            if (ref.watch(rivalQuotesProvider(b.id)) case final n when n > 0)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: PillButton(
+                  key: const ValueKey('compare-quotes'),
+                  label: 'Comparer avec {0} autre(s) devis'.trf([n]),
+                  icon: AppIcons.chart,
+                  tone: ButtonTone.ghost,
+                  onPressed: () =>
+                      context.push(Routes.compareQuotes(b.eventId)),
+                ),
+              ),
             _QuoteCard(quote: b.quote!),
             const SizedBox(height: 14),
             Pressable(

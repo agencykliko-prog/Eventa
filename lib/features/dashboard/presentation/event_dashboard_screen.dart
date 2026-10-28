@@ -12,6 +12,7 @@ import '../../../core/widgets/entrance.dart';
 import '../../../core/widgets/mascot.dart';
 import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/ui.dart';
+import '../../booking/presentation/quote_compare_screen.dart';
 import '../../commerce/domain/commerce_models.dart';
 import '../../commerce/presentation/commerce_providers.dart';
 import '../../events/domain/models.dart';
@@ -257,7 +258,15 @@ class _DashboardState extends ConsumerState<_Dashboard> {
             ),
           ),
           if (bookings.isNotEmpty) ...[
-            SliverToBoxAdapter(child: SectionTitle('Réservations'.tr)),
+            SliverToBoxAdapter(
+              child: SectionTitle(
+                'Réservations'.tr,
+                action: ref.watch(quoteGroupsProvider(e.id)).isEmpty
+                    ? null
+                    : 'Comparer les devis'.tr,
+                onAction: () => context.push(Routes.compareQuotes(e.id)),
+              ),
+            ),
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               sliver: SliverList.separated(

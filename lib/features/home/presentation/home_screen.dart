@@ -27,6 +27,7 @@ import '../../events/domain/models.dart';
 import '../../events/presentation/events_providers.dart';
 import '../../marketplace/presentation/widgets/vendor_card.dart';
 import '../../premium/presentation/premium_nudge.dart';
+import '../../events/presentation/widgets/event_card.dart';
 import 'event_carousel.dart';
 import 'greeting_hero.dart';
 import 'notifications_sheet.dart';
@@ -42,75 +43,143 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final events = ref.watch(eventsProvider);
+    final hero = GreetingHero(
+      header: HomeHeader(subtitle: _today()),
+      action: PillButton(
+        label: 'Créer un événement'.tr,
+        icon: AppIcons.add,
+        expand: false,
+        height: 46,
+        onPressed: () => context.push(Routes.newEvent),
+      ),
+    );
     return Scaffold(
       // Accueil sur fond blanc (le mode sombre garde son fond).
       backgroundColor: Confetti.dark ? null : Colors.white,
       body: SafeArea(
         bottom: false,
-        child: RefreshIndicator(
-          color: Confetti.coral,
-          onRefresh: () => ref.read(eventsProvider.notifier).refresh(),
-          child: CustomScrollView(
-            physics: const AlwaysScrollableScrollPhysics(
-              parent: BouncingScrollPhysics(),
-            ),
-            slivers: [
-              SliverToBoxAdapter(
-                child: GreetingHero(
-                  header: HomeHeader(subtitle: _today()),
-                  action: PillButton(
-                    label: 'Créer un événement'.tr,
-                    icon: AppIcons.add,
-                    expand: false,
-                    height: 46,
-                    onPressed: () => context.push(Routes.newEvent),
-                  ),
+        child: LayoutBuilder(
+          builder: (context, box) {
+            final desktop = box.maxWidth >= _desktop;
+            // En desktop, le héros entre dans la grille dès qu'il y a des
+            // événements ; sinon il reste en tête, comme sur mobile.
+            final heroInGrid =
+                desktop &&
+                !events.hasError &&
+                (events.value?.isNotEmpty ?? false);
+            return RefreshIndicator(
+              color: Confetti.coral,
+              onRefresh: () => ref.read(eventsProvider.notifier).refresh(),
+              child: CustomScrollView(
+                physics: const AlwaysScrollableScrollPhysics(
+                  parent: BouncingScrollPhysics(),
                 ),
-              ),
-              ...events.when(
-                skipLoadingOnRefresh: true,
-                loading: () => const [SliverToBoxAdapter(child: _Loading())],
-                error: (e, _) => [
-                  SliverFillRemaining(
-                    hasScrollBody: false,
-                    child: ErrorState(
-                      onRetry: () => ref.invalidate(eventsProvider),
-                    ),
+                slivers: [
+                  if (!heroInGrid) SliverToBoxAdapter(child: hero),
+                  ...events.when(
+                    skipLoadingOnRefresh: true,
+                    loading: () => const [
+                      SliverToBoxAdapter(child: _Loading()),
+                    ],
+                    error: (e, _) => [
+                      SliverFillRemaining(
+                        hasScrollBody: false,
+                        child: ErrorState(
+                          onRetry: () => ref.invalidate(eventsProvider),
+                        ),
+                      ),
+                    ],
+                    data: (list) => list.isEmpty
+                        ? [
+                            const SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: _Empty(),
+                            ),
+                          ]
+                        : desktop
+                        ? [
+                            SliverToBoxAdapter(
+                              child: _desktopContent(context, ref, list, hero),
+                            ),
+                          ]
+                        : _content(context, ref, list),
+                  ),
+                  SliverToBoxAdapter(
+                    child: SizedBox(height: desktop ? 48 : 120),
                   ),
                 ],
-                data: (list) => list.isEmpty
-                    ? [
-                        const SliverFillRemaining(
-                          hasScrollBody: false,
-                          child: _Empty(),
-                        ),
-                      ]
-                    : _content(context, ref, list),
               ),
-              const SliverToBoxAdapter(child: SizedBox(height: 120)),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
   }
 
-  List<Widget> _content(BuildContext context, WidgetRef ref, List<Event> list) {
+  /// Données communes aux deux mises en page.
+  ({
+    Event next,
+    List<Event> upcoming,
+    List<Vendor> featured,
+    List<(Event, EventTask)> deadlines,
+  })
+  _prepare(List<Event> list) {
     final sorted = [...list]..sort((a, b) => a.date.compareTo(b.date));
     final next = sorted.firstWhere(
       (e) => daysUntil(e.date) >= 0,
       orElse: () => sorted.first,
     );
-    final upcoming = [next, ...sorted.where((e) => e.id != next.id)];
-    final featured = [...Catalog.vendors]
-      ..sort((a, b) => b.rating.compareTo(a.rating));
+    return (
+      next: next,
+      upcoming: [next, ...sorted.where((e) => e.id != next.id)],
+      featured: [...Catalog.vendors]
+        ..sort((a, b) => b.rating.compareTo(a.rating)),
+      deadlines: [
+        for (final e in sorted)
+          for (final t in e.tasks)
+            if (!t.done) (e, t),
+      ]..sort((a, b) => a.$2.due.compareTo(b.$2.due)),
+    );
+  }
 
-    final deadlines = [
-      for (final e in sorted)
-        for (final t in e.tasks)
-          if (!t.done) (e, t),
-    ]..sort((a, b) => a.$2.due.compareTo(b.$2.due));
+  Widget _budget(BuildContext context, Event next) => Entrance(
+    index: 1,
+    child: BudgetOverview(
+      event: next,
+      onTap: () => context.push(Routes.budget(next.id)),
+    ),
+  );
 
+  Widget _deadlinesPanel(
+    BuildContext context,
+    WidgetRef ref,
+    List<(Event, EventTask)> deadlines,
+  ) => Panel(
+    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+    child: Column(
+      children: [
+        for (final (i, (e, t)) in deadlines.take(4).indexed) ...[
+          if (i > 0) const Divider(height: 1),
+          _DeadlineRow(
+            event: e,
+            task: t,
+            onToggle: () =>
+                ref.read(eventsProvider.notifier).toggleTask(e.id, t.id),
+            onTap: () => context.push(Routes.event(e.id)),
+          ),
+        ],
+      ],
+    ),
+  );
+
+  /// Lignes « À faire en priorité » : devis, paiement, relance RSVP.
+  List<Widget> _actions(
+    BuildContext context,
+    WidgetRef ref,
+    List<Event> list,
+    Event next,
+  ) {
+    final sorted = [...list]..sort((a, b) => a.date.compareTo(b.date));
     final payments = [
       for (final e in sorted)
         if (e.nextPayment != null) (e, e.nextPayment!),
@@ -122,13 +191,71 @@ class HomeScreen extends ConsumerWidget {
         )
         .toList();
     final pendingRsvp = next.guests.pending;
+    return [
+      for (final b in quotes)
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: _ActionRow(
+            icon: AppIcons.file,
+            hue: Hue.mango,
+            title: b.step == BookingStep.quoted
+                ? 'Devis reçu · {0}'.trf([b.vendor.name])
+                : 'Acompte à régler · {0}'.trf([b.vendor.name]),
+            caption: b.quote == null
+                ? ''
+                : fcfa(
+                    b.step == BookingStep.quoted
+                        ? b.quote!.total
+                        : b.quote!.deposit,
+                  ),
+            action: b.step == BookingStep.quoted ? 'Voir'.tr : 'Payer'.tr,
+            onTap: () => context.push(Routes.booking(b.id)),
+          ),
+        ),
+      if (payments.isNotEmpty)
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: _ActionRow(
+            icon: AppIcons.coins,
+            hue: Hue.lagoon,
+            title: payments.first.$2.label,
+            caption:
+                '${fcfa(payments.first.$2.amount)} · ${relativeDue(payments.first.$2.due).toLowerCase()}',
+            action: 'Payer'.tr,
+            onTap: () =>
+                _pay(context, ref, payments.first.$1, payments.first.$2),
+          ),
+        ),
+      if (pendingRsvp > 0)
+        _ActionRow(
+          icon: AppIcons.guests,
+          hue: Hue.coral,
+          title: '{0} invités sans réponse'.trf([pendingRsvp]),
+          caption: next.name,
+          action: 'Relancer'.tr,
+          onTap: () {
+            toast(
+              context,
+              'Relance WhatsApp envoyée à {0} invités'.trf([pendingRsvp]),
+              icon: AppIcons.whatsapp,
+            );
+            maybeShowPremiumNudge(context, ref, PremiumNudge.guests);
+          },
+        ),
+    ];
+  }
+
+  List<Widget> _content(BuildContext context, WidgetRef ref, List<Event> list) {
+    final d = _prepare(list);
+    final next = d.next;
+    final featured = d.featured;
 
     return [
       SliverToBoxAdapter(child: SectionTitle('Mes événements'.tr)),
       SliverToBoxAdapter(
         child: Entrance(
           child: EventCarousel(
-            events: upcoming,
+            events: d.upcoming,
             height: MediaQuery.sizeOf(context).width < 400 ? 280 : 320,
           ),
         ),
@@ -142,15 +269,7 @@ class HomeScreen extends ConsumerWidget {
       ),
       SliverPadding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        sliver: SliverToBoxAdapter(
-          child: Entrance(
-            index: 1,
-            child: BudgetOverview(
-              event: next,
-              onTap: () => context.push(Routes.budget(next.id)),
-            ),
-          ),
-        ),
+        sliver: SliverToBoxAdapter(child: _budget(context, next)),
       ),
       SliverToBoxAdapter(
         child: SectionTitle(
@@ -162,83 +281,13 @@ class HomeScreen extends ConsumerWidget {
       SliverPadding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
         sliver: SliverToBoxAdapter(
-          child: Panel(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: Column(
-              children: [
-                for (final (i, (e, t)) in deadlines.take(4).indexed) ...[
-                  if (i > 0) const Divider(height: 1),
-                  _DeadlineRow(
-                    event: e,
-                    task: t,
-                    onToggle: () => ref
-                        .read(eventsProvider.notifier)
-                        .toggleTask(e.id, t.id),
-                    onTap: () => context.push(Routes.event(e.id)),
-                  ),
-                ],
-              ],
-            ),
-          ),
+          child: _deadlinesPanel(context, ref, d.deadlines),
         ),
       ),
       SliverToBoxAdapter(child: SectionTitle('À faire en priorité'.tr)),
       SliverPadding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        sliver: SliverList.list(
-          children: [
-            for (final b in quotes)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: _ActionRow(
-                  icon: AppIcons.file,
-                  hue: Hue.mango,
-                  title: b.step == BookingStep.quoted
-                      ? 'Devis reçu · {0}'.trf([b.vendor.name])
-                      : 'Acompte à régler · {0}'.trf([b.vendor.name]),
-                  caption: b.quote == null
-                      ? ''
-                      : fcfa(
-                          b.step == BookingStep.quoted
-                              ? b.quote!.total
-                              : b.quote!.deposit,
-                        ),
-                  action: b.step == BookingStep.quoted ? 'Voir'.tr : 'Payer'.tr,
-                  onTap: () => context.push(Routes.booking(b.id)),
-                ),
-              ),
-            if (payments.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: _ActionRow(
-                  icon: AppIcons.coins,
-                  hue: Hue.lagoon,
-                  title: payments.first.$2.label,
-                  caption:
-                      '${fcfa(payments.first.$2.amount)} · ${relativeDue(payments.first.$2.due).toLowerCase()}',
-                  action: 'Payer'.tr,
-                  onTap: () =>
-                      _pay(context, ref, payments.first.$1, payments.first.$2),
-                ),
-              ),
-            if (pendingRsvp > 0)
-              _ActionRow(
-                icon: AppIcons.guests,
-                hue: Hue.coral,
-                title: '{0} invités sans réponse'.trf([pendingRsvp]),
-                caption: next.name,
-                action: 'Relancer'.tr,
-                onTap: () {
-                  toast(
-                    context,
-                    'Relance WhatsApp envoyée à {0} invités'.trf([pendingRsvp]),
-                    icon: AppIcons.whatsapp,
-                  );
-                  maybeShowPremiumNudge(context, ref, PremiumNudge.guests);
-                },
-              ),
-          ],
-        ),
+        sliver: SliverList.list(children: _actions(context, ref, list, next)),
       ),
       SliverToBoxAdapter(
         child: SectionTitle(
@@ -270,6 +319,133 @@ class HomeScreen extends ConsumerWidget {
         ),
       ),
     ];
+  }
+
+  /// Desktop : héros et budget côte à côte, événements en grille, puis
+  /// échéances et priorités à gauche, prestataires à droite.
+  Widget _desktopContent(
+    BuildContext context,
+    WidgetRef ref,
+    List<Event> list,
+    Widget hero,
+  ) {
+    final d = _prepare(list);
+    final next = d.next;
+    const pad = EdgeInsets.symmetric(horizontal: 16);
+
+    Widget grid({
+      required int columns,
+      required double height,
+      required List<Widget> children,
+    }) => Padding(
+      padding: pad,
+      child: LayoutBuilder(
+        builder: (context, box) {
+          final w = (box.maxWidth - 12 * (columns - 1)) / columns;
+          return Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              for (final c in children)
+                SizedBox(width: w, height: height, child: c),
+            ],
+          );
+        },
+      ),
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(flex: 3, child: hero),
+            Expanded(
+              flex: 2,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SectionTitle(
+                    'Budget'.tr,
+                    action: next.name,
+                    onAction: () => context.push(Routes.budget(next.id)),
+                  ),
+                  Padding(padding: pad, child: _budget(context, next)),
+                ],
+              ),
+            ),
+          ],
+        ),
+        SectionTitle('Mes événements'.tr),
+        grid(
+          columns: 3,
+          height: 300,
+          children: [
+            for (final (i, e) in d.upcoming.take(6).indexed)
+              Entrance(
+                index: i.clamp(0, 4),
+                child: EventCard(
+                  event: e,
+                  onTap: () => context.push(Routes.event(e.id)),
+                ),
+              ),
+          ],
+        ),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SectionTitle(
+                    'Prochaines échéances'.tr,
+                    action: 'Agenda'.tr,
+                    onAction: () => context.go(Routes.planning),
+                  ),
+                  Padding(
+                    padding: pad,
+                    child: _deadlinesPanel(context, ref, d.deadlines),
+                  ),
+                  SectionTitle('À faire en priorité'.tr),
+                  Padding(
+                    padding: pad,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: _actions(context, ref, list, next),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SectionTitle(
+                    'Prestataires à la une'.tr,
+                    action: 'Tout voir'.tr,
+                    onAction: () => context.go(Routes.explore),
+                  ),
+                  grid(
+                    columns: 3,
+                    height: 236,
+                    children: [
+                      for (final v in d.featured.take(6))
+                        VendorSpotlight(
+                          vendor: v,
+                          onTap: () => context.push(Routes.vendor(v.id)),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   void _pay(BuildContext context, WidgetRef ref, Event e, Payment p) {
@@ -305,6 +481,9 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 }
+
+/// Largeur à partir de laquelle l'accueil passe en mise en page desktop.
+const _desktop = 960.0;
 
 /// Date du jour, capitalisée (« Lundi 26 octobre »).
 String _today() {

@@ -1447,4 +1447,23 @@ const en = <String, String>{
   'Mesure d’audience anonyme': 'Anonymous audience measurement',
   'Écrans vus, sans identifiant, pour améliorer Eventa':
       'Screens viewed, with no identifier, to improve Eventa',
+
+  // ─── Comparateur de devis ──────────────────────────────────────────────
+  'Comparer les devis': 'Compare quotes',
+  'Comparer avec {0} autre(s) devis': 'Compare with {0} other quote(s)',
+  'Les devis reçus côte à côte, par type de prestataire.':
+      'Quotes received side by side, by vendor type.',
+  'Aucun devis reçu pour cet événement. Demandez un devis à au moins deux prestataires d’une même catégorie pour les comparer.': 'No quotes received for this event yet. Request quotes from at least two vendors in the same category to compare them.',
+  '{0} devis': '{0} quote(s)',
+  '{0} est réservé.': '{0} is booked.',
+  '{0} écart entre le moins cher et le plus cher.':
+      '{0} between the cheapest and the most expensive.',
+  'Demandez un autre devis dans cette catégorie pour comparer.':
+      'Request another quote in this category to compare.',
+  '{0} · {1} avis': '{0} · {1} reviews',
+  'Le moins cher': 'Cheapest',
+  'Expiré': 'Expired',
+  'Répond en': 'Replies within',
+  'Voir la réservation': 'View booking',
+  'Choisir ce devis': 'Choose this quote',
 };

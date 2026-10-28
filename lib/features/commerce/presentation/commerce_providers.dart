@@ -185,6 +185,8 @@ String receiptRef() => 'EVT-{0}-{1}'.trf([
 ]);
 
 class BookingsNotifier extends Notifier<List<Booking>> {
+  var _seq = 0;
+
   @override
   List<Booking> build() => const [];
 
@@ -194,7 +196,9 @@ class BookingsNotifier extends Notifier<List<Booking>> {
 
   /// Étapes 1 → 2 : demande de devis. Le prestataire (simulé) répond.
   String request(Vendor v, String eventId, QuoteRequest r) {
-    final id = 'bk-${DateTime.now().microsecondsSinceEpoch}';
+    // Compteur en plus de l'horodatage : deux demandes envoyées dans la même
+    // microseconde (horloge peu précise) ne doivent pas partager d'identifiant.
+    final id = 'bk-${DateTime.now().microsecondsSinceEpoch}-${++_seq}';
     final b = Booking(
       id: id,
       vendor: v,
