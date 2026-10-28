@@ -21,9 +21,19 @@ enum PayMethod {
   String get label => _label.tr;
   final IconData icon;
 
-  /// Pastille d'identification (pas de logo de marque).
+  /// Couleur d'appoint de l'opérateur.
   final Color dot;
   final bool mobileMoney;
+
+  /// Logo officiel du moyen de paiement, quand on l'a.
+  String? get logo => switch (this) {
+    PayMethod.orange => 'assets/images/pay/orange-money.webp',
+    PayMethod.mtn => 'assets/images/pay/momo.webp',
+    PayMethod.wave => 'assets/images/pay/wave.webp',
+    PayMethod.moov => 'assets/images/pay/moov.webp',
+    PayMethod.card => 'assets/images/pay/visa.webp',
+    _ => null,
+  };
 }
 
 @immutable
@@ -204,6 +214,18 @@ enum Plan {
   Hue get hue => _hue.hue;
 
   bool includes(Plan other) => index >= other.index;
+
+  /// Espace du coffre-fort : 100 Mo offerts, davantage avec un abonnement.
+  int get vaultMb => switch (this) {
+    Plan.free => 100,
+    Plan.azur => 1024,
+    Plan.signature => 5 * 1024,
+    Plan.privilege => 50 * 1024,
+  };
+
+  String get vaultLabel => vaultMb >= 1024
+      ? '{0} Go'.trf([vaultMb ~/ 1024])
+      : '{0} Mo'.trf([vaultMb]);
 }
 
 /// Fonctionnalités soumises à un abonnement, et le niveau minimal requis.
@@ -211,7 +233,7 @@ enum PremiumFeature {
   aiBudget('Budget créé par l’IA', Plan.azur, AppIcons.sparkle),
   collaborators('Plus de 2 collaborateurs', Plan.azur, AppIcons.userPlus),
   agent('Agent IA de votre événement', Plan.signature, AppIcons.sparkle),
-  vault('Coffre-fort numérique', Plan.signature, AppIcons.lock);
+  vault('Coffre-fort au-delà de 100 Mo', Plan.azur, AppIcons.lock);
 
   const PremiumFeature(this._label, this.minPlan, this.icon);
   final String _label;

@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 // ─── Rôles et permissions ───────────────────────────────────────────────
 
 enum AdminPermission {
+  overview('Voir la vue d’ensemble (chiffres clés)'),
   accounts('Gérer les comptes'),
   verification('Vérifier les prestataires'),
   catalog('Administrer le catalogue'),
@@ -37,6 +38,7 @@ enum AdminRole {
 Map<AdminRole, Set<AdminPermission>> defaultPermissions() => {
   AdminRole.superAdmin: AdminPermission.values.toSet(),
   AdminRole.finance: {
+    AdminPermission.overview,
     AdminPermission.payments,
     AdminPermission.pricing,
     AdminPermission.bookings,
@@ -445,7 +447,7 @@ class PricingModel {
       'Azur': 2900,
       'Signature': 5900,
       'Privilège': 9900,
-      'Business / Creator': 29900,
+      'Offre Creator': 29900,
     },
     this.categoryCommission = const {
       'Lieux': 6,

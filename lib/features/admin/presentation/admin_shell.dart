@@ -25,7 +25,13 @@ import 'widgets/admin_widgets.dart';
 
 /// Modules du centre de contrôle, dans l'ordre du menu.
 enum AdminModule {
-  overview('vue-ensemble', 'Vue d’ensemble', AppIcons.grid, 'Pilotage', null),
+  overview(
+    'vue-ensemble',
+    'Vue d’ensemble',
+    AppIcons.grid,
+    'Pilotage',
+    AdminPermission.overview,
+  ),
   analytics(
     'analytics',
     'Analytics',
@@ -111,6 +117,13 @@ enum AdminModule {
 
   /// Permission requise pour ouvrir le module (`null` = tout le monde).
   final AdminPermission? permission;
+
+  /// Premier module accessible avec ces permissions : la vue d'ensemble
+  /// pour la direction et la finance, sinon le module du métier.
+  static AdminModule homeFor(Set<AdminPermission> perms) => values.firstWhere(
+    (m) => m.permission == null || perms.contains(m.permission),
+    orElse: () => overview,
+  );
 
   static AdminModule fromSlug(String? s) =>
       values.where((m) => m.slug == s).firstOrNull ?? overview;

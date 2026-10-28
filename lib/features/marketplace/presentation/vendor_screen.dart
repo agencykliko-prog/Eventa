@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -18,6 +19,7 @@ import '../../commerce/presentation/commerce_providers.dart';
 import '../../events/domain/models.dart';
 import '../../events/presentation/events_providers.dart';
 import 'widgets/vendor_card.dart';
+import '../data/vendor_media.dart';
 
 class VendorScreen extends ConsumerWidget {
   const VendorScreen({super.key, required this.id});
@@ -57,7 +59,7 @@ class VendorScreen extends ConsumerWidget {
               stretchModes: const [StretchMode.zoomBackground],
               background: Hero(
                 tag: 'vendor-${v.id}',
-                child: Image.asset(v.image, fit: BoxFit.cover),
+                child: VendorPhoto(v.image, cacheWidth: 1200),
               ),
             ),
           ),
@@ -95,34 +97,46 @@ class VendorScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 14),
-                  Row(
+                  // Note, zone et délai passent à la ligne sur écran étroit.
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 6,
+                    crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Stars(rating: v.rating, reviews: v.reviews, size: 14),
-                      const SizedBox(width: 12),
-                      Icon(
-                        AppIcons.place,
-                        size: 15,
-                        color: Confetti.inkMuted,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            AppIcons.place,
+                            size: 15,
+                            color: Confetti.inkMuted,
+                          ),
+                          const SizedBox(width: 3),
+                          Text(
+                            v.zone,
+                            style: context.text.labelMedium?.copyWith(
+                              color: context.eventa.muted,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 3),
-                      Text(
-                        v.zone,
-                        style: context.text.labelMedium?.copyWith(
-                          color: context.eventa.muted,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Icon(
-                        AppIcons.clock,
-                        size: 15,
-                        color: Confetti.inkMuted,
-                      ),
-                      const SizedBox(width: 3),
-                      Text(
-                        'Répond en {0}'.trf([v.responseTime]),
-                        style: context.text.labelMedium?.copyWith(
-                          color: context.eventa.muted,
-                        ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            AppIcons.clock,
+                            size: 15,
+                            color: Confetti.inkMuted,
+                          ),
+                          const SizedBox(width: 3),
+                          Text(
+                            'Répond en {0}'.trf([v.responseTime]),
+                            style: context.text.labelMedium?.copyWith(
+                              color: context.eventa.muted,
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -181,6 +195,10 @@ class VendorScreen extends ConsumerWidget {
                   const SizedBox(height: 8),
                   Text(v.description, style: context.text.bodyLarge),
                   const SizedBox(height: 26),
+                  Text('Portfolio'.tr, style: context.text.titleLarge),
+                  const SizedBox(height: 10),
+                  _Portfolio(photos: VendorMedia.portfolioOf(v)),
+                  const SizedBox(height: 26),
                   Text('Coordonnées'.tr, style: context.text.titleLarge),
                   const SizedBox(height: 10),
                   _InfoList(
@@ -211,6 +229,80 @@ class VendorScreen extends ConsumerWidget {
         ],
       ),
       bottomNavigationBar: _ActionBar(vendor: v),
+    );
+  }
+}
+
+/// Portfolio : cinq réalisations, la première en grand ; un toucher ouvre
+/// la photo en plein écran.
+class _Portfolio extends StatelessWidget {
+  const _Portfolio({required this.photos});
+
+  final List<String> photos;
+
+  void _open(BuildContext context, int i) {
+    showDialog<void>(
+      context: context,
+      barrierColor: Colors.black87,
+      builder: (ctx) => GestureDetector(
+        onTap: () => Navigator.of(ctx).pop(),
+        child: PageView(
+          controller: PageController(initialPage: i),
+          children: [
+            for (final p in photos)
+              InteractiveViewer(
+                child: Center(child: VendorPhoto(p, fit: BoxFit.contain)),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Widget tile(int i) => Pressable(
+      onTap: () => _open(context, i),
+      semanticLabel: 'Photo {0} du portfolio'.trf([i + 1]),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: VendorPhoto(photos[i], cacheWidth: i == 0 ? 900 : 400),
+      ),
+    );
+    return SizedBox(
+      height: 260,
+      child: Row(
+        children: [
+          Expanded(flex: 3, child: tile(0)),
+          const SizedBox(width: 8),
+          Expanded(
+            flex: 2,
+            child: Column(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(child: tile(1)),
+                      const SizedBox(width: 8),
+                      Expanded(child: tile(2)),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Expanded(child: tile(3)),
+                      const SizedBox(width: 8),
+                      Expanded(child: tile(4)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -268,7 +360,11 @@ class _ActionBar extends ConsumerWidget {
             AppIcons.phone,
             'Appeler'.tr,
             Confetti.ink,
-            () => toast(context, 'Appel vers {0}'.trf([v.phone]), icon: AppIcons.phone),
+            () => toast(
+              context,
+              'Appel vers {0}'.trf([v.phone]),
+              icon: AppIcons.phone,
+            ),
           ),
           contact(
             AppIcons.message,
@@ -360,6 +456,120 @@ Future<void> showQuoteRequestSheet(
   }
 }
 
+/// Une question propre au métier du prestataire (choix simple ou multiple).
+class _Need {
+  const _Need(this.label, this.options, {this.multi = false});
+  final String label;
+  final List<String> options;
+  final bool multi;
+}
+
+/// Ce que chaque métier a besoin de savoir pour chiffrer juste.
+const _needs = <VendorCategory, List<_Need>>{
+  VendorCategory.venue: [
+    _Need('Durée', ['Soirée', 'Journée', 'Week-end']),
+    _Need('Espace', ['Intérieur', 'Extérieur', 'Les deux']),
+    _Need('Sur place', [
+      'Parking',
+      'Hébergement',
+      'Cuisine équipée',
+    ], multi: true),
+  ],
+  VendorCategory.decor: [
+    _Need('Éléments', [
+      'Arche',
+      'Centres de table',
+      'Scène',
+      'Ballons',
+      'Éclairage',
+    ], multi: true),
+    _Need('Style', ['Traditionnel', 'Moderne', 'Bohème', 'Glamour']),
+  ],
+  VendorCategory.catering: [
+    _Need('Service', ['Buffet', 'Service à table', 'Cocktail dînatoire']),
+    _Need('Régimes', [
+      'Sans porc',
+      'Halal',
+      'Végétarien',
+      'Sans piment',
+    ], multi: true),
+    _Need('En plus', ['Boissons', 'Gâteau', 'Vaisselle'], multi: true),
+  ],
+  VendorCategory.photo: [
+    _Need('Couverture', ['Cérémonie', 'Soirée', 'Journée complète']),
+    _Need('Livrables', [
+      'Photos retouchées',
+      'Film',
+      'Drone',
+      'Album imprimé',
+    ], multi: true),
+  ],
+  VendorCategory.music: [
+    _Need('Prestation', ['DJ', 'Live', 'Maître de cérémonie']),
+    _Need('Ambiance', [
+      'Coupé-décalé',
+      'Afro',
+      'Zouk',
+      'Gospel',
+      'Classiques',
+    ], multi: true),
+  ],
+  VendorCategory.rental: [
+    _Need('Articles', [
+      'Chaises',
+      'Tables',
+      'Nappes',
+      'Vaisselle',
+      'Tentes',
+      'Sono',
+    ], multi: true),
+  ],
+  VendorCategory.beauty: [
+    _Need('Prestation', [
+      'Maquillage',
+      'Coiffure',
+      'Tenue sur mesure',
+    ], multi: true),
+    _Need('Pour', ['La mariée', 'Le marié', 'Le cortège']),
+  ],
+  VendorCategory.paper: [
+    _Need('Supports', [
+      'Faire-part',
+      'Menus',
+      'Plan de table',
+      'Invitations numériques',
+    ], multi: true),
+  ],
+  VendorCategory.transport: [
+    _Need('Véhicule', [
+      'Berline',
+      'Limousine',
+      'Voiture de collection',
+      'Minibus',
+    ]),
+    _Need('En plus', ['Décoration du véhicule', 'Aller-retour'], multi: true),
+  ],
+  VendorCategory.staff: [
+    _Need('Rôles', ['Serveurs', 'Hôtesses', 'Sécurité', 'Barmen'], multi: true),
+  ],
+  VendorCategory.planner: [
+    _Need('Mission', [
+      'Coordination du jour J',
+      'Organisation complète',
+      'Conseil',
+    ]),
+    _Need('Étapes', [
+      'Dot',
+      'Mariage civil',
+      'Cérémonie religieuse',
+      'Réception',
+    ], multi: true),
+  ],
+  VendorCategory.activity: [
+    _Need('Format', ['Privatisation', 'Places individuelles']),
+  ],
+};
+
 class _QuoteRequest extends ConsumerStatefulWidget {
   const _QuoteRequest({required this.vendor, required this.events});
 
@@ -372,7 +582,11 @@ class _QuoteRequest extends ConsumerStatefulWidget {
 
 class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
   late Event _event = widget.events.first;
-  late double _guests = _event.guests.invited.clamp(10, 500).toDouble();
+  late double _guests = _event.guests.invited.clamp(1, 5000).toDouble();
+  late final _guestsCtrl = TextEditingController(
+    text: _guests.round().toString(),
+  );
+  final _answers = <String, Set<String>>{};
   late VendorPackage? _package = widget.vendor.packages.isEmpty
       ? null
       : widget.vendor.packages.first;
@@ -405,17 +619,67 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
 
   @override
   void dispose() {
+    _guestsCtrl.dispose();
     _message.dispose();
     _address.dispose();
     super.dispose();
   }
 
+  VendorCategory get _cat => widget.vendor.category;
+  bool get _canDeliver => const {
+    VendorCategory.decor,
+    VendorCategory.rental,
+    VendorCategory.catering,
+    VendorCategory.paper,
+  }.contains(_cat);
+  bool get _canStaff => const {
+    VendorCategory.catering,
+    VendorCategory.venue,
+    VendorCategory.planner,
+    VendorCategory.staff,
+  }.contains(_cat);
+  bool get _canTaste =>
+      const {VendorCategory.catering, VendorCategory.beauty}.contains(_cat);
+  bool get _canOvertime => const {
+    VendorCategory.music,
+    VendorCategory.photo,
+    VendorCategory.staff,
+    VendorCategory.venue,
+    VendorCategory.transport,
+  }.contains(_cat);
+
+  /// Estimation indicative : formule × invités quand le prix est par
+  /// personne ou par pièce, sinon le prix de la formule.
+  int? get _estimate {
+    final price = _package?.price ?? widget.vendor.priceFrom;
+    final perHead =
+        widget.vendor.unit == 'pers.' || widget.vendor.unit == 'pièce';
+    return perHead ? price * _guests.round() : price;
+  }
+
+  void _setGuests(int n) {
+    final v = n.clamp(1, 5000);
+    setState(() => _guests = v.toDouble());
+    final t = v.toString();
+    if (_guestsCtrl.text != t) _guestsCtrl.text = t;
+  }
+
   List<String> get _options => [
     if (_package != null) 'Formule : {0}'.trf([_package!.name]),
-    'Début : {0}:{1}'.trf([_start.hour.toString().padLeft(2, '0'), _start.minute.toString().padLeft(2, '0')]),
+    for (final e in _answers.entries)
+      if (e.value.isNotEmpty)
+        '${e.key.tr} : ${e.value.map((x) => x.tr).join(', ')}',
+    'Début : {0}:{1}'.trf([
+      _start.hour.toString().padLeft(2, '0'),
+      _start.minute.toString().padLeft(2, '0'),
+    ]),
     if (_budget != null) 'Budget : {0}'.trf([_budget]),
     if (_delivery)
-      'Livraison & installation ({0})'.trf([_address.text.trim().isEmpty ? 'adresse à préciser'.tr : _address.text.trim()]),
+      'Livraison & installation ({0})'.trf([
+        _address.text.trim().isEmpty
+            ? 'adresse à préciser'.tr
+            : _address.text.trim(),
+      ]),
     if (_staff) 'Personnel supplémentaire × {0}'.trf([_staffCount]),
     if (_tasting) 'Dégustation ou essai ({0})'.trf([_tastingWhen]),
     if (_overtime) 'Heures supplémentaires × {0} h'.trf([_hours]),
@@ -432,6 +696,9 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
               !o.startsWith('Budget'),
         )
         .toList();
+    _guests = (int.tryParse(_guestsCtrl.text) ?? _guests.round())
+        .clamp(1, 5000)
+        .toDouble();
     final id = ref
         .read(bookingsProvider.notifier)
         .request(
@@ -455,6 +722,45 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
         );
     if (mounted) Navigator.of(context).pop(id);
   }
+
+  Widget _roundBtn(IconData icon, VoidCallback onTap) => Pressable(
+    onTap: onTap,
+    scale: 0.9,
+    child: Container(
+      width: 32,
+      height: 32,
+      decoration: BoxDecoration(
+        color: Confetti.cream,
+        shape: BoxShape.circle,
+        border: Border.all(color: Confetti.line),
+      ),
+      child: Icon(icon, size: 14, color: Confetti.ink),
+    ),
+  );
+
+  Widget _choice(
+    String label, {
+    required bool selected,
+    required VoidCallback onTap,
+  }) => Pressable(
+    onTap: onTap,
+    scale: 0.96,
+    child: AnimatedContainer(
+      duration: Motion.fast,
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+      decoration: BoxDecoration(
+        color: selected ? Confetti.ink : Confetti.surface,
+        borderRadius: BorderRadius.circular(99),
+        border: Border.all(color: selected ? Confetti.ink : Confetti.line),
+      ),
+      child: Text(
+        label,
+        style: context.text.labelMedium?.copyWith(
+          color: selected ? Confetti.onInk : Confetti.ink,
+        ),
+      ),
+    ),
+  );
 
   Widget _stepper(
     int value,
@@ -517,11 +823,13 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
             options: widget.events,
             labelOf: (e) => '${e.name} · ${shortDate(e.date)}',
             iconOf: (e) => e.category.icon,
-            onChanged: (e) => setState(() {
-              _event = e;
-              _guests = e.guests.invited.clamp(10, 500).toDouble();
-              _address.text = e.venue;
-            }),
+            onChanged: (e) {
+              setState(() {
+                _event = e;
+                _address.text = e.venue;
+              });
+              _setGuests(e.guests.invited);
+            },
           ),
           if (v.packages.isNotEmpty) ...[
             const SizedBox(height: 14),
@@ -566,9 +874,13 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
                               color: Confetti.inkMuted,
                             ),
                             const SizedBox(width: 8),
-                            Text(
-                              _start.format(context),
-                              style: context.text.bodyLarge,
+                            Flexible(
+                              child: Text(
+                                _start.format(context),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: context.text.bodyLarge,
+                              ),
                             ),
                           ],
                         ),
@@ -582,22 +894,52 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    FieldLabel('Invités'.tr),
+                    FieldLabel('Nombre d’invités'.tr),
                     Container(
                       height: 54,
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      padding: const EdgeInsets.symmetric(horizontal: 6),
                       decoration: BoxDecoration(
                         color: Confetti.surface,
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(color: Confetti.line),
                       ),
-                      child: Center(
-                        child: _stepper(
-                          _guests.round(),
-                          (n) => setState(() => _guests = n.toDouble()),
-                          min: 10,
-                          max: 800,
-                        ),
+                      child: Row(
+                        children: [
+                          _roundBtn(
+                            AppIcons.minus,
+                            () => _setGuests(_guests.round() - 10),
+                          ),
+                          Expanded(
+                            child: TextField(
+                              controller: _guestsCtrl,
+                              textAlign: TextAlign.center,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly,
+                                LengthLimitingTextInputFormatter(4),
+                              ],
+                              style: context.text.titleSmall,
+                              decoration: const InputDecoration(
+                                isDense: true,
+                                filled: false,
+                                border: InputBorder.none,
+                                enabledBorder: InputBorder.none,
+                                focusedBorder: InputBorder.none,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                              onChanged: (t) {
+                                final n = int.tryParse(t);
+                                if (n != null && n > 0) {
+                                  setState(() => _guests = n.toDouble());
+                                }
+                              },
+                            ),
+                          ),
+                          _roundBtn(
+                            AppIcons.add,
+                            () => _setGuests(_guests.round() + 10),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -614,87 +956,163 @@ class _QuoteRequestState extends ConsumerState<_QuoteRequest> {
             optional: true,
             onChanged: (b) => setState(() => _budget = b),
           ),
-          const SizedBox(height: 18),
-          FieldLabel('Options'.tr),
-          CheckRow(
-            label: 'Livraison & installation'.tr,
-            caption: 'Le prestataire s’installe sur place'.tr,
-            value: _delivery,
-            onChanged: (x) => setState(() => _delivery = x),
-            revealed: TextField(
-              controller: _address,
-              decoration: InputDecoration(
-                hintText: 'Adresse du lieu'.tr,
-                prefixIcon: Icon(AppIcons.place, size: 18),
+          for (final need in _needs[_cat] ?? const <_Need>[]) ...[
+            const SizedBox(height: 16),
+            FieldLabel(
+              need.multi
+                  ? '{0} (plusieurs choix)'.trf([need.label.tr])
+                  : need.label.tr,
+            ),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final o in need.options)
+                  _choice(
+                    o.tr,
+                    selected: _answers[need.label]?.contains(o) ?? false,
+                    onTap: () => setState(() {
+                      final set = _answers.putIfAbsent(need.label, () => {});
+                      if (need.multi) {
+                        set.contains(o) ? set.remove(o) : set.add(o);
+                      } else {
+                        set
+                          ..clear()
+                          ..add(o);
+                      }
+                    }),
+                  ),
+              ],
+            ),
+          ],
+          if (_estimate != null) ...[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: Confetti.lavender,
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Row(
+                children: [
+                  Icon(AppIcons.coins, size: 18, color: Confetti.violet),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      widget.vendor.unit == 'pers.' ||
+                              widget.vendor.unit == 'pièce'
+                          ? 'Estimation pour {0} invités'.trf([_guests.round()])
+                          : 'Estimation de la formule'.tr,
+                      style: context.text.bodySmall,
+                    ),
+                  ),
+                  Text(
+                    fcfa(_estimate!),
+                    style: context.text.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-          CheckRow(
-            label: 'Personnel supplémentaire'.tr,
-            value: _staff,
-            onChanged: (x) => setState(() => _staff = x),
-            revealed: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'Nombre de personnes'.tr,
-                    style: context.text.bodyMedium,
-                  ),
+          ],
+          if (_canDeliver || _canStaff || _canTaste || _canOvertime) ...[
+            const SizedBox(height: 18),
+            FieldLabel('Options'.tr),
+          ],
+          if (_canDeliver)
+            CheckRow(
+              label: 'Livraison & installation'.tr,
+              caption: 'Le prestataire s’installe sur place'.tr,
+              value: _delivery,
+              onChanged: (x) => setState(() => _delivery = x),
+              revealed: TextField(
+                controller: _address,
+                decoration: InputDecoration(
+                  hintText: 'Adresse du lieu'.tr,
+                  prefixIcon: Icon(AppIcons.place, size: 18),
                 ),
-                _stepper(_staffCount, (n) => setState(() => _staffCount = n)),
-              ],
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          CheckRow(
-            label: 'Dégustation ou essai'.tr,
-            value: _tasting,
-            onChanged: (x) => setState(() => _tasting = x),
-            revealed: Wrap(
-              spacing: 8,
-              children: [
-                for (final w in [
-                  'En semaine'.tr,
-                  'Le week-end'.tr,
-                  'Peu importe'.tr,
-                ])
-                  ChoiceChip(
-                    label: Text(w),
-                    selected: _tastingWhen == w,
-                    showCheckmark: false,
-                    selectedColor: Confetti.ink,
-                    labelStyle: context.text.labelMedium?.copyWith(
-                      color: _tastingWhen == w ? Confetti.onInk : Confetti.ink,
+          if (_canStaff) ...[
+            const SizedBox(height: 8),
+            CheckRow(
+              label: 'Personnel supplémentaire'.tr,
+              value: _staff,
+              onChanged: (x) => setState(() => _staff = x),
+              revealed: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Nombre de personnes'.tr,
+                      style: context.text.bodyMedium,
                     ),
-                    backgroundColor: Confetti.surface,
-                    side: BorderSide(
-                      color: _tastingWhen == w ? Confetti.ink : Confetti.line,
-                    ),
-                    onSelected: (_) => setState(() => _tastingWhen = w),
                   ),
-              ],
+                  _stepper(_staffCount, (n) => setState(() => _staffCount = n)),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          CheckRow(
-            label: 'Heures supplémentaires'.tr,
-            value: _overtime,
-            onChanged: (x) => setState(() => _overtime = x),
-            revealed: Row(
-              children: [
-                Expanded(
-                  child: Text('Durée en plus'.tr, style: context.text.bodyMedium),
-                ),
-                _stepper(
-                  _hours,
-                  (n) => setState(() => _hours = n),
-                  max: 8,
-                  unit: ' h',
-                ),
-              ],
+          ],
+          if (_canTaste) ...[
+            const SizedBox(height: 8),
+            CheckRow(
+              label: _cat == VendorCategory.beauty
+                  ? 'Essai avant le jour J'.tr
+                  : 'Dégustation'.tr,
+              value: _tasting,
+              onChanged: (x) => setState(() => _tasting = x),
+              revealed: Wrap(
+                spacing: 8,
+                children: [
+                  for (final w in [
+                    'En semaine'.tr,
+                    'Le week-end'.tr,
+                    'Peu importe'.tr,
+                  ])
+                    ChoiceChip(
+                      label: Text(w),
+                      selected: _tastingWhen == w,
+                      showCheckmark: false,
+                      selectedColor: Confetti.ink,
+                      labelStyle: context.text.labelMedium?.copyWith(
+                        color: _tastingWhen == w
+                            ? Confetti.onInk
+                            : Confetti.ink,
+                      ),
+                      backgroundColor: Confetti.surface,
+                      side: BorderSide(
+                        color: _tastingWhen == w ? Confetti.ink : Confetti.line,
+                      ),
+                      onSelected: (_) => setState(() => _tastingWhen = w),
+                    ),
+                ],
+              ),
             ),
-          ),
+          ],
+          if (_canOvertime) ...[
+            const SizedBox(height: 8),
+            CheckRow(
+              label: 'Heures supplémentaires'.tr,
+              value: _overtime,
+              onChanged: (x) => setState(() => _overtime = x),
+              revealed: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Durée en plus'.tr,
+                      style: context.text.bodyMedium,
+                    ),
+                  ),
+                  _stepper(
+                    _hours,
+                    (n) => setState(() => _hours = n),
+                    max: 8,
+                    unit: ' h',
+                  ),
+                ],
+              ),
+            ),
+          ],
           const SizedBox(height: 18),
           AppField(
             label: 'Message au prestataire'.tr,
@@ -796,18 +1214,20 @@ class _ReviewsSectionState extends State<ReviewsSection> {
               ),
             ),
             const SizedBox(width: 10),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _StarRow(rating: v.rating.round(), size: 15),
-                  const SizedBox(height: 3),
-                  Text(
-                    '{0} avis de clients ayant réservé'.trf([v.reviews]),
-                    style: context.text.bodySmall,
-                  ),
-                ],
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _StarRow(rating: v.rating.round(), size: 15),
+                    const SizedBox(height: 3),
+                    Text(
+                      '{0} avis de clients ayant réservé'.trf([v.reviews]),
+                      style: context.text.bodySmall,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -855,10 +1275,14 @@ class _ReviewsSectionState extends State<ReviewsSection> {
                               color: Confetti.lagoonText,
                             ),
                             const SizedBox(width: 3),
-                            Text(
-                              'Réservation vérifiée'.tr,
-                              style: context.text.labelSmall?.copyWith(
-                                color: Confetti.lagoonText,
+                            Flexible(
+                              child: Text(
+                                'Réservation vérifiée'.tr,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: context.text.labelSmall?.copyWith(
+                                  color: Confetti.lagoonText,
+                                ),
                               ),
                             ),
                           ],
@@ -875,7 +1299,9 @@ class _ReviewsSectionState extends State<ReviewsSection> {
           TextButton(
             onPressed: () => setState(() => _all = !_all),
             child: Text(
-              _all ? 'Voir moins'.tr : 'Voir les {0} avis'.trf([Catalog.reviews.length]),
+              _all
+                  ? 'Voir moins'.tr
+                  : 'Voir les {0} avis'.trf([Catalog.reviews.length]),
               style: context.text.labelMedium?.copyWith(
                 color: Confetti.coralDeep,
               ),

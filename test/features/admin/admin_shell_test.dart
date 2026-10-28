@@ -65,6 +65,22 @@ void main() {
     c.dispose();
   });
 
+  test('la vue d’ensemble est verrouillée pour marketing, service client et modération', () {
+    final perms = defaultPermissions();
+    for (final r in [
+      AdminRole.marketing,
+      AdminRole.support,
+      AdminRole.moderation,
+    ]) {
+      expect(perms[r]!.contains(AdminPermission.overview), isFalse);
+      expect(AdminModule.homeFor(perms[r]!), isNot(AdminModule.overview));
+    }
+    expect(
+      AdminModule.homeFor(perms[AdminRole.finance]!),
+      AdminModule.overview,
+    );
+  });
+
   test('résoudre un litige crée le remboursement et trace l’action', () {
     final c = ProviderContainer();
     addTearDown(c.dispose);

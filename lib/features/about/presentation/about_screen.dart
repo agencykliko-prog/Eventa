@@ -9,6 +9,7 @@ import '../../../core/widgets/brand.dart';
 import '../../../core/widgets/entrance.dart';
 import '../../../core/widgets/mascot.dart';
 import '../../../core/widgets/ui.dart';
+import '../../../core/widgets/contact_team.dart';
 
 /// Texte bilingue des pages éditoriales (prose longue, hors dictionnaire).
 String bi(String fr, String en) => L10n.isEn ? en : fr;
@@ -349,31 +350,26 @@ class AboutScreen extends StatelessWidget {
               child: Column(
                 children: [
                   _ContactRow(
-                    icon: AppIcons.message,
-                    title: bi('Écrire au support', 'Write to support'),
+                    icon: AppIcons.mail,
+                    title: EventaContact.email,
                     caption: bi(
                       'Réponse sous 24 h ouvrées',
                       'Reply within 24 business hours',
                     ),
-                    onTap: () => toast(
-                      context,
-                      'Message envoyé, réponse sous 24 h'.tr,
-                      icon: AppIcons.send,
-                    ),
+                    onTap: EventaContact.openEmail,
                   ),
                   const Divider(height: 1),
                   _ContactRow(
                     icon: AppIcons.whatsapp,
-                    title: bi('Assistance WhatsApp', 'WhatsApp support'),
+                    title: bi(
+                      'WhatsApp · ${EventaContact.whatsapp}',
+                      'WhatsApp · ${EventaContact.whatsapp}',
+                    ),
                     caption: bi(
-                      'Du lundi au samedi, 8 h – 20 h (GMT)',
-                      'Monday to Saturday, 8 am – 8 pm (GMT)',
+                      'Du lundi au samedi, 8 h – 20 h · 7 j/7 pour Privilège',
+                      'Monday to Saturday, 8 am – 8 pm · 7 days for Privilège',
                     ),
-                    onTap: () => toast(
-                      context,
-                      bi('Ouverture de WhatsApp…', 'Opening WhatsApp…'),
-                      icon: AppIcons.whatsapp,
-                    ),
+                    onTap: EventaContact.openWhatsApp,
                   ),
                   const Divider(height: 1),
                   _ContactRow(
@@ -401,8 +397,8 @@ class AboutScreen extends StatelessWidget {
             const SizedBox(height: 14),
             Text(
               bi(
-                'Version de démonstration. Les coordonnées définitives (adresse, e-mail, numéro) seront publiées au lancement officiel.',
-                'Demo version. Final contact details (address, email, number) will be published at the official launch.',
+                'Version de démonstration : l’équipe répond sur WhatsApp et par e-mail.',
+                'Demo version: the team answers on WhatsApp and by email.',
               ),
               textAlign: TextAlign.center,
               style: context.text.bodySmall,

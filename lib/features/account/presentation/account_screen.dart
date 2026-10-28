@@ -24,7 +24,7 @@ import '../../commerce/presentation/payment_sheet.dart';
 import '../../events/domain/models.dart';
 import '../../events/presentation/events_providers.dart';
 import '../../export/export_sheet.dart';
-import '../../premium/presentation/paywall.dart';
+import '../../../core/widgets/contact_team.dart';
 
 class AccountScreen extends ConsumerWidget {
   const AccountScreen({super.key});
@@ -122,13 +122,16 @@ class AccountScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Business / Creator'.tr,
+                            'Offre Creator'.tr,
                             style: context.text.titleMedium?.copyWith(
                               color: Colors.white,
                             ),
                           ),
                           Text(
-                            'CRM, devis, facturation · dès 29 900 FCFA/mois'.tr,
+                            ref.watch(creatorSubProvider) == null
+                                ? 'CRM, devis, facturation · 29 900 FCFA/mois'
+                                      .tr
+                                : 'Abonnement actif · 29 900 FCFA/mois'.tr,
                             style: context.text.bodySmall?.copyWith(
                               color: Colors.white60,
                             ),
@@ -221,12 +224,7 @@ class AccountScreen extends ConsumerWidget {
                     AppIcons.lock,
                     'Coffre-fort'.tr,
                     'Contrats, devis, factures, photos'.tr,
-                    () => requirePremium(
-                      context,
-                      ref,
-                      feature: PremiumFeature.vault,
-                      onUnlocked: () => context.push(Routes.vault),
-                    ),
+                    () => context.push(Routes.vault),
                   ),
                   _Row(
                     AppIcons.download,
@@ -458,16 +456,12 @@ class AccountScreen extends ConsumerWidget {
           ),
         const SizedBox(height: 10),
         PillButton(
-          label: 'Écrire au support'.tr,
-          icon: AppIcons.message,
+          label: 'Contacter l’équipe'.tr,
+          icon: AppIcons.whatsapp,
           tone: ButtonTone.dark,
           onPressed: () {
             Navigator.of(ctx).pop();
-            toast(
-              context,
-              'Message envoyé, réponse sous 24 h'.tr,
-              icon: AppIcons.send,
-            );
+            showContactTeam(context);
           },
         ),
       ],

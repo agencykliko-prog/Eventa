@@ -26,6 +26,66 @@ class PlanNotifier extends Notifier<Plan> {
 
 final planProvider = NotifierProvider<PlanNotifier, Plan>(PlanNotifier.new);
 
+// ─── Abonnement Creator ─────────────────────────────────────────────────
+
+/// Prix mensuel de l'offre Creator.
+const creatorPlanPrice = 29900;
+
+/// Abonnement Creator en cours (null : pas d'abonnement).
+class CreatorSubscription {
+  const CreatorSubscription({
+    required this.since,
+    required this.renewsOn,
+    required this.method,
+    required this.receipt,
+    this.cancelled = false,
+  });
+
+  final DateTime since;
+  final DateTime renewsOn;
+  final PayMethod method;
+  final String receipt;
+
+  /// Résilié : reste actif jusqu'à [renewsOn], sans renouvellement.
+  final bool cancelled;
+
+  CreatorSubscription copyWith({bool? cancelled}) => CreatorSubscription(
+    since: since,
+    renewsOn: renewsOn,
+    method: method,
+    receipt: receipt,
+    cancelled: cancelled ?? this.cancelled,
+  );
+}
+
+class CreatorSubNotifier extends Notifier<CreatorSubscription?> {
+  @override
+  CreatorSubscription? build() => null;
+
+  /// Active l'abonnement après un paiement réussi (30 jours).
+  void activate(PayMethod method, String receipt) {
+    final now = DateTime.now();
+    state = CreatorSubscription(
+      since: now,
+      renewsOn: now.add(const Duration(days: 30)),
+      method: method,
+      receipt: receipt,
+    );
+    Future<void>.delayed(
+      const Duration(milliseconds: 700),
+      () => ref.read(soundProvider).play(Sfx.premium),
+    );
+  }
+
+  void cancel() => state = state?.copyWith(cancelled: true);
+  void resume() => state = state?.copyWith(cancelled: false);
+}
+
+final creatorSubProvider =
+    NotifierProvider<CreatorSubNotifier, CreatorSubscription?>(
+      CreatorSubNotifier.new,
+    );
+
 /// Une fonctionnalité est débloquée par l'abonnement.
 final featureUnlockedProvider =
     Provider.family<bool, (PremiumFeature, String?)>(
@@ -118,8 +178,10 @@ final vaultProvider = NotifierProvider<VaultNotifier, List<VaultDoc>>(
 
 // ─── Réservations ───────────────────────────────────────────────────────
 
-String receiptRef() =>
-    'EVT-{0}-{1}'.trf([DateTime.now().year, (math.Random().nextInt(9000) + 1000)]);
+String receiptRef() => 'EVT-{0}-{1}'.trf([
+  DateTime.now().year,
+  (math.Random().nextInt(9000) + 1000),
+]);
 
 class BookingsNotifier extends Notifier<List<Booking>> {
   @override
@@ -164,7 +226,10 @@ class BookingsNotifier extends Notifier<List<Booking>> {
     final lines = <QuoteLine>[
       QuoteLine(
         perHead
-            ? '{0} × {1} invités'.trf([v.packages.isEmpty ? 'Prestation'.tr : v.packages.first.name, b.request.guests])
+            ? '{0} × {1} invités'.trf([
+                v.packages.isEmpty ? 'Prestation'.tr : v.packages.first.name,
+                b.request.guests,
+              ])
             : (v.packages.isEmpty
                   ? 'Prestation {0}'.trf([v.category.label.toLowerCase()])
                   : v.packages.first.name),
@@ -195,8 +260,8 @@ class BookingsNotifier extends Notifier<List<Booking>> {
           ...b.messages,
           ChatMessage(
             fromMe: false,
-            text:
-                'Merci pour votre demande ! Voici notre devis détaillé, valable 7 jours. N’hésitez pas si vous avez des questions.'.tr,
+            text: 'Merci pour votre demande ! Voici notre devis détaillé, valable 7 jours. N’hésitez pas si vous avez des questions.'
+                .tr,
             at: DateTime.now(),
           ),
         ],
@@ -240,7 +305,8 @@ class BookingsNotifier extends Notifier<List<Booking>> {
           ...b.messages,
           ChatMessage(
             fromMe: true,
-            text: 'L’agent IA a proposé une remise de 7 % au regard des tarifs du marché.'.tr,
+            text: 'L’agent IA a proposé une remise de 7 % au regard des tarifs du marché.'
+                .tr,
             at: DateTime.now(),
           ),
           ChatMessage(

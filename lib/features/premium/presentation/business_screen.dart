@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/tr.dart';
@@ -6,14 +7,85 @@ import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/eventa_colors.dart';
 import '../../../core/widgets/entrance.dart';
 import '../../../core/widgets/ui.dart';
+import '../../../core/utils/formatters.dart';
 import '../../commerce/data/catalog.dart';
+import '../../commerce/domain/commerce_models.dart';
+import '../../commerce/presentation/commerce_providers.dart';
+import '../../commerce/presentation/payment_sheet.dart';
 
-/// Offre SaaS indépendante pour les professionnels, et espaces sponsorisés.
-class BusinessScreen extends StatelessWidget {
+/// Offre Creator (29 900 FCFA / mois) : souscription, état de
+/// l'abonnement, résiliation ; et espaces sponsorisés.
+class BusinessScreen extends ConsumerWidget {
   const BusinessScreen({super.key});
 
+  Future<void> _subscribe(BuildContext context, WidgetRef ref) async {
+    final r = await showPaymentSheet(
+      context,
+      title: 'Abonnement Creator'.tr,
+      payee: 'Eventa'.tr,
+      options: [PayOption('Mensuel'.tr, creatorPlanPrice)],
+      onPay: (amount, m) {
+        final receipt = Receipt(
+          ref: receiptRef(),
+          label: 'Abonnement Creator'.tr,
+          amount: amount,
+          method: m,
+          date: DateTime.now(),
+          payee: 'Eventa'.tr,
+        );
+        ref.read(creatorSubProvider.notifier).activate(m, receipt.ref);
+        return receipt;
+      },
+    );
+    if (r != null && context.mounted) {
+      toast(context, 'Bienvenue dans l’offre Creator'.tr, icon: AppIcons.crown);
+    }
+  }
+
+  Future<void> _cancel(BuildContext context, WidgetRef ref) async {
+    final ok = await showEventaSheet<bool>(
+      context,
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 16, 20, 20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Résilier l’offre Creator ?'.tr,
+              style: ctx.text.headlineSmall,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Vos avantages restent actifs jusqu’à la fin de la période payée. Aucun prélèvement ensuite.'
+                  .tr,
+              style: ctx.text.bodyMedium,
+            ),
+            const SizedBox(height: 18),
+            PillButton(
+              label: 'Résilier'.tr,
+              tone: ButtonTone.dark,
+              onPressed: () => Navigator.of(ctx).pop(true),
+            ),
+            const SizedBox(height: 8),
+            PillButton(
+              label: 'Garder mon abonnement'.tr,
+              tone: ButtonTone.ghost,
+              onPressed: () => Navigator.of(ctx).pop(false),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (ok == true) {
+      ref.read(creatorSubProvider.notifier).cancel();
+      if (context.mounted) toast(context, 'Résiliation enregistrée'.tr);
+    }
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final sub = ref.watch(creatorSubProvider);
     return Scaffold(
       body: SafeArea(
         bottom: false,
@@ -36,11 +108,7 @@ class BusinessScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Tag(
-                    label: 'Business / Creator'.tr,
-                    hue: Hue.gold,
-                    solid: true,
-                  ),
+                  Tag(label: 'Offre Creator'.tr, hue: Hue.gold, solid: true),
                   const SizedBox(height: 16),
                   Text(
                     'Votre agence événementielle, dans une seule app.'.tr,
@@ -50,7 +118,8 @@ class BusinessScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Clients, devis, contrats, facturation et équipe. En marque blanche, avec API et automatisations.'.tr,
+                    'Clients, devis, contrats, facturation et équipe. En marque blanche, avec API et automatisations.'
+                        .tr,
                     style: context.text.bodyMedium?.copyWith(
                       color: Colors.white70,
                     ),
@@ -58,7 +127,6 @@ class BusinessScreen extends StatelessWidget {
                   const SizedBox(height: 18),
                   Text.rich(
                     TextSpan(
-                      text: 'À partir de '.tr,
                       style: context.text.bodySmall?.copyWith(
                         color: Colors.white60,
                       ),
@@ -74,13 +142,28 @@ class BusinessScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 18),
-                  PillButton(
-                    label: 'Demander une démo'.tr,
-                    tone: ButtonTone.gold,
-                    trailingIcon: AppIcons.forward,
-                    onPressed: () => toast(
-                      context,
-                      'Demande envoyée, un conseiller vous rappelle sous 24 h'.tr,
+                  if (sub == null)
+                    PillButton(
+                      label: 'S’abonner · {0} / mois'.trf([
+                        fcfa(creatorPlanPrice),
+                      ]),
+                      tone: ButtonTone.gold,
+                      icon: AppIcons.crown,
+                      onPressed: () => _subscribe(context, ref),
+                    )
+                  else
+                    _ActiveSub(
+                      sub: sub,
+                      onCancel: () => _cancel(context, ref),
+                      onResume: () =>
+                          ref.read(creatorSubProvider.notifier).resume(),
+                    ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Sans engagement · Mobile Money ou carte · résiliable à tout moment'
+                        .tr,
+                    style: context.text.labelSmall?.copyWith(
+                      color: Colors.white60,
                     ),
                   ),
                 ],
@@ -142,7 +225,8 @@ class BusinessScreen extends StatelessWidget {
             ),
             SectionTitle('Publicité Premium'.tr),
             Text(
-              'Réservée aux professionnels : gagnez en visibilité auprès des organisateurs qui préparent leur événement.'.tr,
+              'Réservée aux professionnels : gagnez en visibilité auprès des organisateurs qui préparent leur événement.'
+                  .tr,
               style: context.text.bodyMedium?.copyWith(
                 color: context.eventa.muted,
               ),
@@ -187,6 +271,71 @@ class BusinessScreen extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Abonnement en cours : statut, échéance, moyen de paiement.
+class _ActiveSub extends StatelessWidget {
+  const _ActiveSub({
+    required this.sub,
+    required this.onCancel,
+    required this.onResume,
+  });
+
+  final CreatorSubscription sub;
+  final VoidCallback onCancel;
+  final VoidCallback onResume;
+
+  @override
+  Widget build(BuildContext context) {
+    final white = context.text.bodySmall?.copyWith(color: Colors.white70);
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.08),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: Confetti.gold.withValues(alpha: 0.6)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(AppIcons.checkCircle, size: 18, color: Confetti.gold),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  sub.cancelled
+                      ? 'Offre Creator résiliée'.tr
+                      : 'Offre Creator active'.tr,
+                  style: context.text.titleSmall?.copyWith(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            sub.cancelled
+                ? 'Active jusqu’au {0}, sans renouvellement.'.trf([
+                    longDate(sub.renewsOn),
+                  ])
+                : 'Prochain renouvellement le {0} · {1}'.trf([
+                    longDate(sub.renewsOn),
+                    sub.method.label,
+                  ]),
+            style: white,
+          ),
+          Text('Reçu {0}'.trf([sub.receipt]), style: white),
+          const SizedBox(height: 12),
+          PillButton(
+            label: sub.cancelled ? 'Réactiver'.tr : 'Résilier'.tr,
+            tone: ButtonTone.light,
+            height: 42,
+            onPressed: sub.cancelled ? onResume : onCancel,
+          ),
+        ],
       ),
     );
   }

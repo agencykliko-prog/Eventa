@@ -24,6 +24,7 @@ import 'collaborators_sheet.dart';
 import 'widgets/budget_overview.dart';
 import 'widgets/guests_panel.dart';
 import 'widgets/team_panel.dart';
+import '../../marketplace/data/vendor_media.dart';
 
 class EventDashboardScreen extends ConsumerWidget {
   const EventDashboardScreen({super.key, required this.id});
@@ -175,13 +176,7 @@ class _DashboardState extends ConsumerState<_Dashboard> {
                           icon: AppIcons.lock,
                           label: 'Coffre-fort'.tr,
                           hue: Hue.violet,
-                          onTap: () => requirePremium(
-                            context,
-                            ref,
-                            feature: PremiumFeature.vault,
-                            eventId: e.id,
-                            onUnlocked: () => context.push(Routes.vault),
-                          ),
+                          onTap: () => context.push(Routes.vault),
                         ),
                         _Action(
                           icon: AppIcons.download,
@@ -276,11 +271,11 @@ class _DashboardState extends ConsumerState<_Dashboard> {
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(12),
-                          child: Image.asset(
+                          child: VendorPhoto(
                             b.vendor.image,
                             width: 44,
                             height: 44,
-                            fit: BoxFit.cover,
+                            cacheWidth: 120,
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -739,7 +734,7 @@ class _EventVendorCard extends StatelessWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.asset(v.image, fit: BoxFit.cover),
+                    VendorPhoto(v.image, cacheWidth: 400),
                     Positioned(
                       left: 8,
                       top: 8,

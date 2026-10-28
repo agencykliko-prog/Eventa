@@ -15,6 +15,11 @@
     const name = host.dataset.mascot;
     const img = new Image();
     img.className = 'm-img';
+    // Dimensions déclarées et chargement différé (pas de saut de mise en page).
+    img.width = 384;
+    img.height = 384;
+    img.loading = 'lazy';
+    img.decoding = 'async';
     img.src = src(name);
     img.alt = '';
     img.draggable = false;
@@ -122,10 +127,24 @@
   if (track) track.innerHTML += track.innerHTML.replace(/<span>/g, '<span aria-hidden="true">');
 
   /* ── Titres découpés en mots ─────────────────────────── */
+  // Les mots mis en avant (<em class="script">) gardent leur balise.
   document.querySelectorAll('.split').forEach((h) => {
-    const words = h.textContent.trim().split(/\s+/);
+    const words = [];
+    h.childNodes.forEach((n) => {
+      const open = n.nodeType === 1 ? `<${n.tagName.toLowerCase()}${n.className ? ` class="${n.className}"` : ''}>` : '';
+      const close = n.nodeType === 1 ? `</${n.tagName.toLowerCase()}>` : '';
+      n.textContent.split(/(\s+)/).forEach((w) => {
+        if (!w.trim()) { if (words.length) words.push(null); return; }
+        words.push(open + w + close);
+      });
+    });
     h.setAttribute('aria-label', h.textContent.trim());
-    h.innerHTML = words.map((w, i) => `<span class="w" aria-hidden="true"><span style="--i:${i}">${w}</span></span>`).join(' ');
+    let i = 0, out = '';
+    words.forEach((w) => {
+      if (w === null) { out += ' '; return; }
+      out += `<span class="w" aria-hidden="true"><span style="--i:${i++}">${w}</span></span>`;
+    });
+    h.innerHTML = out.replace(/\s+/g, ' ').trim();
   });
 
   /* ── Compteurs ───────────────────────────────────────── */
@@ -246,6 +265,54 @@
     fetch(base.replace('/#', '/'), { mode: 'no-cors', cache: 'no-store' })
       .then(() => { frame.src = app('/connexion'); })
       .catch(() => shell.classList.add('offline'));
+  }
+
+  /* ── Petit message en bas d'écran ──────────────────────── */
+  const toast = (msg) => {
+    let t = document.querySelector('.toast');
+    if (!t) { t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); document.body.append(t); }
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._h);
+    t._h = setTimeout(() => t.classList.remove('show'), 2600);
+  };
+
+  /* ── Partage : feuille native, sinon copie du lien ───── */
+  document.querySelectorAll('[data-share]').forEach((b) => b.addEventListener('click', async () => {
+    const data = { title: 'Eventa', text: 'Le budget parfait pour célébrer, en Côte d’Ivoire.', url: document.querySelector('link[rel=canonical]')?.href || location.href };
+    try {
+      if (navigator.share) { await navigator.share(data); return; }
+      await navigator.clipboard.writeText(data.url);
+      toast('Lien copié, il ne reste qu’à le partager !');
+    } catch (e) { /* partage annulé */ }
+  }));
+
+  /* ── Accès anticipé : envoi à Netlify Forms ──────────── */
+  const early = document.querySelector('[data-early]');
+  if (early) {
+    const msg = early.querySelector('.form-msg');
+    early.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!early.reportValidity()) return;
+      const btn = early.querySelector('button[type=submit]');
+      btn.disabled = true;
+      msg.className = 'form-msg';
+      msg.textContent = 'Envoi…';
+      try {
+        const body = new URLSearchParams(new FormData(early)).toString();
+        const r = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
+        // En local (démo), le serveur ne gère pas les formulaires : on simule.
+        if (!r.ok && !local) throw new Error(r.status);
+        early.reset();
+        msg.className = 'form-msg ok';
+        msg.textContent = 'Merci ! On vous écrit sur WhatsApp dès l’ouverture.';
+      } catch (err) {
+        msg.className = 'form-msg err';
+        msg.textContent = 'L’envoi n’a pas abouti. Réessayez dans un instant.';
+      } finally {
+        btn.disabled = false;
+      }
+    });
   }
 
   /* ── Menu mobile ─────────────────────────────────────── */

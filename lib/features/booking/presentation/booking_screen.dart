@@ -15,6 +15,7 @@ import '../../commerce/presentation/payment_sheet.dart';
 import '../../events/presentation/events_providers.dart';
 import '../../premium/presentation/paywall.dart';
 import '../../premium/presentation/premium_nudge.dart';
+import '../../marketplace/data/vendor_media.dart';
 
 /// Parcours de réservation en 7 étapes, sur un seul écran : chaque étape
 /// affiche son contenu et une seule action principale.
@@ -88,11 +89,11 @@ class _BookingScreenState extends ConsumerState<BookingScreen> {
                 const SizedBox(width: 12),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
+                  child: VendorPhoto(
                     b.vendor.image,
                     width: 42,
                     height: 42,
-                    fit: BoxFit.cover,
+                    cacheWidth: 120,
                   ),
                 ),
                 const SizedBox(width: 10),

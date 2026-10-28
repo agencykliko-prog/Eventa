@@ -6,6 +6,7 @@ import '../../../../core/theme/eventa_colors.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../core/widgets/pressable.dart';
 import '../../../events/domain/models.dart';
+import '../../data/vendor_media.dart';
 
 String priceLabel(Vendor v) => 'dès {0}{1}'.trf([
   fcfa(v.priceFrom),
@@ -52,11 +53,7 @@ class VendorCard extends StatelessWidget {
                 children: [
                   Hero(
                     tag: 'vendor-${v.id}',
-                    child: Image.asset(
-                      v.image,
-                      fit: BoxFit.cover,
-                      cacheWidth: 800,
-                    ),
+                    child: VendorPhoto(v.image, cacheWidth: 800),
                   ),
                   const _Veil(stops: [0, 0.45, 1]),
                   if (v.sponsor != null)
@@ -208,7 +205,7 @@ class VendorSpotlight extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset(v.image, fit: BoxFit.cover, cacheWidth: 500),
+            VendorPhoto(v.image, cacheWidth: 500),
             const _Veil(stops: [0, 0.3, 1]),
             Positioned(right: 10, top: 10, child: RatingChip(vendor: v)),
             Positioned(

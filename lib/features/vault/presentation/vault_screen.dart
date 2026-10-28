@@ -12,8 +12,10 @@ import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/ui.dart';
 import '../../commerce/domain/commerce_models.dart';
 import '../../commerce/presentation/commerce_providers.dart';
+import '../../premium/presentation/paywall.dart';
 
-/// Coffre-fort numérique (Premium) : contrats, devis, factures, photos…
+/// Coffre-fort numérique : contrats, devis, factures, photos… 100 Mo
+/// offerts à tous les organisateurs, davantage avec un abonnement.
 class VaultScreen extends ConsumerStatefulWidget {
   const VaultScreen({super.key});
 
@@ -23,6 +25,36 @@ class VaultScreen extends ConsumerStatefulWidget {
 
 class _VaultScreenState extends ConsumerState<VaultScreen> {
   VaultFolder? _folder;
+
+  /// Ajoute un document si l'espace le permet ; sinon propose plus d'espace.
+  void _upload(BuildContext context, int sizeKb) {
+    final plan = ref.read(planProvider);
+    final used = ref.read(vaultProvider).fold<int>(0, (s, d) => s + d.sizeKb);
+    void add() {
+      ref
+          .read(vaultProvider.notifier)
+          .add(
+            VaultDoc(
+              name: 'Scan {0}.pdf'.trf([shortDate(DateTime.now())]),
+              folder: _folder ?? VaultFolder.documents,
+              sizeKb: sizeKb,
+              date: DateTime.now(),
+            ),
+          );
+      toast(context, 'Document chiffré et ajouté'.tr, icon: AppIcons.lock);
+    }
+
+    if (used + sizeKb <= plan.vaultMb * 1024) {
+      add();
+      return;
+    }
+    requirePremium(
+      context,
+      ref,
+      feature: PremiumFeature.vault,
+      onUnlocked: add,
+    );
+  }
 
   String _size(int kb) => kb >= 1024
       ? '{0} Mo'.trf([(kb / 1024).toStringAsFixed(1).replaceAll('.', ',')])
@@ -90,6 +122,8 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
         .where((d) => _folder == null || d.folder == _folder)
         .toList();
     final usedKb = docs.fold<int>(0, (s, d) => s + d.sizeKb);
+    final plan = ref.watch(planProvider);
+    final quotaKb = plan.vaultMb * 1024;
     return Scaffold(
       body: SafeArea(
         bottom: false,
@@ -108,23 +142,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                 RoundIconButton(
                   icon: AppIcons.upload,
                   tooltip: 'Ajouter un document',
-                  onTap: () {
-                    ref
-                        .read(vaultProvider.notifier)
-                        .add(
-                          VaultDoc(
-                            name: 'Scan {0}.pdf'.trf([shortDate(DateTime.now())]),
-                            folder: _folder ?? VaultFolder.documents,
-                            sizeKb: 310,
-                            date: DateTime.now(),
-                          ),
-                        );
-                    toast(
-                      context,
-                      'Document chiffré et ajouté'.tr,
-                      icon: AppIcons.lock,
-                    );
-                  },
+                  onTap: () => _upload(context, 310),
                 ),
               ],
             ),
@@ -135,11 +153,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                 children: [
                   Row(
                     children: [
-                      IconTile(
-                        icon: AppIcons.lock,
-                        hue: Hue.gold,
-                        size: 44,
-                      ),
+                      IconTile(icon: AppIcons.lock, hue: Hue.gold, size: 44),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -160,7 +174,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                           ],
                         ),
                       ),
-                      PremiumBadge(label: 'Signature'.tr, onDark: true),
+                      PremiumBadge(label: plan.label, onDark: true),
                     ],
                   ),
                   const SizedBox(height: 18),
@@ -174,7 +188,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                       ),
                       const Spacer(),
                       Text(
-                        '{0} sur 5 Go'.trf([_size(usedKb)]),
+                        '{0} sur {1}'.trf([_size(usedKb), plan.vaultLabel]),
                         style: context.text.labelMedium?.copyWith(
                           color: Colors.white60,
                         ),
@@ -183,7 +197,7 @@ class _VaultScreenState extends ConsumerState<VaultScreen> {
                   ),
                   const SizedBox(height: 8),
                   Meter(
-                    value: usedKb / (5 * 1024 * 1024) + 0.02,
+                    value: (usedKb / quotaKb).clamp(0.02, 1.0),
                     color: Confetti.gold,
                     track: Confetti.nightLine,
                     height: 6,

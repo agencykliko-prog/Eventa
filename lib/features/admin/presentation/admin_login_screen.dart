@@ -54,7 +54,8 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
     ref
         .read(adminProvider.notifier)
         .note('Connexion au centre de contrôle', 'Code à usage unique validé');
-    context.go(adminPath(AdminModule.overview));
+    final perms = ref.read(adminProvider).permissions[_member.role] ?? const {};
+    context.go(adminPath(AdminModule.homeFor(perms)));
   }
 
   @override

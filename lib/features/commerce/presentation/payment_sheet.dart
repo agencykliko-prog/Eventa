@@ -194,7 +194,8 @@ class _PaymentSheetState extends State<_PaymentSheet> {
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  'Paiement sécurisé, conservé jusqu’à la validation de la prestation, puis reversé au prestataire. Démonstration : aucun débit réel.'.tr,
+                  'Paiement sécurisé, conservé jusqu’à la validation de la prestation, puis reversé au prestataire. Démonstration : aucun débit réel.'
+                      .tr,
                   style: context.text.bodySmall,
                 ),
               ),
@@ -334,14 +335,7 @@ class _MethodPickerState extends State<MethodPicker> {
                               ),
                               child: Row(
                                 children: [
-                                  Container(
-                                    width: 8,
-                                    height: 8,
-                                    decoration: BoxDecoration(
-                                      color: op.dot,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
+                                  PayLogo(method: op),
                                   const SizedBox(width: 10),
                                   Expanded(
                                     child: Text(
@@ -372,6 +366,12 @@ class _MethodPickerState extends State<MethodPicker> {
             row(
               icon: m.icon,
               label: m.label,
+              end: m.logo == null
+                  ? null
+                  : Padding(
+                      padding: const EdgeInsets.only(right: 10),
+                      child: PayLogo(method: m),
+                    ),
               selected: widget.value == m,
               onTap: () {
                 setState(() => _open = false);
@@ -477,6 +477,32 @@ class ReceiptView extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Logo officiel d'un moyen de paiement, sur une petite tuile blanche.
+class PayLogo extends StatelessWidget {
+  const PayLogo({super.key, required this.method, this.height = 26});
+
+  final PayMethod method;
+  final double height;
+
+  @override
+  Widget build(BuildContext context) {
+    final logo = method.logo;
+    return Container(
+      height: height,
+      width: height * 1.5,
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: Confetti.line),
+      ),
+      child: logo == null
+          ? Icon(method.icon, size: height * 0.6, color: Confetti.ink)
+          : Image.asset(logo, fit: BoxFit.contain),
     );
   }
 }

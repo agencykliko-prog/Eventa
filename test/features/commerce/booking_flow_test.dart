@@ -124,9 +124,11 @@ void main() {
     expect(unlocked(PremiumFeature.aiBudget), isFalse);
     c.read(planProvider.notifier).subscribe(Plan.azur);
     expect(unlocked(PremiumFeature.aiBudget), isTrue);
-    expect(unlocked(PremiumFeature.vault), isFalse);
-    c.read(planProvider.notifier).subscribe(Plan.signature);
+    // Coffre-fort : 100 Mo offerts, l'espace étendu dès Azur.
     expect(unlocked(PremiumFeature.vault), isTrue);
+    expect(Plan.free.vaultMb, 100);
+    expect(unlocked(PremiumFeature.agent), isFalse);
+    c.read(planProvider.notifier).subscribe(Plan.signature);
     expect(unlocked(PremiumFeature.agent), isTrue);
   });
 }

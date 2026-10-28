@@ -70,6 +70,7 @@ flutter:
     - assets/images/v/
     - assets/images/shop/
     - assets/images/mascots/
+    - assets/images/pay/
     - assets/sounds/
 
   fonts:

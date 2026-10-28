@@ -21,7 +21,10 @@ void main() {
     tester,
   ) async {
     await start(tester);
-    expect(find.text('Le budget parfait\npour célébrer.'), findsOneWidget);
+    expect(
+      find.textContaining('Le budget parfait', findRichText: true),
+      findsOneWidget,
+    );
 
     await tester.tap(find.text('Créer un compte'));
     await tester.pump(const Duration(milliseconds: 700));

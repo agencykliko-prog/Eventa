@@ -102,7 +102,9 @@ final routerProvider = Provider<GoRouter>((ref) {
         final member = adminSession.value;
         if (member == null && loc != Routes.admin) return Routes.admin;
         if (member != null && loc == Routes.admin) {
-          return adminPath(AdminModule.overview);
+          final perms =
+              ref.read(adminProvider).permissions[member.role] ?? const {};
+          return adminPath(AdminModule.homeFor(perms));
         }
         return null;
       }
