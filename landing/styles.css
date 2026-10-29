@@ -529,6 +529,51 @@ h1, h2, h3, h4, p { margin: 0; }
 .form-msg.ok { color: #0E7E70; }
 .form-msg.err { color: var(--coral-press); }
 
+/* Profil : deux pastilles, une seule active. */
+.profil { border: 0; margin: 0; padding: 0; min-width: 0; }
+.profil legend { padding: 0; margin-bottom: 6px; }
+.profil-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.profil-opts label { position: relative; }
+.profil-opts input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.profil-opts span {
+  display: grid; place-items: center; height: 52px; border-radius: 14px;
+  border: 1.5px solid var(--line, #E4E0EC); background: var(--cream);
+  font-weight: 700; font-size: 15px; color: var(--ink);
+  transition: border-color .2s, background-color .2s, color .2s, transform .18s var(--ease);
+}
+.profil-opts label:hover span { border-color: var(--violet); }
+.profil-opts input:checked + span { background: var(--violet); border-color: var(--violet); color: var(--white); }
+.profil-opts input:active + span { transform: scale(.97); }
+.profil-opts input:focus-visible + span { outline: 3px solid var(--mango-hi); outline-offset: 3px; }
+
+/* Chargement : le libellé s'efface, trois points sautillent. */
+.early-btn { position: relative; }
+.early-label { transition: opacity .15s, transform .2s var(--ease); }
+.early-dots { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; gap: 6px; opacity: 0; transition: opacity .15s; }
+.early-dots i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: dot .9s var(--ease) infinite; }
+.early-dots i:nth-child(2) { animation-delay: .12s; }
+.early-dots i:nth-child(3) { animation-delay: .24s; }
+.early-btn.loading { cursor: progress; }
+.early-btn.loading .early-label { opacity: 0; transform: translateY(-6px); }
+.early-btn.loading .early-dots { opacity: 1; }
+@keyframes dot { 0%, 60%, 100% { transform: translateY(0); opacity: .5; } 30% { transform: translateY(-7px); opacity: 1; } }
+
+/* Remerciement : les champs laissent place au message. */
+.early-form.sent > :not(.early-done) { display: none; }
+.early-done { display: grid; justify-items: center; gap: 10px; padding: 18px 0 6px; text-align: center; }
+.early-done[hidden] { display: none; }
+.early-check { width: 76px; height: 76px; fill: none; stroke-linecap: round; stroke-linejoin: round; animation: pop .5s var(--spring) both; }
+.early-check circle { stroke: var(--lagoon); stroke-width: 4; stroke-dasharray: 183; animation: draw .55s var(--ease) .05s both; }
+.early-check path { stroke: var(--lagoon); stroke-width: 5; stroke-dasharray: 44; animation: draw .4s var(--ease) .45s both; }
+.early-title { font-size: 22px; font-weight: 800; letter-spacing: -.02em; color: var(--ink); outline: none; animation: rise .5s var(--ease) .55s both; }
+.early-text { max-width: 34ch; color: var(--muted); animation: rise .5s var(--ease) .65s both; }
+.early-again { height: 44px; color: var(--violet); animation: rise .5s var(--ease) .75s both; }
+@keyframes draw { from { stroke-dashoffset: var(--len, 183); } }
+.early-check circle { --len: 183; }
+.early-check path { --len: 44; }
+@keyframes pop { from { transform: scale(.6); } }
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+
 /* ── Appel final ────────────────────────────────────────── */
 .final { overflow: hidden; }
 .final .display { margin: 8px 0 32px; }

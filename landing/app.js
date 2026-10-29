@@ -402,33 +402,62 @@
   const early = document.querySelector('[data-early]');
   if (early) {
     const msg = early.querySelector('.form-msg');
+    const btn = early.querySelector('button[type=submit]');
+    const done = early.querySelector('.early-done');
+    // Le chargement reste visible au moins ce temps : un éclair passerait pour un bug.
+    const minWait = (t0) => new Promise((ok) => setTimeout(ok, Math.max(0, 700 - (performance.now() - t0))));
     early.addEventListener('submit', async (e) => {
       e.preventDefault();
       if (!early.reportValidity()) return;
-      const btn = early.querySelector('button[type=submit]');
+      const t0 = performance.now();
       btn.disabled = true;
+      btn.classList.add('loading');
+      btn.setAttribute('aria-busy', 'true');
       msg.className = 'form-msg';
-      msg.textContent = 'Envoi…';
+      msg.textContent = '';
       try {
         if (early.elements['bot-field'].value) throw new Error('bot');
         // Numéro normalisé : chiffres seulement, + conservé en tête.
         const whatsapp = early.elements.whatsapp.value.trim().replace(/(?!^\+)[^0-9]/g, '');
+        const nom = early.elements.nom.value.trim();
+        const profil = early.elements.profil.value;
         const r = await fetch(`${SUPABASE_URL}/rest/v1/early_access`, {
           method: 'POST',
           headers: { apikey: SUPABASE_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
-          body: JSON.stringify({ nom: early.elements.nom.value.trim(), whatsapp, consent: true, source: 'landing' }),
+          body: JSON.stringify({ nom, whatsapp, profil, consent: true, source: 'landing' }),
         });
         // 409 : numéro déjà inscrit, on le traite comme un succès.
         if (!r.ok && r.status !== 409) throw new Error(r.status);
-        early.reset();
-        msg.className = 'form-msg ok';
-        msg.textContent = 'Merci ! On vous écrit sur WhatsApp dès l’ouverture.';
+        await minWait(t0);
+        thank(nom.split(/\s+/)[0], profil);
       } catch (err) {
+        await minWait(t0);
         msg.className = 'form-msg err';
         msg.textContent = 'L’envoi n’a pas abouti. Réessayez dans un instant.';
       } finally {
         btn.disabled = false;
+        btn.classList.remove('loading');
+        btn.removeAttribute('aria-busy');
       }
+    });
+
+    // Remerciement : coche dessinée, message personnalisé, confettis depuis la coche.
+    function thank(prenom, profil) {
+      done.querySelector('.early-title').textContent = `Bienvenue sur la liste, ${prenom} !`;
+      done.querySelector('.early-text').textContent = profil === 'prestataire'
+        ? 'On vous écrit sur WhatsApp dès l’ouverture de l’espace pro, avec les avantages de lancement réservés aux premiers prestataires.'
+        : 'On vous écrit sur WhatsApp dès l’ouverture, avec les avantages de lancement pour votre prochain événement.';
+      early.reset();
+      early.classList.add('sent');
+      done.hidden = false;
+      done.querySelector('.early-title').focus({ preventScroll: true });
+      const r = done.querySelector('.early-check').getBoundingClientRect();
+      setTimeout(() => burst(r.left + r.width / 2, r.top + r.height / 2, 120), 380);
+    }
+    done.querySelector('.early-again').addEventListener('click', () => {
+      done.hidden = true;
+      early.classList.remove('sent');
+      early.elements.nom.focus();
     });
   }
 

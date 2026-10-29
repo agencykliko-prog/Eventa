@@ -31,7 +31,7 @@
     setTimeout(() => { if (!window.gsap) d.classList.remove('anim'); }, 2500);
   }
 </script>
-<link rel="stylesheet" href="styles.css?v=37">
+<link rel="stylesheet" href="styles.css?v=38">
 </head>
 <body>
 
@@ -368,12 +368,28 @@
         <input name="nom" type="text" autocomplete="name" required placeholder="Awa Koné"></label>
       <label class="field"><span>Numéro WhatsApp</span>
         <input name="whatsapp" type="tel" inputmode="tel" autocomplete="tel" required pattern="[+0-9 ]{8,20}" placeholder="+225 07 00 00 00 00"></label>
+      <fieldset class="field profil">
+        <legend>En tant que</legend>
+        <div class="profil-opts">
+          <label><input type="radio" name="profil" value="organisateur" required><span>Organisateur</span></label>
+          <label><input type="radio" name="profil" value="prestataire"><span>Prestataire</span></label>
+        </div>
+      </fieldset>
       <label class="consent">
         <input type="checkbox" name="consentement" value="oui" required>
         <span>J’accepte qu’Eventa me contacte sur WhatsApp au sujet de l’accès anticipé. <a data-app-link="/confidentialite" href="#">Politique de confidentialité</a></span>
       </label>
-      <button class="btn btn-cta btn-violet" type="submit">Je m’inscris</button>
+      <button class="btn btn-cta btn-violet early-btn" type="submit">
+        <span class="early-label">Rejoindre la liste</span>
+        <span class="early-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      </button>
       <p class="form-msg" role="status" aria-live="polite"></p>
+      <div class="early-done" hidden>
+        <svg class="early-check" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="29"/><path d="M19 33l9 9 17-19"/></svg>
+        <p class="early-title" tabindex="-1"></p>
+        <p class="early-text"></p>
+        <button class="btn-link early-again" type="button">Inscrire un autre numéro</button>
+      </div>
     </form>
   </div>
 </section>
@@ -429,6 +445,6 @@
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollSmoother.min.js"></script>
-<script defer src="app.js?v=36"></script>
+<script defer src="app.js?v=37"></script>
 </body>
 </html>
