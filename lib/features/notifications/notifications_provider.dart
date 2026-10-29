@@ -66,6 +66,8 @@ class NoticesNotifier extends Notifier<List<Notice>> {
       ref.listen(bookingsProvider, _onBookings);
       ref.listen(directThreadsProvider, _onDirect);
     }
+    // Avec un compte réel, pas de notifications fictives.
+    if (ref.watch(liveSessionProvider)) return const [];
     return creator ? _creatorDemo() : _organizerDemo();
   }
 

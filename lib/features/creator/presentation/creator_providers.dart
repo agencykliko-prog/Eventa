@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/analytics/analytics.dart';
 import '../../../core/i18n/tr.dart';
+import '../../auth/presentation/session_provider.dart';
 import '../../events/domain/models.dart';
 
 enum RequestStatus {
@@ -129,6 +130,8 @@ class ClientRequest {
 class RequestsNotifier extends Notifier<List<ClientRequest>> {
   @override
   List<ClientRequest> build() {
+    // Demandes fictives réservées à la démo.
+    if (ref.watch(liveSessionProvider)) return const [];
     final n = DateTime.now();
     DateTime d(int days, int h, [int m = 0]) =>
         DateTime(n.year, n.month, n.day + days, h, m);

@@ -1,13 +1,32 @@
 import '../domain/models.dart';
 import 'demo_data.dart';
 
-/// Contrat d'accès aux événements. La v1 s'appuie sur des données locales ;
-/// une implémentation Supabase prendra le relais sans toucher aux écrans.
-abstract interface class EventsRepository {
+/// Contrat d'accès aux événements. En démo, les données sont locales et les
+/// écritures ne vont nulle part ; avec un compte réel, [SupabaseEventsRepository]
+/// lit et enregistre dans la base, sans que les écrans changent.
+abstract class EventsRepository {
+  const EventsRepository();
+
   Future<List<Event>> fetchEvents();
+
+  /// Crée l'événement et renvoie sa version enregistrée (identifiants de la
+  /// base).
+  Future<Event> createEvent(Event e) async => e;
+
+  Future<void> setTarget(String eventId, int target) async {}
+
+  Future<void> saveTask(String eventId, EventTask t) async {}
+
+  Future<void> deleteTask(String taskId) async {}
+
+  Future<void> saveLine(String eventId, BudgetLine line) async {}
+
+  Future<void> deleteLine(String eventId, BudgetCategory c) async {}
+
+  Future<void> addExpense(String eventId, Expense x) async {}
 }
 
-class DemoEventsRepository implements EventsRepository {
+class DemoEventsRepository extends EventsRepository {
   const DemoEventsRepository({
     this.latency = const Duration(milliseconds: 650),
   });

@@ -1466,4 +1466,32 @@ const en = <String, String>{
   'Répond en': 'Replies within',
   'Voir la réservation': 'View booking',
   'Choisir ce devis': 'Choose this quote',
+
+  // ─── Comptes réels (Supabase) ──────────────────────────────────────────
+  'Session expirée, reconnectez-vous.':
+      'Session expired, please sign in again.',
+  'E-mail ou mot de passe incorrect.': 'Incorrect email or password.',
+  'Confirmez d’abord votre adresse : ouvrez le lien reçu par e-mail.':
+      'Confirm your address first: open the link we emailed you.',
+  'Un compte existe déjà avec cette adresse. Connectez-vous.':
+      'An account already exists with this address. Please sign in.',
+  'Mot de passe trop faible : 8 caractères avec minuscules, majuscules et chiffres.':
+      'Password too weak: 8 characters with lowercase, uppercase and digits.',
+  'Trop de tentatives. Réessayez dans quelques minutes.':
+      'Too many attempts. Try again in a few minutes.',
+  'Adresse e-mail invalide.': 'Invalid email address.',
+  'Connexion impossible pour le moment. Vérifiez votre connexion puis réessayez.':
+      'Can’t sign in right now. Check your connection and try again.',
+  'Vérifiez vos e-mails': 'Check your email',
+  'Nous avons envoyé un lien de confirmation à {0}. Ouvrez-le pour activer votre compte, puis connectez-vous.': 'We sent a confirmation link to {0}. Open it to activate your account, then sign in.',
+  'Compris': 'Got it',
+  'Inscription impossible pour le moment. Vérifiez votre connexion puis réessayez.':
+      'Can’t sign up right now. Check your connection and try again.',
+  'La connexion par téléphone arrive bientôt : utilisez votre adresse e-mail.':
+      'Phone sign-in is coming soon: use your email address.',
+  'Saisissez d’abord votre adresse e-mail.': 'Enter your email address first.',
+  'Lien de réinitialisation envoyé à {0}': 'Reset link sent to {0}',
+  'Découvrir la démo sans compte': 'Explore the demo without an account',
+  'Enregistrement impossible. Vérifiez votre connexion puis réessayez.':
+      'Couldn’t save. Check your connection and try again.',
 };

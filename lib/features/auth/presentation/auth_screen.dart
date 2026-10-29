@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/tr.dart';
+import '../data/auth_gateway.dart';
 import '../../../core/router/app_router.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
@@ -327,6 +328,68 @@ class RolePicker extends StatelessWidget {
   }
 }
 
+// ─── Création de compte ─────────────────────────────────────────────────
+
+/// Crée un compte réel. Si l'adresse doit être confirmée, l'utilisateur
+/// est prévenu et renvoyé vers la connexion ([onConfirm]).
+Future<void> createAccount(
+  BuildContext context,
+  WidgetRef ref,
+  UserProfile profile,
+  String password, {
+  required VoidCallback onConfirm,
+}) async {
+  try {
+    final outcome = await ref
+        .read(sessionProvider.notifier)
+        .signUpWithPassword(profile, password);
+    if (!context.mounted) return;
+    authMascotKey.currentState?.jump();
+    ref.read(soundProvider).play(Sfx.success);
+    if (outcome == SignUpOutcome.confirmEmail) {
+      await showEventaSheet<void>(
+        context,
+        builder: (ctx) => Padding(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Vérifiez vos e-mails'.tr, style: ctx.text.headlineSmall),
+              const SizedBox(height: 8),
+              Text(
+                'Nous avons envoyé un lien de confirmation à {0}. Ouvrez-le pour activer votre compte, puis connectez-vous.'
+                    .trf([profile.email]),
+                style: ctx.text.bodyMedium,
+              ),
+              const SizedBox(height: 18),
+              PillButton(
+                label: 'Compris'.tr,
+                onPressed: () => Navigator.of(ctx).pop(),
+              ),
+            ],
+          ),
+        ),
+      );
+      onConfirm();
+      return;
+    }
+    await Future<void>.delayed(const Duration(milliseconds: 420));
+    if (context.mounted) context.go(Routes.home);
+  } on AuthFailure catch (e) {
+    if (context.mounted) toast(context, e.message, icon: AppIcons.warning);
+  } catch (_) {
+    if (context.mounted) {
+      toast(
+        context,
+        'Inscription impossible pour le moment. Vérifiez votre connexion puis réessayez.'
+            .tr,
+        icon: AppIcons.warning,
+      );
+    }
+  }
+}
+
 // ─── Connexion ──────────────────────────────────────────────────────────
 
 class _SignInForm extends ConsumerStatefulWidget {
@@ -354,16 +417,79 @@ class _SignInFormState extends ConsumerState<_SignInForm> {
     super.dispose();
   }
 
+  String? _error;
+
   Future<void> _submit() async {
     final ok = _form.currentState!.validate();
     setState(() => _consentError = !_accepted);
     if (!ok || !_accepted) return;
-    setState(() => _busy = true);
-    await Future<void>.delayed(const Duration(milliseconds: 700));
+    final id = _id.text.trim();
+    if (!id.contains('@')) {
+      setState(
+        () => _error = 'La connexion par téléphone arrive bientôt : utilisez votre adresse e-mail.'
+            .tr,
+      );
+      return;
+    }
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      await ref
+          .read(sessionProvider.notifier)
+          .signInWithPassword(id, _pwd.text);
+    } on AuthFailure catch (e) {
+      if (mounted) {
+        setState(() {
+          _busy = false;
+          _error = e.message;
+        });
+      }
+      return;
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _busy = false;
+          _error = 'Connexion impossible pour le moment. Vérifiez votre connexion puis réessayez.'
+              .tr;
+        });
+      }
+      return;
+    }
     if (!mounted) return;
     authMascotKey.currentState?.jump();
     await Future<void>.delayed(const Duration(milliseconds: 420));
     if (!mounted) return;
+    context.go(Routes.home);
+  }
+
+  Future<void> _forgot() async {
+    final email = _id.text.trim();
+    if (!email.contains('@')) {
+      toast(
+        context,
+        'Saisissez d’abord votre adresse e-mail.'.tr,
+        icon: AppIcons.info,
+      );
+      return;
+    }
+    try {
+      await ref.read(authGatewayProvider).resetPassword(email);
+      if (mounted) {
+        toast(
+          context,
+          'Lien de réinitialisation envoyé à {0}'.trf([email]),
+          icon: AppIcons.mail,
+        );
+      }
+    } on AuthFailure catch (e) {
+      if (mounted) toast(context, e.message, icon: AppIcons.warning);
+    }
+  }
+
+  /// Visite sans compte : données fictives, rien n'est enregistré.
+  void _demo() {
     ref.read(sessionProvider.notifier).signIn(widget.role);
     context.go(Routes.home);
   }
@@ -397,11 +523,7 @@ class _SignInFormState extends ConsumerState<_SignInForm> {
           Align(
             alignment: Alignment.centerRight,
             child: TextButton(
-              onPressed: () => toast(
-                context,
-                'Lien de réinitialisation envoyé'.tr,
-                icon: AppIcons.mail,
-              ),
+              onPressed: _forgot,
               child: Text(
                 'Mot de passe oublié ?'.tr,
                 style: context.text.labelMedium?.copyWith(
@@ -420,18 +542,35 @@ class _SignInFormState extends ConsumerState<_SignInForm> {
             }),
           ),
           const SizedBox(height: 16),
+          if (_error != null) ...[
+            Text(
+              _error!,
+              key: const ValueKey('auth-error'),
+              style: context.text.bodySmall?.copyWith(
+                color: Confetti.coralDeep,
+              ),
+            ),
+            const SizedBox(height: 10),
+          ],
           PillButton(
             flat: true,
             label: 'Se connecter'.tr,
             loading: _busy,
             onPressed: _submit,
           ),
-          const SizedBox(height: 10),
-          Text(
-            'Démonstration : saisissez n’importe quel identifiant et mot de passe.'
-                .tr,
-            textAlign: TextAlign.center,
-            style: context.text.bodySmall,
+          const SizedBox(height: 6),
+          Center(
+            child: TextButton(
+              key: const ValueKey('demo-access'),
+              onPressed: _demo,
+              child: Text(
+                'Découvrir la démo sans compte'.tr,
+                style: context.text.labelMedium?.copyWith(
+                  color: context.eventa.muted,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
           ),
           const SizedBox(height: 22),
           _SwitchLine(
@@ -516,25 +655,21 @@ class _OrganizerSignUpState extends ConsumerState<_OrganizerSignUp> {
     setState(() => _consentError = !_accepted);
     if (!ok || !_accepted) return;
     setState(() => _busy = true);
-    await Future<void>.delayed(const Duration(milliseconds: 800));
-    if (!mounted) return;
-    authMascotKey.currentState?.jump();
-    ref.read(soundProvider).play(Sfx.success);
-    await Future<void>.delayed(const Duration(milliseconds: 420));
-    if (!mounted) return;
-    ref
-        .read(sessionProvider.notifier)
-        .signUp(
-          UserProfile(
-            role: UserRole.organizer,
-            name: _name.text.trim(),
-            email: _email.text.trim(),
-            phone: '+225 ${_phone.text.trim()}',
-            city: _city ?? 'Abidjan'.tr,
-            photoBytes: _photo,
-          ),
-        );
-    context.go(Routes.home);
+    await createAccount(
+      context,
+      ref,
+      UserProfile(
+        role: UserRole.organizer,
+        name: _name.text.trim(),
+        email: _email.text.trim(),
+        phone: '+225 ${_phone.text.trim()}',
+        city: _city ?? 'Abidjan'.tr,
+        photoBytes: _photo,
+      ),
+      _pwd.text,
+      onConfirm: widget.onSwitch,
+    );
+    if (mounted) setState(() => _busy = false);
   }
 
   @override
@@ -825,39 +960,35 @@ class _CreatorSignUpState extends ConsumerState<_CreatorSignUp> {
 
   Future<void> _submit() async {
     setState(() => _busy = true);
-    await Future<void>.delayed(const Duration(milliseconds: 900));
-    if (!mounted) return;
-    authMascotKey.currentState?.jump();
-    ref.read(soundProvider).play(Sfx.success);
-    await Future<void>.delayed(const Duration(milliseconds: 420));
-    if (!mounted) return;
     String? opt(TextEditingController c) =>
         c.text.trim().isEmpty ? null : c.text.trim();
-    ref
-        .read(sessionProvider.notifier)
-        .signUp(
-          UserProfile(
-            role: UserRole.creator,
-            name: _name.text.trim(),
-            email: _email.text.trim(),
-            phone: '+225 ${_phone.text.trim()}',
-            city: _zone ?? 'Abidjan'.tr,
-            creator: CreatorInfo(
-              kind: _kind,
-              businessName: _business.text.trim(),
-              category: _category!,
-              zone: _zone ?? 'Abidjan'.tr,
-              rccm: opt(_rccm),
-              description: _desc.text.trim(),
-              displayName: _display.text.trim(),
-              priceFrom: int.tryParse(_price.text) ?? 0,
-              address: _address.text.trim(),
-              website: opt(_website),
-              portfolio: opt(_portfolio),
-            ),
-          ),
-        );
-    context.go(Routes.home);
+    await createAccount(
+      context,
+      ref,
+      UserProfile(
+        role: UserRole.creator,
+        name: _name.text.trim(),
+        email: _email.text.trim(),
+        phone: '+225 ${_phone.text.trim()}',
+        city: _zone ?? 'Abidjan'.tr,
+        creator: CreatorInfo(
+          kind: _kind,
+          businessName: _business.text.trim(),
+          category: _category!,
+          zone: _zone ?? 'Abidjan'.tr,
+          rccm: opt(_rccm),
+          description: _desc.text.trim(),
+          displayName: _display.text.trim(),
+          priceFrom: int.tryParse(_price.text) ?? 0,
+          address: _address.text.trim(),
+          website: opt(_website),
+          portfolio: opt(_portfolio),
+        ),
+      ),
+      _pwd.text,
+      onConfirm: widget.onSwitch,
+    );
+    if (mounted) setState(() => _busy = false);
   }
 
   @override

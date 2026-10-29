@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/i18n/tr.dart';
 import '../../../core/utils/formatters.dart';
+import '../../auth/presentation/session_provider.dart';
 import '../../creator/presentation/creator_providers.dart';
 import '../domain/pro_models.dart';
 
@@ -51,6 +52,22 @@ class ProState {
 class ProController extends Notifier<ProState> {
   @override
   ProState build() {
+    // Compte réel : catalogue vierge, sans avis ni reversements fictifs.
+    if (ref.watch(liveSessionProvider)) {
+      return ProState(
+        catalog: ProCatalog(
+          portfolio: const [],
+          zones: [?ref.watch(profileProvider).creator?.zone],
+          categories: const [],
+          packages: const [],
+          options: const [],
+        ),
+        availability: const Availability(),
+        progress: const {},
+        payouts: const [],
+        reviews: const [],
+      );
+    }
     final n = DateTime.now();
     DateTime ago(int d) => n.subtract(Duration(days: d));
     return ProState(

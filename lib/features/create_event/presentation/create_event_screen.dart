@@ -107,10 +107,21 @@ class _CreateEventScreenState extends ConsumerState<CreateEventScreen> {
     _go(2);
   }
 
-  void _open() {
+  Future<void> _open() async {
     final e = _draft!;
-    ref.read(eventsProvider.notifier).add(e);
-    context.pushReplacement(Routes.event(e.id));
+    try {
+      final id = await ref.read(eventsProvider.notifier).add(e);
+      if (!mounted) return;
+      context.pushReplacement(Routes.event(id));
+    } catch (_) {
+      if (!mounted) return;
+      toast(
+        context,
+        'Enregistrement impossible. Vérifiez votre connexion puis réessayez.'
+            .tr,
+        icon: AppIcons.warning,
+      );
+    }
   }
 
   @override

@@ -1,16 +1,62 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/backend/backend.dart';
+import '../../auth/presentation/session_provider.dart';
+import '../data/events_remote.dart';
 import '../data/events_repository.dart';
 import '../domain/models.dart';
 
-final eventsRepositoryProvider = Provider<EventsRepository>(
-  (ref) => const DemoEventsRepository(),
-);
+/// Source des événements : la base pour un compte réel, les données de
+/// démonstration sinon.
+final eventsRepositoryProvider = Provider<EventsRepository>((ref) {
+  if (ref.watch(liveSessionProvider) && Backend.ready) {
+    final id = Backend.client.auth.currentUser?.id;
+    if (id != null) {
+      return SupabaseEventsRepository(
+        userId: id,
+        userName: ref.watch(profileProvider.select((p) => p.name)),
+      );
+    }
+  }
+  return const DemoEventsRepository();
+});
 
 class EventsNotifier extends AsyncNotifier<List<Event>> {
   @override
   Future<List<Event>> build() =>
       ref.watch(eventsRepositoryProvider).fetchEvents();
+
+  EventsRepository get _repo => ref.read(eventsRepositoryProvider);
+
+  /// Enregistre une modification déjà affichée. En cas d'échec, on recharge
+  /// depuis la base pour ne pas laisser l'écran mentir.
+  void _persist(Future<void> Function(EventsRepository r) write) {
+    unawaited(
+      write(_repo).catchError((Object e) {
+        debugPrint('Enregistrement impossible : $e');
+        ref.invalidateSelf();
+      }),
+    );
+  }
+
+  /// Ligne de budget après modification, pour l'enregistrer.
+  void _persistLine(String eventId, BudgetCategory c) {
+    final line = state.value
+        ?.where((e) => e.id == eventId)
+        .firstOrNull
+        ?.line(c);
+    if (line != null) _persist((r) => r.saveLine(eventId, line));
+  }
+
+  EventTask? _taskOf(String eventId, String taskId) => state.value
+      ?.where((e) => e.id == eventId)
+      .firstOrNull
+      ?.tasks
+      .where((t) => t.id == taskId)
+      .firstOrNull;
 
   Future<void> refresh() async {
     ref.invalidateSelf();
@@ -23,58 +69,117 @@ class EventsNotifier extends AsyncNotifier<List<Event>> {
     state = AsyncData([for (final e in events) e.id == eventId ? f(e) : e]);
   }
 
-  void toggleTask(String eventId, String taskId) => _update(
-    eventId,
-    (e) => e.copyWith(
-      tasks: [
-        for (final t in e.tasks)
-          if (t.id == taskId) t.copyWith(done: !t.done) else t,
-      ],
-    ),
-  );
+  void toggleTask(String eventId, String taskId) {
+    _update(
+      eventId,
+      (e) => e.copyWith(
+        tasks: [
+          for (final t in e.tasks)
+            if (t.id == taskId) t.copyWith(done: !t.done) else t,
+        ],
+      ),
+    );
+    final t = _taskOf(eventId, taskId);
+    if (t != null) _persist((r) => r.saveTask(eventId, t));
+  }
 
-  void addTask(String eventId, EventTask t) =>
-      _update(eventId, (e) => e.copyWith(tasks: [...e.tasks, t]));
+  void addTask(String eventId, EventTask t) {
+    // La base attend un identifiant UUID.
+    final task = ref.read(liveSessionProvider) && !isServerId(t.id)
+        ? EventTask(
+            id: newUuid(),
+            title: t.title,
+            due: t.due,
+            module: t.module,
+            assigneeId: t.assigneeId,
+            done: t.done,
+            urgent: t.urgent,
+            durationMin: t.durationMin,
+            icon: t.icon,
+          )
+        : t;
+    _update(eventId, (e) => e.copyWith(tasks: [...e.tasks, task]));
+    _persist((r) => r.saveTask(eventId, task));
+  }
 
-  void updateTask(String eventId, EventTask t) => _update(
-    eventId,
-    (e) => e.copyWith(tasks: [for (final x in e.tasks) x.id == t.id ? t : x]),
-  );
+  void updateTask(String eventId, EventTask t) {
+    _update(
+      eventId,
+      (e) => e.copyWith(tasks: [for (final x in e.tasks) x.id == t.id ? t : x]),
+    );
+    _persist((r) => r.saveTask(eventId, t));
+  }
 
-  void removeTask(String eventId, String taskId) => _update(
-    eventId,
-    (e) => e.copyWith(tasks: e.tasks.where((x) => x.id != taskId).toList()),
-  );
+  void removeTask(String eventId, String taskId) {
+    _update(
+      eventId,
+      (e) => e.copyWith(tasks: e.tasks.where((x) => x.id != taskId).toList()),
+    );
+    _persist((r) => r.deleteTask(taskId));
+  }
 
-  void add(Event event) {
+  /// Ajoute un événement et renvoie son identifiant définitif (celui de la
+  /// base pour un compte réel).
+  Future<String> add(Event event) async {
+    final saved = await _repo.createEvent(event);
     final events = state.value ?? const [];
-    state = AsyncData([event, ...events]);
+    state = AsyncData([saved, ...events]);
+    return saved.id;
   }
 
   // ─── Budget ──────────────────────────────────────────────────────────
 
-  void setTarget(String eventId, int target) =>
-      _update(eventId, (e) => e.copyWith(targetBudget: target));
+  void setTarget(String eventId, int target) {
+    _update(eventId, (e) => e.copyWith(targetBudget: target));
+    _persist((r) => r.setTarget(eventId, target));
+  }
 
-  void upsertLine(String eventId, BudgetLine line) => _update(eventId, (e) {
-    final exists = e.budget.any((l) => l.category == line.category);
-    return e.copyWith(
-      budget: exists
-          ? [for (final l in e.budget) l.category == line.category ? line : l]
-          : [...e.budget, line],
+  void upsertLine(String eventId, BudgetLine line) {
+    _update(eventId, (e) {
+      final exists = e.budget.any((l) => l.category == line.category);
+      return e.copyWith(
+        budget: exists
+            ? [for (final l in e.budget) l.category == line.category ? line : l]
+            : [...e.budget, line],
+      );
+    });
+    _persist((r) => r.saveLine(eventId, line));
+  }
+
+  void removeLine(String eventId, BudgetCategory c) {
+    _update(
+      eventId,
+      (e) =>
+          e.copyWith(budget: e.budget.where((l) => l.category != c).toList()),
     );
-  });
+    _persist((r) => r.deleteLine(eventId, c));
+  }
 
-  void removeLine(String eventId, BudgetCategory c) => _update(
-    eventId,
-    (e) => e.copyWith(budget: e.budget.where((l) => l.category != c).toList()),
-  );
-
-  void replaceBudget(String eventId, List<BudgetLine> lines) =>
-      _update(eventId, (e) => e.copyWith(budget: lines));
+  void replaceBudget(String eventId, List<BudgetLine> lines) {
+    final before =
+        state.value?.where((e) => e.id == eventId).firstOrNull?.budget ??
+        const <BudgetLine>[];
+    _update(eventId, (e) => e.copyWith(budget: lines));
+    _persist((r) async {
+      for (final old in before) {
+        if (!lines.any((l) => l.category == old.category)) {
+          await r.deleteLine(eventId, old.category);
+        }
+      }
+      for (final l in lines) {
+        await r.saveLine(eventId, l);
+      }
+    });
+  }
 
   /// Une dépense réglée augmente le payé du poste (et l'engagé s'il le faut).
-  void addExpense(String eventId, Expense x) => _update(eventId, (e) {
+  void addExpense(String eventId, Expense x) {
+    _addExpense(eventId, x);
+    _persist((r) => r.addExpense(eventId, x));
+    _persistLine(eventId, x.category);
+  }
+
+  void _addExpense(String eventId, Expense x) => _update(eventId, (e) {
     final line =
         e.line(x.category) ?? BudgetLine(category: x.category, estimated: 0);
     final paid = line.paid + x.amount;
@@ -92,7 +197,12 @@ class EventsNotifier extends AsyncNotifier<List<Event>> {
   });
 
   /// Une réservation acceptée crée ou met à jour l'engagé du poste.
-  void commit(String eventId, BudgetCategory c, int amount) =>
+  void commit(String eventId, BudgetCategory c, int amount) {
+    _commit(eventId, c, amount);
+    _persistLine(eventId, c);
+  }
+
+  void _commit(String eventId, BudgetCategory c, int amount) =>
       _update(eventId, (e) {
         final line = e.line(c) ?? BudgetLine(category: c, estimated: amount);
         final updated = line.copyWith(committed: line.committed + amount);

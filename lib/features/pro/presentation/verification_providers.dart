@@ -106,6 +106,7 @@ class VerificationNotifier extends Notifier<Verification> {
         state = state.copyWith(step: step, comment: c.comment);
       }
     });
+    if (ref.watch(liveSessionProvider)) return const Verification();
     // Profil de démo : pièce d'identité et portfolio déjà déposés.
     return const Verification(
       provided: {ProofKind.identity, ProofKind.portfolio},

@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/analytics/analytics.dart';
 import '../../../core/i18n/tr.dart';
 import '../../../core/sound/sounds.dart';
+import '../../auth/presentation/session_provider.dart';
 import '../../events/domain/models.dart';
 import '../../events/presentation/events_providers.dart';
 import '../domain/commerce_models.dart';
@@ -98,6 +99,8 @@ final featureUnlockedProvider =
 class VaultNotifier extends Notifier<List<VaultDoc>> {
   @override
   List<VaultDoc> build() {
+    // Documents fictifs réservés à la démo.
+    if (ref.watch(liveSessionProvider)) return const [];
     final now = DateTime.now();
     DateTime ago(int d) => now.subtract(Duration(days: d));
     const w = 'mariage-awa-kouassi';
