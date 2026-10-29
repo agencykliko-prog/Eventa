@@ -1,6 +1,11 @@
 /* Eventa · landing page : mascottes, confettis, révélations, simulateur, démo. */
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // GSAP pilote l'ouverture et les révélations. Sans lui (ou en mouvement
+  // réduit), les observateurs et les transitions CSS prennent le relais.
+  const root = document.documentElement;
+  const G = !reduce && root.classList.contains('anim') && window.gsap && window.ScrollTrigger;
+  if (!G) root.classList.remove('anim');
   const fcfa = (n) => Math.round(n).toLocaleString('fr-FR').replace(/ | /g, ' ');
 
   /* ── Mascottes ─────────────────────────────────────────
@@ -161,10 +166,8 @@
   };
 
   /* ── Révélations au défilement ───────────────────────── */
-  const io = new IntersectionObserver((entries) => entries.forEach((en) => {
-    if (!en.isIntersecting) return;
-    const el = en.target;
-    el.classList.add('in');
+  // À l'arrivée d'un bloc : compteurs, conversation, duo de mascottes.
+  const enter = (el) => {
     el.querySelectorAll('[data-count]').forEach((c) => countTo(c, +c.dataset.count));
     if (el.matches('[data-chat]')) playChat(el);
     if (el.matches('[data-duo]')) setTimeout(() => {
@@ -173,12 +176,95 @@
       const r = el.getBoundingClientRect();
       burst(r.left + r.width / 2, r.top + r.height * .4, 110);
     }, reduce ? 0 : 950);
-    io.unobserve(el);
+  };
+  const io = new IntersectionObserver((entries) => entries.forEach((en) => {
+    if (!en.isIntersecting) return;
+    en.target.classList.add('in');
+    enter(en.target);
+    io.unobserve(en.target);
   }), { threshold: .2, rootMargin: '0px 0px -8% 0px' });
-  document.querySelectorAll('.reveal, .split, [data-chat], [data-duo]').forEach((el, i) => {
+  document.querySelectorAll(G ? '[data-duo]' : '.reveal, .split, [data-chat], [data-duo]').forEach((el, i) => {
     if (el.matches('.reveal')) el.style.transitionDelay = `${(i % 4) * 70}ms`;
     io.observe(el);
   });
+  if (G) motion();
+
+  /* ── GSAP : ouverture du hero et sections au défilement ─ */
+  // Uniquement transform et opacité ; distances réduites sur mobile, parallaxe
+  // réservée aux grands écrans, chaque déclencheur ne sert qu'une fois.
+  function motion() {
+    gsap.registerPlugin(ScrollTrigger);
+    // La barre d'adresse mobile qui se replie ne recalcule pas tout.
+    ScrollTrigger.config({ ignoreMobileResize: true });
+    const hero = document.querySelector('.hero');
+    const inHero = (sel) => hero.querySelectorAll(sel);
+    const phone = hero.querySelector('.phone-tilt');
+    const title = hero.querySelector('h1');
+    const dist = innerWidth > 980 ? 48 : 24;
+
+    // Ouverture : navigation, titre mot à mot, texte, puis le téléphone qui
+    // monte, le badge qui tourne et les bulles de discussion.
+    gsap.timeline({ defaults: { duration: .8, ease: 'power3.out' } })
+      .fromTo(inHero('.pill-nav'), { autoAlpha: 0, y: -24 }, { autoAlpha: 1, y: 0, duration: .6, clearProps: 'transform' }, 0)
+      .fromTo(inHero('.eyebrow'), { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0 }, .15)
+      .fromTo(title.querySelectorAll('.w > span'), { y: 0, yPercent: 105 }, {
+        yPercent: 0, duration: .9, ease: 'power4.out', stagger: .07,
+        onComplete: () => title.classList.add('in'),
+      }, .25)
+      .fromTo(inHero('.lead, .hero-actions, .community'), { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, stagger: .1 }, '-=.45')
+      .addLabel('visual', .35)
+      .fromTo(phone, { autoAlpha: 0, y: dist * 2.5 }, {
+        autoAlpha: 1, y: 0, duration: 1.1, ease: 'expo.out', clearProps: 'transform',
+        // Le tour sur lui-même (animation CSS) prend la suite.
+        onComplete: () => phone.classList.add('spin'),
+      }, 'visual')
+      .fromTo(inHero('.ci-badge'), { autoAlpha: 0, scale: .4, rotation: -90 }, {
+        autoAlpha: 1, scale: 1, rotation: 0, ease: 'back.out(1.7)', clearProps: 'transform',
+      }, 'visual+=.5')
+      // Les bulles flottent déjà en CSS : seule leur opacité est animée.
+      .fromTo(inHero('.bubble'), { autoAlpha: 0 }, { autoAlpha: 1, duration: .5, stagger: .3 }, 'visual+=.7');
+
+    // Titres des sections : les mots montent un à un. (y: 0, car GSAP lit le
+    // translateY(105 %) du CSS comme un décalage en pixels.)
+    gsap.utils.toArray('.split').filter((h) => h !== title).forEach((h) => {
+      gsap.fromTo(h.querySelectorAll('.w > span'), { y: 0, yPercent: 105 }, {
+        yPercent: 0, duration: .9, ease: 'power4.out', stagger: .05,
+        scrollTrigger: { trigger: h, start: 'top 88%', once: true },
+        onComplete: () => h.classList.add('in'),
+      });
+    });
+
+    // Blocs des sections : groupés quand ils arrivent ensemble, en cascade.
+    const extras = gsap.utils.toArray('.band:not(.hero) :is(.eyebrow, h2 + p), .chat');
+    gsap.set(extras, { autoAlpha: 0, y: dist / 2 });
+    gsap.set('.reveal', { y: dist });
+    ScrollTrigger.batch([...document.querySelectorAll('.reveal'), ...extras], {
+      start: 'top 88%',
+      once: true,
+      onEnter: (els) => {
+        els.forEach(enter);
+        gsap.to(els, {
+          autoAlpha: 1, y: 0, rotation: 0, duration: .9, ease: 'power3.out', stagger: .09, overwrite: true,
+          onComplete: () => {
+            // Les styles CSS reprennent la main (survols, compteurs, anneau).
+            els.forEach((el) => el.classList.add('in'));
+            gsap.set(els, { clearProps: 'transform,opacity,visibility' });
+          },
+        });
+      },
+    });
+
+    // Grands écrans : le hero se sépare doucement en partant.
+    gsap.matchMedia().add('(min-width: 981px)', () => {
+      const out = { trigger: hero, start: 'top top', end: 'bottom top', scrub: .6 };
+      gsap.to(hero.querySelector('.hero-copy'), { y: -90, ease: 'none', scrollTrigger: out });
+      gsap.to(hero.querySelector('.hero-visual'), { y: 70, ease: 'none', scrollTrigger: { ...out } });
+    });
+
+    // Positions recalculées une fois les polices et les images en place.
+    document.fonts?.ready.then(() => ScrollTrigger.refresh());
+    addEventListener('load', () => ScrollTrigger.refresh(), { once: true });
+  }
 
   // Mascottes des bordures : déclenchées par l'arrivée de leur section
   // (elles-mêmes démarrent hors champ).
@@ -217,7 +303,8 @@
     if (!reduce) en.target.classList.add('spin');
     spinIO.unobserve(en.target);
   }), { threshold: .35 });
-  document.querySelectorAll('[data-spin]').forEach((ph) => spinIO.observe(ph));
+  // Avec GSAP, le téléphone du hero tourne à la fin de l'ouverture.
+  document.querySelectorAll(G ? '[data-spin]:not(.phone-tilt)' : '[data-spin]').forEach((ph) => spinIO.observe(ph));
 
   /* ── Budget : petite démonstration du simulateur ─────── */
   const budget = document.getElementById('budget');

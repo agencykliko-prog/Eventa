@@ -620,6 +620,11 @@ h1, h2, h3, h4, p { margin: 0; }
   .btn-xl { height: 60px; padding: 0 30px; font-size: 17px; }
 }
 
+/* Animations GSAP : l'ouverture attend son entrée, et les transitions CSS
+   s'effacent tant qu'un élément n'est pas révélé pour ne pas contrarier GSAP. */
+.anim .hero :is(.pill-nav, .eyebrow, .lead, .hero-actions, .community, .phone-tilt, .bubble, .ci-badge) { visibility: hidden; }
+.anim .reveal:not(.in), .anim .split:not(.in) .w > span { transition: none; }
+
 /* Mouvement réduit : tout reste lisible, rien ne bouge. */
 @media (prefers-reduced-motion: reduce) {
   .ci-ring, .marquee-track { animation: none !important; }

@@ -22,7 +22,16 @@
 <meta name="twitter:description" content="Eventa organise vos fêtes en Côte d’Ivoire : budget maîtrisé, prestataires vérifiés, invités et équipe au même endroit. Essai 100 % gratuit.">
 <meta name="twitter:image" content="https://eventa.ci/img/og-eventa.jpg">
 <link rel="preload" href="fonts/RedHatDisplay-800.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="styles.css?v=35">
+<script>
+  // Animations GSAP (app.js) : l'ouverture reste masquée le temps du chargement.
+  // Sans GSAP au bout de 2,5 s (réseau lent, CDN bloqué), tout s'affiche.
+  if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const d = document.documentElement;
+    d.classList.add('anim');
+    setTimeout(() => { if (!window.gsap) d.classList.remove('anim'); }, 2500);
+  }
+</script>
+<link rel="stylesheet" href="styles.css?v=36">
 </head>
 <body>
 
@@ -410,6 +419,8 @@
 <canvas class="confetti" aria-hidden="true"></canvas>
 <button class="to-top" type="button" aria-label="Revenir en haut"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
 
-<script src="app.js?v=33"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script defer src="app.js?v=35"></script>
 </body>
 </html>
