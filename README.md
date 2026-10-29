@@ -1,8 +1,8 @@
-# Eventa
+# Calandix
 
 **Le budget parfait pour célébrer.**
 
-Application d'organisation d'événements (Côte d'Ivoire, FCFA) : budget, planification des tâches, marketplace de prestataires, réservations, paiements et coordination d'équipe. Trois espaces : **Organisateur**, **Creator** (prestataires, agences) et **centre de contrôle** de l'équipe Eventa.
+Application d'organisation d'événements (Côte d'Ivoire, FCFA) : budget, planification des tâches, marketplace de prestataires, réservations, paiements et coordination d'équipe. Trois espaces : **Organisateur**, **Creator** (prestataires, agences) et **centre de contrôle** de l'équipe Calandix.
 
 > Version de démonstration : données fictives locales, connexion simulée, paiements et agent IA simulés. Aucun backend n'est encore branché (Supabase prévu).
 

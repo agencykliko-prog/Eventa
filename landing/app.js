@@ -1,4 +1,4 @@
-/* Eventa · landing page : mascottes, confettis, révélations, simulateur, démo. */
+/* Calandix · landing page : mascottes, confettis, révélations, simulateur, démo. */
 (() => {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   // GSAP pilote l'ouverture et les révélations. Sans lui (ou en mouvement
@@ -36,7 +36,7 @@
     mascots.push(m);
     if (!host.hasAttribute('data-interactive')) return;
     host.setAttribute('role', 'button');
-    host.setAttribute('aria-label', 'Mascotte Eventa');
+    host.setAttribute('aria-label', 'Mascotte Calandix');
     host.tabIndex = 0;
     const jump = () => {
       // Saut, nouvelle pose, pluie de confettis.

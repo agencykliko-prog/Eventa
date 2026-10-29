@@ -114,7 +114,7 @@ const en = <String, String>{
   'Profil visible des collaborateurs': 'Profile visible to collaborators',
   'Nom et photo': 'Name and photo',
   'Partager mes statistiques anonymes': 'Share anonymous statistics',
-  'Pour améliorer Eventa': 'To improve Eventa',
+  'Pour améliorer Calandix': 'To improve Calandix',
   'Afficher mon numéro aux prestataires': 'Show my number to vendors',
   'Après une demande de devis': 'After a quote request',
   '{0} défini par défaut': '{0} set as default',
@@ -715,7 +715,7 @@ const en = <String, String>{
   'Mensuel': 'Monthly',
   'Comparer les offres et les packs': 'Compare plans and packs',
   'Bienvenue dans {0}': 'Welcome to {0}',
-  'Eventa Premium': 'Eventa Premium',
+  'Calandix Premium': 'Calandix Premium',
   'Organisez comme\nun professionnel.': 'Plan like\na professional.',
   'IA, coffre-fort, collaboration illimitée. Sans engagement, résiliable à tout moment.':
       'AI, vault, unlimited collaboration. No commitment, cancel anytime.',
@@ -875,7 +875,7 @@ const en = <String, String>{
   'Mieux notés': 'Top rated',
 
   // ─── Mascotte, accueil, préférences ────────────────────────────────────
-  'Mascotte Eventa': 'Eventa mascot',
+  'Mascotte Calandix': 'Calandix mascot',
   'Qu’est-ce qu’on célèbre aujourd’hui ?': 'What are we celebrating today?',
   'Prêt à faire briller de belles fêtes ?':
       'Ready to make great parties shine?',
@@ -890,7 +890,7 @@ const en = <String, String>{
   'Langue': 'Language',
   'Sons': 'Sounds',
   'Réservation, paiement, notifications': 'Booking, payment, notifications',
-  'À propos d’Eventa': 'About Eventa',
+  'À propos de Calandix': 'About Calandix',
   'Vision, mission, valeurs, contact': 'Vision, mission, values, contact',
   'Politique de confidentialité': 'Privacy policy',
   'Vos données et vos droits': 'Your data and your rights',
@@ -1161,7 +1161,7 @@ const en = <String, String>{
   'Clôturée': 'Closed',
 
   // E. Revenus & reversements
-  'Eventa encaisse les paiements de vos clients et vous reverse le net après chaque prestation.': 'Eventa collects your clients’ payments and pays you the net amount after each service.',
+  'Calandix encaisse les paiements de vos clients et vous reverse le net après chaque prestation.': 'Calandix collects your clients’ payments and pays you the net amount after each service.',
   'Commandes payées': 'Paid orders',
   'Commissions prélevées': 'Commissions deducted',
   '{0} % par prestation': '{0}% per service',
@@ -1258,7 +1258,7 @@ const en = <String, String>{
   'Une question, un souci ? Écrivez-nous, on vous répond vite.':
       'A question or a problem? Write to us, we reply fast.',
   'WhatsApp · {0}': 'WhatsApp · {0}',
-  'Bonjour Eventa, j’ai besoin d’aide.': 'Hello Eventa, I need some help.',
+  'Bonjour Calandix, j’ai besoin d’aide.': 'Hello Calandix, I need some help.',
 
   // ─── Demande de devis ──────────────────────────────────────────────────
   'Photo {0} du portfolio': 'Portfolio photo {0}',
@@ -1440,13 +1440,13 @@ const en = <String, String>{
   'Renvoyer le dossier': 'Send the file again',
   'Envoyer le dossier': 'Send the file',
   'Encore {0} pièce(s) à déposer': '{0} more document(s) to upload',
-  'Dossier envoyé à l’équipe Eventa': 'File sent to the Eventa team',
+  'Dossier envoyé à l’équipe Calandix': 'File sent to the Calandix team',
   'Retirer': 'Remove',
 
   // ─── Mesure d'audience ─────────────────────────────────────────────────
   'Mesure d’audience anonyme': 'Anonymous audience measurement',
-  'Écrans vus, sans identifiant, pour améliorer Eventa':
-      'Screens viewed, with no identifier, to improve Eventa',
+  'Écrans vus, sans identifiant, pour améliorer Calandix':
+      'Screens viewed, with no identifier, to improve Calandix',
 
   // ─── Comparateur de devis ──────────────────────────────────────────────
   'Comparer les devis': 'Compare quotes',

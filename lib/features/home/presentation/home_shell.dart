@@ -255,8 +255,8 @@ class _Rail extends StatelessWidget {
             Padding(
               padding: EdgeInsets.fromLTRB(extended ? 20 : 0, 20, 0, 24),
               child: extended
-                  ? const EventaWordmark(size: 18)
-                  : const EventaMark(size: 30),
+                  ? const CalandixWordmark(size: 18)
+                  : const CalandixMark(size: 30),
             ),
             if (!creator)
               Padding(

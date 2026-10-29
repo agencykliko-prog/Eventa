@@ -16,7 +16,7 @@ Organisateurs particuliers et professionnels en Côte d'Ivoire (puis Afrique fra
 
 ## Product Purpose
 
-Eventa — « Le budget parfait pour célébrer ». Centraliser l'organisation d'un événement : budget (cible, prévu, engagé, payé, reste), tâches et rétroplanning, prestataires (devis, réservation, paiement), invités/RSVP et coordination de l'équipe en temps réel. La v1 valide le parcours accueil → dashboard.
+Calandix — « Le budget parfait pour célébrer ». Centraliser l'organisation d'un événement : budget (cible, prévu, engagé, payé, reste), tâches et rétroplanning, prestataires (devis, réservation, paiement), invités/RSVP et coordination de l'équipe en temps réel. La v1 valide le parcours accueil → dashboard.
 
 ## Positioning
 
@@ -31,11 +31,12 @@ Chaque événement a son propre espace (budget, tâches, prestataires, invités,
 - Sources : `Cahier_des_charges_plateforme_evenementielle.docx`, `Fonctionnalités des dashboards par type d'événement.docx`.
 - v1 : onboarding, connexion simulée, accueil multi-événements, dashboard d'événement, budget, tâches, prestataires, équipe — données de démo pour plusieurs types d'événements (mariage, anniversaire, baby shower).
 - Hors v1 : paiements réels, marketplace complète, back-office, dashboard prestataire.
-- Le nom « Eventa » n'est pas encore validé juridiquement.
+- Le nom « Calandix » (anciennement Eventa) : validation juridique à confirmer.
 
 ## Brand Commitments
 
-- Nom : Eventa. Slogan : « Le budget parfait pour célébrer ».
+- Nom : Calandix (anciennement Eventa). Slogan : « Le budget parfait pour célébrer ».
+- Logo : trois cartes empilées (mangue, corail, violet) + « Calandix » en encre. Fichiers de référence dans `assets/brand/` (version sombre, version claire, symbole seul) ; ne pas le redessiner.
 - Palette Confetti (fichier `palette_confetti_app_evenementiel.html`) fait foi : Corail fiesta #FF5A5F (primaire/CTA), Violet disco #7B5CFF (tâches), Turquoise lagon #14C8B4 (budget), Jaune mangue #FFC233 (prestataires), Rose bonbon #FF7AC6 (équipes), Encre nuit #1E1B3A (texte), Crème ballon #FFF8F0 (fond), Lavande brume #ECE9F7 (surfaces).
 - Ton : tech, moderne, accessible, rassurant, convivial.
 - Références d'inspiration citées par l'utilisateur : Luma (iOS), Structured (iOS).

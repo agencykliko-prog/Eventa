@@ -1,83 +1,42 @@
 import 'package:flutter/material.dart';
 
-import '../theme/eventa_colors.dart';
-
-/// Monogramme Eventa : quatre confettis aux couleurs des modules
-/// (tâches, budget, prestataires, équipe) sur une tuile encre.
-class EventaMark extends StatelessWidget {
-  const EventaMark({super.key, this.size = 32});
+/// Symbole Calandix : trois cartes empilées (mangue, corail, violet).
+class CalandixMark extends StatelessWidget {
+  const CalandixMark({super.key, this.size = 32});
 
   final double size;
 
   @override
-  Widget build(BuildContext context) {
-    final g = size * 0.1;
-    Widget dot(Color c, double r) => Container(
-      decoration: BoxDecoration(
-        color: c,
-        borderRadius: BorderRadius.circular(size * r),
-      ),
-    );
-    return Container(
-      width: size,
-      height: size,
-      padding: EdgeInsets.all(size * 0.2),
-      decoration: BoxDecoration(
-        color: Confetti.ink,
-        borderRadius: BorderRadius.circular(size * 0.3),
-      ),
-      child: Column(
-        children: [
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(child: dot(Confetti.violet, 0.2)),
-                SizedBox(width: g),
-                Expanded(child: dot(Confetti.lagoon, 0.06)),
-              ],
-            ),
-          ),
-          SizedBox(height: g),
-          Expanded(
-            child: Row(
-              children: [
-                Expanded(child: dot(Confetti.mango, 0.06)),
-                SizedBox(width: g),
-                Expanded(child: dot(Confetti.coral, 0.2)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Image.asset(
+    'assets/brand/calandix_mark.png',
+    width: size,
+    height: size,
+    fit: BoxFit.contain,
+    filterQuality: FilterQuality.medium,
+    semanticLabel: 'Calandix',
+  );
 }
 
-class EventaWordmark extends StatelessWidget {
-  const EventaWordmark({super.key, this.size = 22, this.color});
+/// Logo complet (symbole + nom). [size] reprend la taille de texte de
+/// l'ancien logo ; [color] clair donne la version blanche, pour les fonds
+/// sombres.
+class CalandixWordmark extends StatelessWidget {
+  const CalandixWordmark({super.key, this.size = 22, this.color});
 
   final double size;
   final Color? color;
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        EventaMark(size: size * 1.25),
-        SizedBox(width: size * 0.4),
-        Text(
-          'eventa',
-          style: TextStyle(
-            fontFamily: 'RedHatDisplay',
-            fontSize: size,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -size * 0.05,
-            color: color ?? Confetti.ink,
-            height: 1,
-          ),
-        ),
-      ],
+    final light = color != null && color!.computeLuminance() > 0.5;
+    return Image.asset(
+      light
+          ? 'assets/brand/calandix_logo_light.png'
+          : 'assets/brand/calandix_logo.png',
+      height: size * 1.25,
+      fit: BoxFit.contain,
+      filterQuality: FilterQuality.medium,
+      semanticLabel: 'Calandix',
     );
   }
 }

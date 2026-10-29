@@ -243,7 +243,7 @@ class _Menu extends ConsumerWidget {
             padding: const EdgeInsets.fromLTRB(6, 0, 6, 4),
             child: Row(
               children: [
-                const EventaWordmark(size: 19),
+                const Flexible(child: CalandixWordmark(size: 17)),
                 const SizedBox(width: 8),
                 Container(
                   padding: const EdgeInsets.symmetric(
@@ -413,7 +413,7 @@ class _TopBar extends ConsumerWidget {
             ),
           Expanded(
             child: Text(
-              menu ? module.label : 'Eventa · Centre de contrôle',
+              menu ? module.label : 'Calandix · Centre de contrôle',
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: menu ? context.text.titleMedium : context.text.bodySmall,

@@ -7,7 +7,7 @@ import '../../auth/presentation/session_provider.dart';
 import '../../creator/presentation/creator_providers.dart';
 import '../domain/pro_models.dart';
 
-/// Commission Eventa prélevée sur chaque prestation (cf. centre de contrôle).
+/// Commission Calandix prélevée sur chaque prestation (cf. centre de contrôle).
 const proCommissionRate = 0.08;
 
 @immutable

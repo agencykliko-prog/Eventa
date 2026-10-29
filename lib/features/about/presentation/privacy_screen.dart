@@ -19,7 +19,7 @@ typedef _Block = (bool, String);
 (bool, String) _p(String fr, String en) => (false, bi(fr, en));
 (bool, String) _ul(String fr, String en) => (true, bi(fr, en));
 
-/// Politique de confidentialité d'Eventa (version provisoire, à valider
+/// Politique de confidentialité de Calandix (version provisoire, à valider
 /// par un juriste avant le lancement).
 class PrivacyScreen extends ConsumerStatefulWidget {
   const PrivacyScreen({super.key});
@@ -37,8 +37,8 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen> {
       bi('1. Qui sommes-nous ?', '1. Who are we?'),
       [
         _p(
-          'Eventa est une application d’organisation d’événements destinée aux organisateurs (particuliers et professionnels) et aux prestataires événementiels (« Creators »). Le responsable du traitement de vos données est l’éditeur de l’application Eventa [raison sociale, siège social et numéro RCCM à compléter avant le lancement].',
-          'Eventa is an event planning app for organizers (individuals and professionals) and event vendors (“Creators”). The controller of your data is the publisher of the Eventa app [company name, registered office and RCCM number to be completed before launch].',
+          'Calandix est une application d’organisation d’événements destinée aux organisateurs (particuliers et professionnels) et aux prestataires événementiels (« Creators »). Le responsable du traitement de vos données est l’éditeur de l’application Calandix [raison sociale, siège social et numéro RCCM à compléter avant le lancement].',
+          'Calandix is an event planning app for organizers (individuals and professionals) and event vendors (“Creators”). The controller of your data is the publisher of the Calandix app [company name, registered office and RCCM number to be completed before launch].',
         ),
       ],
     ),
@@ -77,13 +77,13 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen> {
               'Traiter les paiements et conserver les fonds jusqu’à la validation de la prestation (exécution du contrat, obligations légales).\n'
               'Vous envoyer des rappels et notifications que vous avez activés (consentement, modifiable à tout moment).\n'
               'Sécuriser la plateforme et prévenir la fraude (intérêt légitime).\n'
-              'Améliorer Eventa à partir de statistiques anonymes, seulement si vous l’acceptez (consentement).\n'
+              'Améliorer Calandix à partir de statistiques anonymes, seulement si vous l’acceptez (consentement).\n'
               'Respecter nos obligations comptables et fiscales (obligation légale).',
           'Providing the service: creating your account, managing your events, budget and bookings (performance of contract).\n'
               'Processing payments and holding funds until the service is approved (performance of contract, legal obligations).\n'
               'Sending reminders and notifications you have turned on (consent, changeable at any time).\n'
               'Securing the platform and preventing fraud (legitimate interest).\n'
-              'Improving Eventa with anonymous statistics, only if you agree (consent).\n'
+              'Improving Calandix with anonymous statistics, only if you agree (consent).\n'
               'Meeting our accounting and tax obligations (legal obligation).',
         ),
         _p(
@@ -101,7 +101,7 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen> {
               'Pièces comptables et reçus : 10 ans, comme l’exige la loi.\n'
               'Journaux techniques : 12 mois maximum.\n'
               'Documents du coffre-fort : jusqu’à leur suppression par vous ou la fermeture du compte.',
-          'Account and events: for as long as you use Eventa, then 3 years after your last activity.\n'
+          'Account and events: for as long as you use Calandix, then 3 years after your last activity.\n'
               'Accounting records and receipts: 10 years, as required by law.\n'
               'Technical logs: 12 months maximum.\n'
               'Vault documents: until you delete them or close your account.',
@@ -189,8 +189,8 @@ class _PrivacyScreenState extends ConsumerState<PrivacyScreen> {
           'This policy is based on Ivorian Law No. 2013-450 of 19 June 2013 on the protection of personal data, the ECOWAS Supplementary Act A/SA.1/01/10 and, for people located in the European Union, the General Data Protection Regulation (GDPR). Filings with ARTCI will be completed before the official launch.',
         ),
         _p(
-          'Eventa ne s’adresse pas aux enfants de moins de 16 ans. Les informations sur des enfants (par exemple pour un anniversaire) sont saisies sous la responsabilité de l’organisateur.',
-          'Eventa is not intended for children under 16. Information about children (for example for a birthday) is entered under the organizer’s responsibility.',
+          'Calandix ne s’adresse pas aux enfants de moins de 16 ans. Les informations sur des enfants (par exemple pour un anniversaire) sont saisies sous la responsabilité de l’organisateur.',
+          'Calandix is not intended for children under 16. Information about children (for example for a birthday) is entered under the organizer’s responsibility.',
         ),
       ],
     ),

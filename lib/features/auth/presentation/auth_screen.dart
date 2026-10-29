@@ -70,7 +70,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                         : context.go(Routes.onboarding),
                   ),
                 ),
-                const Entrance(child: EventaWordmark(size: 30)),
+                const Entrance(child: CalandixWordmark(size: 30)),
               ],
             ),
           ),

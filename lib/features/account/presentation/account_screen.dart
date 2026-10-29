@@ -268,12 +268,12 @@ class AccountScreen extends ConsumerWidget {
                 ),
               ],
             ),
-            const SectionTitle('Eventa'),
+            const SectionTitle('Calandix'),
             _Group(
               rows: [
                 _Row(
                   AppIcons.heart,
-                  'À propos d’Eventa'.tr,
+                  'À propos de Calandix'.tr,
                   'Vision, mission, valeurs, contact'.tr,
                   () => context.push(Routes.about),
                 ),
@@ -302,7 +302,7 @@ class AccountScreen extends ConsumerWidget {
               },
             ),
             const SizedBox(height: 28),
-            const Center(child: EventaWordmark(size: 15)),
+            const Center(child: CalandixWordmark(size: 15)),
             const SizedBox(height: 6),
             Center(
               child: Text(
@@ -376,7 +376,7 @@ class AccountScreen extends ConsumerWidget {
             ('Profil visible des collaborateurs'.tr, 'Nom et photo'.tr, true),
             (
               'Mesure d’audience anonyme'.tr,
-              'Écrans vus, sans identifiant, pour améliorer Eventa'.tr,
+              'Écrans vus, sans identifiant, pour améliorer Calandix'.tr,
               ref.read(audienceConsentProvider),
             ),
             (

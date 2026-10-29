@@ -1,4 +1,4 @@
-/* Eventa · téléphones 3D (three.js).
+/* Calandix · téléphones 3D (three.js).
    La maquette réaliste (img/phone/frame.webp) devient un objet 3D : corps en
    titane, dos en verre, bloc photo, ombre portée et reflet sur l'écran.
    L'écran reste du vrai HTML (accueil reproduit, démo en direct) : il reçoit

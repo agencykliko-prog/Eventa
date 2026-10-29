@@ -154,7 +154,7 @@ class _ExportSheetState extends ConsumerState<_ExportSheet> {
         ExportKind.payments => Exporter.payments(e, ref),
       };
       downloaded =
-          await saveTextFile('eventa-$slug-${k.name}.csv', csv) && downloaded;
+          await saveTextFile('calandix-$slug-${k.name}.csv', csv) && downloaded;
     }
     if (!mounted) return;
     Navigator.of(context).pop();

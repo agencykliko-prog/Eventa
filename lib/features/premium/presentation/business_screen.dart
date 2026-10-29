@@ -22,7 +22,7 @@ class BusinessScreen extends ConsumerWidget {
     final r = await showPaymentSheet(
       context,
       title: 'Abonnement Creator'.tr,
-      payee: 'Eventa'.tr,
+      payee: 'Calandix'.tr,
       options: [PayOption('Mensuel'.tr, creatorPlanPrice)],
       onPay: (amount, m) {
         final receipt = Receipt(
@@ -31,7 +31,7 @@ class BusinessScreen extends ConsumerWidget {
           amount: amount,
           method: m,
           date: DateTime.now(),
-          payee: 'Eventa'.tr,
+          payee: 'Calandix'.tr,
         );
         ref.read(creatorSubProvider.notifier).activate(m, receipt.ref);
         return receipt;

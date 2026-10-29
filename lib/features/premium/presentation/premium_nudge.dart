@@ -215,7 +215,7 @@ class _NudgeSheet extends ConsumerWidget {
               final r = await showPaymentSheet(
                 context,
                 title: 'Abonnement {0}'.trf([plan.label]),
-                payee: 'Eventa',
+                payee: 'Calandix',
                 options: [PayOption('Mensuel'.tr, plan.price)],
                 onPay: (amount, method) {
                   ref.read(planProvider.notifier).subscribe(plan);
@@ -225,7 +225,7 @@ class _NudgeSheet extends ConsumerWidget {
                     amount: amount,
                     method: method,
                     date: DateTime.now(),
-                    payee: 'Eventa',
+                    payee: 'Calandix',
                   );
                 },
               );

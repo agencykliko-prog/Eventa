@@ -245,7 +245,7 @@ class Payout {
   /// Montant payé par le client pour la prestation.
   final int gross;
 
-  /// Commission Eventa prélevée.
+  /// Commission Calandix prélevée.
   final int commission;
   final DateTime date;
   final PayoutStatus status;

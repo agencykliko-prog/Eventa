@@ -75,7 +75,7 @@ class RevenueScreen extends ConsumerWidget {
 
     return ProPage(
       title: 'Revenus & reversements'.tr,
-      subtitle: 'Eventa encaisse les paiements de vos clients et vous reverse le net après chaque prestation.'
+      subtitle: 'Calandix encaisse les paiements de vos clients et vous reverse le net après chaque prestation.'
           .tr,
       children: [
         const SizedBox(height: 12),
@@ -355,7 +355,7 @@ class RevenueScreen extends ConsumerWidget {
         ].join(';'),
       );
     }
-    final name = 'releve-eventa-${DateFormat('yyyy-MM').format(month)}.csv';
+    final name = 'releve-calandix-${DateFormat('yyyy-MM').format(month)}.csv';
     final saved = await saveTextFile(name, csv.toString());
     if (context.mounted) {
       toast(

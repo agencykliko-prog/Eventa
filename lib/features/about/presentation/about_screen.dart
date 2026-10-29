@@ -14,7 +14,7 @@ import '../../../core/widgets/contact_team.dart';
 /// Texte bilingue des pages éditoriales (prose longue, hors dictionnaire).
 String bi(String fr, String en) => L10n.isEn ? en : fr;
 
-/// À propos d'Eventa : vision, mission, valeurs, avantages, histoire, contact.
+/// À propos de Calandix : vision, mission, valeurs, avantages, histoire, contact.
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
 
@@ -186,7 +186,7 @@ class AboutScreen extends StatelessWidget {
                 children: [
                   const Mascot(size: 150, waving: true),
                   const SizedBox(height: 14),
-                  const EventaWordmark(size: 26),
+                  const CalandixWordmark(size: 26),
                   const SizedBox(height: 6),
                   Text(
                     bi(
@@ -277,7 +277,7 @@ class AboutScreen extends StatelessWidget {
               ),
             ),
             SectionTitle(
-              bi('Ce qu’Eventa vous apporte', 'What Eventa gives you'),
+              bi('Ce que Calandix vous apporte', 'What Calandix gives you'),
             ),
             for (final (title, hue, mascot, items) in benefits)
               Padding(

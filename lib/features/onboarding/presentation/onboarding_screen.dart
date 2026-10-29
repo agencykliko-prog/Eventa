@@ -40,7 +40,7 @@ class OnboardingScreen extends StatelessWidget {
                     children: [
                       const Padding(
                         padding: EdgeInsets.fromLTRB(24, 14, 24, 0),
-                        child: Entrance(child: EventaWordmark(size: 24)),
+                        child: Entrance(child: CalandixWordmark(size: 24)),
                       ),
                       SizedBox(
                         height: collageH,
@@ -144,7 +144,7 @@ class _Desktop extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Entrance(child: EventaWordmark(size: 28)),
+              const Entrance(child: CalandixWordmark(size: 28)),
               Expanded(
                 child: Row(
                   children: [

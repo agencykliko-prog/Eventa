@@ -28,14 +28,14 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
     amount: amount,
     method: m,
     date: DateTime.now(),
-    payee: 'Eventa'.tr,
+    payee: 'Calandix'.tr,
   );
 
   Future<void> _subscribe(Plan p) async {
     final r = await showPaymentSheet(
       context,
       title: 'Abonnement {0}'.trf([p.label]),
-      payee: 'Eventa'.tr,
+      payee: 'Calandix'.tr,
       options: [PayOption('Mensuel'.tr, p.price)],
       onPay: (amount, m) {
         ref.read(planProvider.notifier).subscribe(p);
@@ -69,7 +69,7 @@ class _PremiumScreenState extends ConsumerState<PremiumScreen> {
                       onTap: () => context.pop(),
                     ),
                     const Spacer(),
-                    PremiumBadge(label: 'Eventa Premium'.tr, onDark: true),
+                    PremiumBadge(label: 'Calandix Premium'.tr, onDark: true),
                   ],
                 ),
               ),

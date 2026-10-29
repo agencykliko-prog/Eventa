@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../i18n/tr.dart';
 
-/// Les deux mascottes d'Eventa : la bleue accompagne les organisateurs,
+/// Les deux mascottes de Calandix : la bleue accompagne les organisateurs,
 /// l'orange les créateurs (prestataires et agences).
 enum MascotColor {
   organizer('red'),
@@ -107,7 +107,7 @@ class MascotState extends State<Mascot> {
     if (widget.onTap == null) return ExcludeSemantics(child: img);
     return Semantics(
       button: true,
-      label: 'Mascotte Eventa'.tr,
+      label: 'Mascotte Calandix'.tr,
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         child: GestureDetector(

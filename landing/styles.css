@@ -1,4 +1,4 @@
-/* Eventa · landing page
+/* Calandix · landing page
    Direction : aplats de couleur pleine largeur (inspiration Linktree),
    bulles de discussion flottantes (WhatsApp), surtitres espacés (Perk).
    Couleurs Confetti à leur rôle : corail = action uniquement. */
@@ -13,7 +13,7 @@
 @font-face { font-family: "Dancing Script"; src: url(fonts/DancingScript-700.woff2) format("woff2"); font-weight: 700; font-display: swap; }
 
 :root {
-  /* Palette Confetti (app Eventa) */
+  /* Palette Confetti (app Calandix) */
   --coral: #E5484D;        /* action, rien d'autre */
   --coral-press: #C93A3F;
   --violet: #6246EA;       /* ouverture, tâches */
@@ -151,12 +151,7 @@ h1, h2, h3, h4, p { margin: 0; }
   background: var(--white); color: var(--ink);
 }
 .logo { display: inline-flex; align-items: center; gap: 9px; font-weight: 800; font-size: 22px; letter-spacing: -.015em; text-decoration: none; }
-.logo-mark { width: 26px; height: 26px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; }
-.logo-mark i { border-radius: 4px; }
-.logo-mark i:nth-child(1) { background: var(--coral); }
-.logo-mark i:nth-child(2) { background: var(--violet); }
-.logo-mark i:nth-child(3) { background: var(--mango); }
-.logo-mark i:nth-child(4) { background: var(--lagoon); }
+.logo img { display: block; height: 28px; width: auto; }
 .nav-links { display: flex; gap: 4px; margin-left: auto; }
 .nav-links a, .ghost { padding: 10px 14px; border-radius: 99px; font-size: 15px; font-weight: 500; text-decoration: none; }
 .nav-links a:hover, .ghost:hover { background: var(--lavender); }
@@ -345,10 +340,8 @@ h1, h2, h3, h4, p { margin: 0; }
 .to-top svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
 
 /* Pied de page : grand logo blanc */
-.foot-brand { display: flex; align-items: center; gap: clamp(12px, 2vw, 26px); color: var(--white); font-weight: 800;
-  font-size: clamp(64px, 13vw, 180px); line-height: .9; letter-spacing: -.05em; margin-bottom: 56px; }
-.foot-brand .logo-mark { width: .78em; height: .78em; gap: .07em; flex: none; }
-.foot-brand .logo-mark i { border-radius: .1em; }
+.foot-brand { margin-bottom: 56px; }
+.foot-brand img { display: block; width: min(100%, 1100px); height: auto; }
 
 /* ── Bandeau des occasions ──────────────────────────────── */
 .marquee { position: relative; z-index: 6; background: var(--ink); color: var(--white); overflow: hidden; padding: 34px 0;
@@ -622,6 +615,7 @@ h1, h2, h3, h4, p { margin: 0; }
 @media (max-width: 640px) {
   :root { --gutter: 16px; }
   .pill-nav { height: 60px; padding: 0 6px 0 18px; gap: 8px; }
+  .logo img { height: 22px; }
   .nav-cta .btn-sm { padding: 0 14px; font-size: 14px; height: 42px; }
   .burger { display: block; margin-left: 0; width: 42px; height: 42px; }
   .pill-nav.open { flex-wrap: wrap; height: auto; border-radius: 30px; padding: 10px 10px 14px 18px; }

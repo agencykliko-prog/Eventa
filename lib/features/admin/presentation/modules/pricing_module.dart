@@ -131,7 +131,7 @@ class _PricingModuleState extends ConsumerState<PricingModule> {
           for (final (k, v, strong) in [
             ('L’organisateur paie', clientPays, false),
             ('Le prestataire reçoit', vendorGets, false),
-            ('Eventa encaisse', eventa, true),
+            ('Calandix encaisse', eventa, true),
           ])
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 5),

@@ -85,7 +85,7 @@ class _AdminLoginScreenState extends ConsumerState<AdminLoginScreen> {
                     children: [
                       Row(
                         children: [
-                          const EventaWordmark(size: 26),
+                          const CalandixWordmark(size: 26),
                           const SizedBox(width: 8),
                           Tag(label: 'Admin', hue: Hue.ink, solid: true),
                         ],

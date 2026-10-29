@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-// Modèles du centre de contrôle Eventa (exploitant de la plateforme).
+// Modèles du centre de contrôle Calandix (exploitant de la plateforme).
 // Démo : données fictives, aucune donnée réelle.
 
 // ─── Rôles et permissions ───────────────────────────────────────────────

@@ -8,7 +8,7 @@ import '../../admin/presentation/admin_providers.dart';
 import '../../auth/presentation/session_provider.dart';
 
 // ─── Vérification du prestataire ────────────────────────────────────────
-// Le Creator dépose ses pièces et envoie son dossier ; l'équipe Eventa le
+// Le Creator dépose ses pièces et envoie son dossier ; l'équipe Calandix le
 // contrôle dans le centre de contrôle (module Vérification). Sa décision
 // revient ici et pilote le badge « Vérifié » de la fiche.
 

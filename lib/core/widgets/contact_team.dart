@@ -7,7 +7,7 @@ import '../utils/open_link_stub.dart'
     if (dart.library.js_interop) '../utils/open_link_web.dart';
 import 'ui.dart';
 
-/// Coordonnées de l'équipe Eventa : WhatsApp et e-mail, sans formulaire.
+/// Coordonnées de l'équipe Calandix : WhatsApp et e-mail, sans formulaire.
 abstract final class EventaContact {
   static const email = 'contact@eventa.ci';
   static const whatsapp = '+225 07 57 63 37 65';
@@ -50,7 +50,7 @@ Future<void> showContactTeam(BuildContext context, {bool privilege = false}) {
             onPressed: () {
               Navigator.of(ctx).pop();
               EventaContact.openWhatsApp(
-                'Bonjour Eventa, j’ai besoin d’aide.'.tr,
+                'Bonjour Calandix, j’ai besoin d’aide.'.tr,
               );
             },
           ),

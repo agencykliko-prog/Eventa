@@ -8,7 +8,7 @@ import '../../../core/widgets/mascot.dart';
 import '../../../core/widgets/ui.dart';
 import 'about_screen.dart';
 
-/// Conditions générales d'utilisation et de vente d'Eventa (version
+/// Conditions générales d'utilisation et de vente de Calandix (version
 /// provisoire, à valider par un juriste avant le lancement).
 class TermsScreen extends StatefulWidget {
   const TermsScreen({super.key});
@@ -27,8 +27,8 @@ class _TermsScreenState extends State<TermsScreen> {
       bi('1. Objet', '1. Purpose'),
       [
         bi(
-          'Les présentes conditions encadrent l’utilisation de l’application Eventa, éditée par [raison sociale, siège et RCCM à compléter], par les organisateurs d’événements et par les prestataires événementiels (« Creators »). Créer un compte vaut acceptation de ces conditions.',
-          'These terms govern the use of the Eventa app, published by [company name, registered office and RCCM to be completed], by event organizers and event vendors (“Creators”). Creating an account means accepting these terms.',
+          'Les présentes conditions encadrent l’utilisation de l’application Calandix, éditée par [raison sociale, siège et RCCM à compléter], par les organisateurs d’événements et par les prestataires événementiels (« Creators »). Créer un compte vaut acceptation de ces conditions.',
+          'These terms govern the use of the Calandix app, published by [company name, registered office and RCCM to be completed], by event organizers and event vendors (“Creators”). Creating an account means accepting these terms.',
         ),
       ],
     ),
@@ -54,11 +54,11 @@ class _TermsScreenState extends State<TermsScreen> {
     ),
     (
       AppIcons.handshake,
-      bi('4. Rôle d’Eventa', '4. Eventa’s role'),
+      bi('4. Rôle de Calandix', '4. Calandix’s role'),
       [
         bi(
-          'Eventa met en relation organisateurs et Creators, fournit les outils d’organisation et sécurise les paiements. Le contrat de prestation est conclu directement entre l’organisateur et le Creator, qui reste seul responsable de l’exécution de sa prestation.',
-          'Eventa connects organizers and Creators, provides planning tools and secures payments. The service contract is concluded directly between the organizer and the Creator, who remains solely responsible for delivering the service.',
+          'Calandix met en relation organisateurs et Creators, fournit les outils d’organisation et sécurise les paiements. Le contrat de prestation est conclu directement entre l’organisateur et le Creator, qui reste seul responsable de l’exécution de sa prestation.',
+          'Calandix connects organizers and Creators, provides planning tools and secures payments. The service contract is concluded directly between the organizer and the Creator, who remains solely responsible for delivering the service.',
         ),
       ],
     ),
@@ -80,8 +80,8 @@ class _TermsScreenState extends State<TermsScreen> {
       bi('6. Paiements et reversements', '6. Payments and payouts'),
       [
         bi(
-          '• Les paiements passent par des opérateurs agréés (Mobile Money, carte bancaire).\n• Les fonds sont conservés jusqu’à la validation de la prestation par l’organisateur, puis reversés au Creator, déduction faite de la commission Eventa (actuellement 8 %), sous 2 jours ouvrés.\n• Des frais de service (actuellement 2 %) peuvent s’ajouter au montant payé par l’organisateur ; ils sont affichés avant paiement.\n• Le paiement en dehors de l’application d’une prestation trouvée sur Eventa est interdit.',
-          '• Payments go through licensed operators (Mobile Money, bank card).\n• Funds are held until the organizer approves the service, then paid to the Creator, minus Eventa’s commission (currently 8%), within 2 business days.\n• A service fee (currently 2%) may be added to the organizer’s payment; it is shown before payment.\n• Paying outside the app for a service found on Eventa is prohibited.',
+          '• Les paiements passent par des opérateurs agréés (Mobile Money, carte bancaire).\n• Les fonds sont conservés jusqu’à la validation de la prestation par l’organisateur, puis reversés au Creator, déduction faite de la commission Calandix (actuellement 8 %), sous 2 jours ouvrés.\n• Des frais de service (actuellement 2 %) peuvent s’ajouter au montant payé par l’organisateur ; ils sont affichés avant paiement.\n• Le paiement en dehors de l’application d’une prestation trouvée sur Calandix est interdit.',
+          '• Payments go through licensed operators (Mobile Money, bank card).\n• Funds are held until the organizer approves the service, then paid to the Creator, minus Calandix’s commission (currently 8%), within 2 business days.\n• A service fee (currently 2%) may be added to the organizer’s payment; it is shown before payment.\n• Paying outside the app for a service found on Calandix is prohibited.',
         ),
       ],
     ),
@@ -100,8 +100,8 @@ class _TermsScreenState extends State<TermsScreen> {
       bi('8. Litiges', '8. Disputes'),
       [
         bi(
-          'En cas de désaccord sur une prestation, l’organisateur le signale dans l’application au plus tard 48 h après la date prévue. Les fonds restent bloqués pendant l’examen. L’équipe Eventa recueille les éléments des deux parties et peut décider d’un remboursement total ou partiel, sans préjudice des recours de chacun.',
-          'If there is a disagreement about a service, the organizer reports it in the app no later than 48 h after the scheduled date. Funds stay frozen during the review. The Eventa team gathers both parties’ evidence and may decide on a full or partial refund, without prejudice to either party’s remedies.',
+          'En cas de désaccord sur une prestation, l’organisateur le signale dans l’application au plus tard 48 h après la date prévue. Les fonds restent bloqués pendant l’examen. L’équipe Calandix recueille les éléments des deux parties et peut décider d’un remboursement total ou partiel, sans préjudice des recours de chacun.',
+          'If there is a disagreement about a service, the organizer reports it in the app no later than 48 h after the scheduled date. Funds stay frozen during the review. The Calandix team gathers both parties’ evidence and may decide on a full or partial refund, without prejudice to either party’s remedies.',
         ),
       ],
     ),
@@ -120,8 +120,8 @@ class _TermsScreenState extends State<TermsScreen> {
       bi('10. Avis et contenus', '10. Reviews and content'),
       [
         bi(
-          'Seuls les organisateurs ayant réservé peuvent laisser un avis. Les avis doivent être sincères et respectueux ; Eventa peut retirer un contenu illicite ou trompeur. Chaque utilisateur reste propriétaire de ses photos et accorde à Eventa le droit de les afficher dans l’application pour le service.',
-          'Only organizers who booked can leave a review. Reviews must be honest and respectful; Eventa may remove unlawful or misleading content. Each user keeps ownership of their photos and grants Eventa the right to display them in the app for the service.',
+          'Seuls les organisateurs ayant réservé peuvent laisser un avis. Les avis doivent être sincères et respectueux ; Calandix peut retirer un contenu illicite ou trompeur. Chaque utilisateur reste propriétaire de ses photos et accorde à Calandix le droit de les afficher dans l’application pour le service.',
+          'Only organizers who booked can leave a review. Reviews must be honest and respectful; Calandix may remove unlawful or misleading content. Each user keeps ownership of their photos and grants Calandix the right to display them in the app for the service.',
         ),
       ],
     ),
@@ -130,8 +130,8 @@ class _TermsScreenState extends State<TermsScreen> {
       bi('11. Suspension et résiliation', '11. Suspension and termination'),
       [
         bi(
-          'Eventa peut suspendre un compte en cas de fraude, de contournement des paiements, d’annulations répétées ou de non-respect de ces conditions, après information de l’utilisateur sauf urgence. Chacun peut supprimer son compte à tout moment (voir la politique de confidentialité).',
-          'Eventa may suspend an account for fraud, payment circumvention, repeated cancellations or breach of these terms, after informing the user except in emergencies. Anyone can delete their account at any time (see the privacy policy).',
+          'Calandix peut suspendre un compte en cas de fraude, de contournement des paiements, d’annulations répétées ou de non-respect de ces conditions, après information de l’utilisateur sauf urgence. Chacun peut supprimer son compte à tout moment (voir la politique de confidentialité).',
+          'Calandix may suspend an account for fraud, payment circumvention, repeated cancellations or breach of these terms, after informing the user except in emergencies. Anyone can delete their account at any time (see the privacy policy).',
         ),
       ],
     ),
@@ -140,8 +140,8 @@ class _TermsScreenState extends State<TermsScreen> {
       bi('12. Droit applicable', '12. Governing law'),
       [
         bi(
-          'Ces conditions sont régies par le droit ivoirien. En cas de litige, une solution amiable est recherchée en priorité ; à défaut, les tribunaux d’Abidjan sont compétents. Eventa informe les utilisateurs dans l’application de toute modification importante de ces conditions.',
-          'These terms are governed by Ivorian law. In case of dispute, an amicable solution is sought first; failing that, the courts of Abidjan have jurisdiction. Eventa notifies users in the app of any significant change to these terms.',
+          'Ces conditions sont régies par le droit ivoirien. En cas de litige, une solution amiable est recherchée en priorité ; à défaut, les tribunaux d’Abidjan sont compétents. Calandix informe les utilisateurs dans l’application de toute modification importante de ces conditions.',
+          'These terms are governed by Ivorian law. In case of dispute, an amicable solution is sought first; failing that, the courts of Abidjan have jurisdiction. Calandix notifies users in the app of any significant change to these terms.',
         ),
       ],
     ),

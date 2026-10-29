@@ -141,7 +141,7 @@ class VerificationScreen extends ConsumerWidget {
                     n.submit();
                     toast(
                       context,
-                      'Dossier envoyé à l’équipe Eventa'.tr,
+                      'Dossier envoyé à l’équipe Calandix'.tr,
                       icon: AppIcons.send,
                     );
                   }

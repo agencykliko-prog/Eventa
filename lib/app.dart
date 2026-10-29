@@ -15,7 +15,7 @@ class EventaApp extends ConsumerWidget {
     final prefs = ref.watch(prefsProvider);
     final en = prefs.language == AppLanguage.en;
     return MaterialApp.router(
-      title: 'Eventa',
+      title: 'Calandix',
       debugShowCheckedModeBanner: false,
       // Le thème suit Confetti.dark, mis à jour avec les préférences.
       theme: AppTheme.current(),
