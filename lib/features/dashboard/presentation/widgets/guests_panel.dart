@@ -5,7 +5,7 @@ import '../../../../ui/theme/app_theme.dart';
 import '../../../../ui/theme/app_icons.dart';
 import '../../../../ui/theme/eventa_colors.dart';
 import '../../../../ui/widgets/ui.dart';
-import '../../../events/domain/models.dart';
+import '../../../../core/models/models.dart';
 
 class GuestsPanel extends StatelessWidget {
   const GuestsPanel({super.key, required this.guests, required this.onRemind});

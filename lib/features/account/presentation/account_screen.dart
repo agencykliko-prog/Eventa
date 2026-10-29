@@ -22,7 +22,7 @@ import '../../../core/auth/session_provider.dart';
 import '../../commerce/domain/commerce_models.dart';
 import '../../commerce/presentation/commerce_providers.dart';
 import '../../commerce/presentation/payment_sheet.dart';
-import '../../events/domain/models.dart';
+import '../../../core/models/models.dart';
 import '../../events/presentation/events_providers.dart';
 import '../../export/presentation/export_sheet.dart';
 import '../../../ui/widgets/contact_team.dart';

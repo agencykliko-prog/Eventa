@@ -8,6 +8,7 @@ import '../../../ui/widgets/ui.dart';
 import '../../domain/admin_models.dart';
 import '../admin_providers.dart';
 import '../widgets/admin_widgets.dart';
+import '../../../ui/dataviz/dataviz.dart';
 
 /// Service client : tickets, attribution et suivi de résolution.
 class SupportModule extends ConsumerStatefulWidget {
@@ -36,7 +37,7 @@ class _SupportModuleState extends ConsumerState<SupportModule> {
           title: 'Service client',
           subtitle: 'Demandes reçues par WhatsApp, e-mail, téléphone et dans l’app. Attribuez, répondez, suivez la résolution.',
         ),
-        ResponsiveGrid(
+        KpiGrid(
           minTile: 200,
           children: [
             KpiCard(

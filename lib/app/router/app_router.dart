@@ -22,7 +22,7 @@ import '../../features/create_event/presentation/create_event_screen.dart';
 import '../../features/pro/presentation/creator_home_screen.dart';
 import '../../features/pro/presentation/requests_screen.dart';
 import '../../features/dashboard/presentation/event_dashboard_screen.dart';
-import '../../features/events/domain/models.dart';
+import '../../core/models/models.dart';
 import '../../features/guests/presentation/guests_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/inbox/presentation/inbox_screen.dart';

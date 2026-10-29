@@ -12,7 +12,7 @@ import '../../../ui/widgets/mascot.dart';
 import '../../../ui/widgets/pressable.dart';
 import '../../../ui/widgets/ui.dart';
 import '../../dashboard/presentation/widgets/guests_panel.dart';
-import '../../events/domain/models.dart';
+import '../../../core/models/models.dart';
 import '../../events/presentation/events_providers.dart';
 import '../../premium/presentation/premium_nudge.dart';
 

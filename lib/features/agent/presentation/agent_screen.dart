@@ -12,7 +12,7 @@ import '../../../ui/widgets/pressable.dart';
 import '../../../ui/widgets/ui.dart';
 import '../../commerce/data/catalog.dart';
 import '../../events/data/event_templates.dart';
-import '../../events/domain/models.dart';
+import '../../../core/models/models.dart';
 import '../../events/presentation/events_providers.dart';
 
 /// Agent IA spécialisé par famille d'événements (Premium).

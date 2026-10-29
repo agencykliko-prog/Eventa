@@ -17,7 +17,7 @@ import '../../../ui/widgets/ui.dart';
 import '../../commerce/domain/commerce_models.dart';
 import '../../dashboard/presentation/widgets/budget_overview.dart';
 import '../../events/data/event_templates.dart';
-import '../../events/domain/models.dart';
+import '../../../core/models/models.dart';
 import '../../events/presentation/events_providers.dart';
 import '../../export/presentation/export_sheet.dart';
 import '../../premium/presentation/paywall.dart';

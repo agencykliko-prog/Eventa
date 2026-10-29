@@ -10,6 +10,7 @@ import '../../../ui/widgets/ui.dart';
 import '../../domain/admin_models.dart';
 import '../admin_providers.dart';
 import '../widgets/admin_widgets.dart';
+import '../../../ui/dataviz/dataviz.dart';
 
 /// Marketing & fidélisation : codes promo, campagnes, parrainage, notifications.
 class MarketingModule extends ConsumerWidget {
@@ -48,7 +49,7 @@ class MarketingModule extends ConsumerWidget {
             ),
           ],
         ),
-        ResponsiveGrid(
+        KpiGrid(
           minTile: 200,
           children: [
             KpiCard(
@@ -125,7 +126,7 @@ class MarketingModule extends ConsumerWidget {
           ],
         ),
         const BlockTitle('Campagnes'),
-        ResponsiveGrid(
+        KpiGrid(
           minTile: 300,
           max: 2,
           children: [

@@ -8,7 +8,7 @@ import '../../../../ui/theme/eventa_colors.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../ui/widgets/avatars.dart';
 import '../../../../ui/widgets/pressable.dart';
-import '../../domain/models.dart';
+import '../../../../core/models/models.dart';
 
 Hue moduleHue(Module m) => switch (m) {
   Module.budget => Hue.lagoon,

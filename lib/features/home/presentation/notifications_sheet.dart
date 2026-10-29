@@ -6,7 +6,7 @@ import '../../../core/i18n/tr.dart';
 import '../../../ui/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../ui/widgets/ui.dart';
-import '../../../core/notifications/notifications_provider.dart';
+import '../../notifications/presentation/notifications_provider.dart';
 
 Future<void> showNotificationsSheet(BuildContext context) =>
     showEventaSheet<void>(context, builder: (_) => const _Notifications());

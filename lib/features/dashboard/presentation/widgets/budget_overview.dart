@@ -9,7 +9,7 @@ import '../../../../ui/theme/eventa_colors.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../ui/widgets/pressable.dart';
 import '../../../../ui/widgets/ui.dart';
-import '../../../events/domain/models.dart';
+import '../../../../core/models/models.dart';
 
 /// Carte budget. Hiérarchie : le budget total d'abord, en grand ; puis
 /// l'allocation (payé, engagé, disponible) sur une seule barre.

@@ -14,7 +14,7 @@ import '../../../ui/widgets/entrance.dart';
 import '../../../ui/widgets/pressable.dart';
 import '../../../ui/widgets/ui.dart';
 import '../../events/data/event_templates.dart';
-import '../../events/domain/models.dart';
+import '../../../core/models/models.dart';
 import '../../events/presentation/events_providers.dart';
 import '../../events/presentation/widgets/task_timeline.dart';
 import '../../premium/presentation/premium_nudge.dart';

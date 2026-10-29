@@ -4,7 +4,7 @@ import 'package:eventa/features/commerce/data/catalog.dart';
 import 'package:eventa/features/commerce/domain/commerce_models.dart';
 import 'package:eventa/features/commerce/presentation/commerce_providers.dart';
 import 'package:eventa/features/events/data/events_repository.dart';
-import 'package:eventa/features/events/domain/models.dart';
+import 'package:eventa/core/models/models.dart';
 import 'package:eventa/features/events/presentation/events_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

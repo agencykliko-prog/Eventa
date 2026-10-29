@@ -22,7 +22,7 @@ import '../../../ui/widgets/mascot.dart';
 import '../../../ui/widgets/pressable.dart';
 import '../../../ui/widgets/ui.dart';
 import '../../account/presentation/photo_cropper.dart';
-import '../../events/domain/models.dart';
+import '../../../core/models/models.dart';
 import '../../../core/auth/profile.dart';
 import '../../../core/auth/session_provider.dart';
 

@@ -8,6 +8,7 @@ import '../../../ui/widgets/ui.dart';
 import '../../domain/admin_models.dart';
 import '../admin_providers.dart';
 import '../widgets/admin_widgets.dart';
+import '../../../ui/dataviz/dataviz.dart';
 
 /// Réservations : commandes, changements, annulations et litiges.
 class BookingsModule extends ConsumerStatefulWidget {
@@ -42,7 +43,7 @@ class _BookingsModuleState extends ConsumerState<BookingsModule> {
           title: 'Réservations',
           subtitle: 'Suivi des commandes entre organisateurs et prestataires, des changements, annulations et litiges.',
         ),
-        ResponsiveGrid(
+        KpiGrid(
           minTile: 200,
           children: [
             KpiCard(

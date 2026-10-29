@@ -6,7 +6,7 @@ import '../../../../ui/theme/eventa_colors.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../ui/widgets/avatars.dart';
 import '../../../../ui/widgets/pressable.dart';
-import '../../domain/models.dart';
+import '../../../../core/models/models.dart';
 
 /// Carte d'événement plein cadre : la photo porte tout, le texte se pose
 /// sur un voile dégradé vers la couleur de la catégorie.

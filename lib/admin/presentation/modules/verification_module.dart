@@ -9,6 +9,7 @@ import '../../../ui/widgets/ui.dart';
 import '../../domain/admin_models.dart';
 import '../admin_providers.dart';
 import '../widgets/admin_widgets.dart';
+import '../../../ui/dataviz/dataviz.dart';
 
 /// Vérification des prestataires : profil, pièces et décision.
 class VerificationModule extends ConsumerStatefulWidget {
@@ -48,7 +49,7 @@ class _VerificationState extends ConsumerState<VerificationModule> {
               style: context.text.bodyMedium,
             ),
           ),
-        ResponsiveGrid(
+        KpiGrid(
           minTile: 380,
           max: 2,
           children: [for (final c in list) _CheckCard(check: c)],

@@ -14,6 +14,7 @@ import '../../marketplace/presentation/explore_screen.dart';
 import '../domain/pro_models.dart';
 import 'pro_providers.dart';
 import 'pro_widgets.dart';
+import '../../../ui/dataviz/dataviz.dart';
 
 /// Exigences du client à préparer pour une commande.
 List<String> requirementsOf(ClientRequest r) => [
@@ -54,27 +55,27 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
           'Chaque réservation confirmée, de la préparation à la clôture.'.tr,
       children: [
         const SizedBox(height: 12),
-        StatGrid(
+        KpiGrid.compact(
           children: [
-            ProStat(
+            KpiCard.compact(
               label: 'En cours'.tr,
               value: '${orders.where((r) => !isClosed(r)).length}',
               hue: Hue.lagoon,
               icon: AppIcons.calendarCheck,
             ),
-            ProStat(
+            KpiCard.compact(
               label: 'Prochaine prestation'.tr,
               value: next == null ? '—' : countdownLabel(next.date),
               hue: Hue.coral,
               icon: AppIcons.timer,
             ),
-            ProStat(
+            KpiCard.compact(
               label: 'Clôturées'.tr,
               value: '${orders.where(isClosed).length}',
               hue: Hue.violet,
               icon: AppIcons.checkCircle,
             ),
-            ProStat(
+            KpiCard.compact(
               label: 'Montant en cours'.tr,
               value: fcfaCompact(
                 orders

@@ -9,7 +9,7 @@ import '../../../platform/mobile/download_mobile.dart'
 import '../../../ui/widgets/forms.dart';
 import '../../../ui/widgets/ui.dart';
 import '../../commerce/presentation/commerce_providers.dart';
-import '../../events/domain/models.dart';
+import '../../../core/models/models.dart';
 import '../../events/presentation/events_providers.dart';
 
 enum ExportKind {

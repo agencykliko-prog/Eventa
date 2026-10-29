@@ -8,7 +8,7 @@ import '../../../app/router/app_router.dart';
 import '../../../ui/theme/app_theme.dart';
 import '../../../ui/theme/eventa_colors.dart';
 import '../../../ui/widgets/pressable.dart';
-import '../../events/domain/models.dart';
+import '../../../core/models/models.dart';
 import '../../events/presentation/widgets/event_card.dart';
 
 /// Diaporama des événements : la carte au centre est mise en avant, ses

@@ -9,6 +9,7 @@ import '../../../ui/widgets/ui.dart';
 import '../../domain/admin_models.dart';
 import '../admin_providers.dart';
 import '../widgets/admin_widgets.dart';
+import '../../../ui/dataviz/dataviz.dart';
 
 /// Modèle économique : commissions, frais, abonnements, avec simulateur.
 class PricingModule extends ConsumerStatefulWidget {
@@ -256,7 +257,7 @@ class _PricingModuleState extends ConsumerState<PricingModule> {
           ),
         ),
         const BlockTitle('Abonnements mensuels'),
-        ResponsiveGrid(
+        KpiGrid(
           minTile: 220,
           children: [
             for (final e in p.subscriptions.entries)

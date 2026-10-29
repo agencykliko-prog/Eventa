@@ -4,10 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/analytics/analytics.dart';
 import '../../../ui/theme/app_icons.dart';
 import '../../../ui/theme/eventa_colors.dart';
-import '../../../ui/dataviz/donut.dart';
 import '../../../ui/widgets/ui.dart';
 import '../../data/admin_demo.dart';
 import '../widgets/admin_widgets.dart';
+import '../../../ui/dataviz/dataviz.dart';
 
 /// Analytics : acquisition, activité, rétention et revenus (12 mois).
 class AnalyticsModule extends ConsumerStatefulWidget {
@@ -192,7 +192,7 @@ class _AnalyticsModuleState extends ConsumerState<AnalyticsModule> {
           title: 'Analytics',
           subtitle: 'Acquisition, activité, rétention et revenus sur les 12 derniers mois (données fictives).',
         ),
-        ResponsiveGrid(
+        KpiGrid(
           minTile: 200,
           children: [
             KpiCard(

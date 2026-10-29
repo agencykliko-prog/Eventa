@@ -4,7 +4,7 @@ import '../../../../core/i18n/tr.dart';
 import '../../../../ui/theme/eventa_colors.dart';
 import '../../../../ui/widgets/avatars.dart';
 import '../../../../ui/widgets/ui.dart';
-import '../../../events/domain/models.dart';
+import '../../../../core/models/models.dart';
 import '../../../events/presentation/widgets/task_timeline.dart';
 
 class TeamPanel extends StatelessWidget {

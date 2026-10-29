@@ -21,7 +21,7 @@ import 'modules/pricing_module.dart';
 import 'modules/security_module.dart';
 import 'modules/support_module.dart';
 import 'modules/verification_module.dart';
-import 'widgets/admin_widgets.dart';
+import '../../ui/dataviz/dataviz.dart';
 
 /// Modules du centre de contrôle, dans l'ordre du menu.
 enum AdminModule {

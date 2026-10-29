@@ -1,17 +1,17 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../i18n/tr.dart';
-import '../../app/router/app_router.dart';
-import '../../ui/theme/app_icons.dart';
-import '../../ui/theme/eventa_colors.dart';
-import '../utils/formatters.dart';
-import '../auth/session_provider.dart';
-import '../../features/commerce/domain/commerce_models.dart';
-import '../../features/commerce/presentation/commerce_providers.dart';
-import '../../features/pro/presentation/creator_providers.dart';
-import '../../features/inbox/presentation/inbox_providers.dart';
-import '../../features/pro/presentation/verification_providers.dart';
+import '../../../core/i18n/tr.dart';
+import '../../../app/router/app_router.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/eventa_colors.dart';
+import '../../../core/utils/formatters.dart';
+import '../../../core/auth/session_provider.dart';
+import '../../commerce/domain/commerce_models.dart';
+import '../../commerce/presentation/commerce_providers.dart';
+import '../../pro/presentation/creator_providers.dart';
+import '../../inbox/presentation/inbox_providers.dart';
+import '../../pro/presentation/verification_providers.dart';
 
 /// Notification affichée dans la cloche de l'accueil.
 @immutable

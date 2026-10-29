@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/analytics/analytics.dart';
 import '../../../core/i18n/tr.dart';
 import '../../../core/auth/session_provider.dart';
-import '../../events/domain/models.dart';
+import '../../../core/models/models.dart';
 
 enum RequestStatus {
   received('Nouvelle'),

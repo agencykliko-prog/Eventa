@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 import '../../../core/i18n/tr.dart';
 import '../../../ui/theme/app_icons.dart';
 import '../../../ui/theme/eventa_colors.dart';
-import '../../events/domain/models.dart';
+import '../../../core/models/models.dart';
 
 // ─── Paiements ──────────────────────────────────────────────────────────
 

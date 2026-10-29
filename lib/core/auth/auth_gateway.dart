@@ -2,7 +2,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../backend/backend.dart';
 import '../i18n/tr.dart';
-import '../../features/events/domain/models.dart';
+import '../models/models.dart';
 import 'profile.dart';
 
 /// Erreur d'authentification présentable à l'utilisateur.

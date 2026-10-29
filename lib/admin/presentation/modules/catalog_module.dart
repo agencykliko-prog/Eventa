@@ -9,6 +9,7 @@ import '../../../ui/widgets/ui.dart';
 import '../../domain/admin_models.dart';
 import '../admin_providers.dart';
 import '../widgets/admin_widgets.dart';
+import '../../../ui/dataviz/dataviz.dart';
 
 /// Catalogue : catégories, sous-catégories, annonces et contenus.
 class CatalogModule extends ConsumerStatefulWidget {
@@ -59,7 +60,7 @@ class _CatalogModuleState extends ConsumerState<CatalogModule> {
           ],
         ),
         const BlockTitle('Catégories'),
-        ResponsiveGrid(
+        KpiGrid(
           minTile: 300,
           max: 3,
           children: [

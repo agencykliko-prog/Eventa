@@ -23,7 +23,7 @@ import '../../commerce/presentation/commerce_providers.dart';
 import '../../commerce/data/catalog.dart';
 import '../../commerce/presentation/payment_sheet.dart';
 import '../../dashboard/presentation/widgets/budget_overview.dart';
-import '../../events/domain/models.dart';
+import '../../../core/models/models.dart';
 import '../../events/presentation/events_providers.dart';
 import '../../marketplace/presentation/widgets/vendor_card.dart';
 import '../../premium/presentation/premium_nudge.dart';
@@ -32,7 +32,7 @@ import 'event_carousel.dart';
 import 'greeting_hero.dart';
 import 'notifications_sheet.dart';
 import '../../inbox/presentation/inbox_providers.dart';
-import '../../../core/notifications/notifications_provider.dart';
+import '../../notifications/presentation/notifications_provider.dart';
 
 /// Accueil Organisateur. Ordre de lecture : le diaporama des événements
 /// (le prochain en premier), son budget, les prochaines échéances, ce qui

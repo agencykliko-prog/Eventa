@@ -10,7 +10,7 @@ import 'package:eventa/features/commerce/presentation/commerce_providers.dart';
 import 'package:eventa/features/events/data/events_repository.dart';
 import 'package:eventa/features/events/presentation/events_providers.dart';
 import 'package:eventa/features/inbox/presentation/inbox_providers.dart';
-import 'package:eventa/core/notifications/notifications_provider.dart';
+import 'package:eventa/features/notifications/presentation/notifications_provider.dart';
 import 'package:eventa/features/pro/presentation/verification_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

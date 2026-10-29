@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../i18n/tr.dart';
-import '../../features/events/domain/models.dart';
+import '../models/models.dart';
 
 /// Deux profils, deux interfaces : chacun ne voit que ce qui le concerne.
 enum UserRole {

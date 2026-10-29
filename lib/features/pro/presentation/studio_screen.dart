@@ -14,6 +14,7 @@ import '../../commerce/presentation/commerce_providers.dart';
 import 'creator_providers.dart';
 import 'pro_widgets.dart';
 import 'studio_providers.dart';
+import '../../../ui/dataviz/dataviz.dart';
 
 /// Studio Creator : CRM, facturation, équipe, automatisations, marque
 /// blanche, statistiques avancées et API. Réservé à l'offre Creator.
@@ -166,28 +167,28 @@ class _Stats extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         SectionTitle('Statistiques avancées'.tr),
-        StatGrid(
+        KpiGrid.compact(
           children: [
-            ProStat(
+            KpiCard.compact(
               label: 'Taux de conversion'.tr,
               value: '${(s.conversion * 100).round()} %',
               hue: Hue.violet,
               icon: AppIcons.trendUp,
             ),
-            ProStat(
+            KpiCard.compact(
               label: 'Panier moyen'.tr,
               value: fcfaCompact(s.averageBasket),
               hue: Hue.lagoon,
               icon: AppIcons.coins,
             ),
-            ProStat(
+            KpiCard.compact(
               key: const ValueKey('stat-invoiced'),
               label: 'Facturé'.tr,
               value: fcfaCompact(s.invoiced),
               hue: Hue.mango,
               icon: AppIcons.invoice,
             ),
-            ProStat(
+            KpiCard.compact(
               key: const ValueKey('stat-outstanding'),
               label: 'Reste à encaisser'.tr,
               value: fcfaCompact(s.outstanding),

@@ -10,7 +10,7 @@ import '../../../core/auth/session_provider.dart';
 import '../../commerce/domain/commerce_models.dart';
 import '../../commerce/presentation/commerce_providers.dart';
 import '../../pro/presentation/creator_providers.dart';
-import '../../events/domain/models.dart';
+import '../../../core/models/models.dart';
 
 // ─── Messagerie ─────────────────────────────────────────────────────────
 // Une conversation par dossier : réservation côté organisateur, demande de

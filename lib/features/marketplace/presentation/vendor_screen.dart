@@ -16,7 +16,7 @@ import '../../../ui/widgets/ui.dart';
 import '../../commerce/data/catalog.dart';
 import '../../commerce/domain/commerce_models.dart';
 import '../../commerce/presentation/commerce_providers.dart';
-import '../../events/domain/models.dart';
+import '../../../core/models/models.dart';
 import '../../events/presentation/events_providers.dart';
 import '../../inbox/presentation/inbox_providers.dart';
 import 'widgets/vendor_card.dart';

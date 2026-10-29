@@ -13,6 +13,7 @@ import 'creator_providers.dart';
 import '../domain/pro_models.dart';
 import 'pro_providers.dart';
 import 'pro_widgets.dart';
+import '../../../ui/dataviz/dataviz.dart';
 
 /// E. Revenus & reversements : commandes payées, commissions, reversements
 /// attendus et effectués, relevés de paiements.
@@ -79,15 +80,15 @@ class RevenueScreen extends ConsumerWidget {
           .tr,
       children: [
         const SizedBox(height: 12),
-        StatGrid(
+        KpiGrid.compact(
           children: [
-            ProStat(
+            KpiCard.compact(
               label: 'Commandes payées'.tr,
               value: fcfaCompact(paid),
               hue: Hue.lagoon,
               icon: AppIcons.coins,
             ),
-            ProStat(
+            KpiCard.compact(
               label: 'Commissions prélevées'.tr,
               value: fcfaCompact(commissions),
               hue: Hue.coral,
@@ -96,13 +97,13 @@ class RevenueScreen extends ConsumerWidget {
                 (proCommissionRate * 100).round(),
               ]),
             ),
-            ProStat(
+            KpiCard.compact(
               label: 'Reversements attendus'.tr,
               value: fcfaCompact(expected),
               hue: Hue.mango,
               icon: AppIcons.timer,
             ),
-            ProStat(
+            KpiCard.compact(
               label: 'Reversements effectués'.tr,
               value: fcfaCompact(done),
               hue: Hue.violet,

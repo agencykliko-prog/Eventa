@@ -15,7 +15,7 @@ import '../../../ui/widgets/ui.dart';
 import '../../booking/presentation/quote_compare_screen.dart';
 import '../../commerce/domain/commerce_models.dart';
 import '../../commerce/presentation/commerce_providers.dart';
-import '../../events/domain/models.dart';
+import '../../../core/models/models.dart';
 import '../../events/presentation/events_providers.dart';
 import '../../events/presentation/widgets/task_timeline.dart';
 import '../../export/presentation/export_sheet.dart';

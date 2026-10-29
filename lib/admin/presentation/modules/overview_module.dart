@@ -13,6 +13,7 @@ import '../../domain/admin_models.dart';
 import '../admin_providers.dart';
 import '../admin_shell.dart';
 import '../widgets/admin_widgets.dart';
+import '../../../ui/dataviz/dataviz.dart';
 
 /// Vue d'ensemble : les quatre indicateurs clés, ce qui demande une
 /// action, le flux de transactions en direct et l'accès aux modules.
@@ -61,7 +62,7 @@ class OverviewModule extends ConsumerWidget {
           subtitle:
               'Vue d’ensemble de l’activité · ${longDate(DateTime.now())}',
         ),
-        ResponsiveGrid(
+        KpiGrid(
           minTile: 230,
           children: [
             Entrance(
@@ -187,7 +188,7 @@ class OverviewModule extends ConsumerWidget {
           },
         ),
         const BlockTitle('Les modules administrateur'),
-        ResponsiveGrid(
+        KpiGrid(
           minTile: 280,
           max: 3,
           children: [

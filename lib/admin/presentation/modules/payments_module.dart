@@ -8,6 +8,7 @@ import '../../../ui/widgets/ui.dart';
 import '../../domain/admin_models.dart';
 import '../admin_providers.dart';
 import '../widgets/admin_widgets.dart';
+import '../../../ui/dataviz/dataviz.dart';
 
 /// Paiements : transactions, commissions, remboursements, rapprochements.
 class PaymentsModule extends ConsumerStatefulWidget {
@@ -65,7 +66,7 @@ class _PaymentsModuleState extends ConsumerState<PaymentsModule> {
             ),
           ],
         ),
-        ResponsiveGrid(
+        KpiGrid(
           minTile: 200,
           children: [
             KpiCard(

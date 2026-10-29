@@ -5,7 +5,7 @@ import '../../../../ui/theme/app_icons.dart';
 import '../../../../ui/theme/eventa_colors.dart';
 import '../../../../core/utils/formatters.dart';
 import '../../../../ui/widgets/pressable.dart';
-import '../../../events/domain/models.dart';
+import '../../../../core/models/models.dart';
 import '../../data/vendor_media.dart';
 
 String priceLabel(Vendor v) => 'dès {0}{1}'.trf([
