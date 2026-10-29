@@ -7,17 +7,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/tr.dart';
-import '../../../core/router/app_router.dart';
+import '../../../app/router/app_router.dart';
 import '../../../core/sound/sounds.dart';
-import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/eventa_colors.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
-import '../../../core/widgets/avatars.dart';
-import '../../../core/widgets/entrance.dart';
-import '../../../core/widgets/mascot.dart';
-import '../../../core/widgets/pressable.dart';
-import '../../../core/widgets/ui.dart';
-import '../../auth/presentation/session_provider.dart';
+import '../../../ui/widgets/avatars.dart';
+import '../../../ui/widgets/entrance.dart';
+import '../../../ui/widgets/mascot.dart';
+import '../../../ui/widgets/pressable.dart';
+import '../../../ui/widgets/ui.dart';
+import '../../../core/auth/session_provider.dart';
 import '../../commerce/domain/commerce_models.dart';
 import '../../commerce/presentation/commerce_providers.dart';
 import '../../commerce/data/catalog.dart';
@@ -31,8 +31,8 @@ import '../../events/presentation/widgets/event_card.dart';
 import 'event_carousel.dart';
 import 'greeting_hero.dart';
 import 'notifications_sheet.dart';
-import '../../inbox/inbox_providers.dart';
-import '../../notifications/notifications_provider.dart';
+import '../../inbox/presentation/inbox_providers.dart';
+import '../../../core/notifications/notifications_provider.dart';
 
 /// Accueil Organisateur. Ordre de lecture : le diaporama des événements
 /// (le prochain en premier), son budget, les prochaines échéances, ce qui

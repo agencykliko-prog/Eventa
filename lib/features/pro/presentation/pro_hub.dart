@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/tr.dart';
-import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/eventa_colors.dart';
+import '../../../app/router/app_router.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
-import '../../../core/widgets/ui.dart';
-import '../../creator/presentation/creator_providers.dart';
+import '../../../ui/widgets/ui.dart';
+import 'creator_providers.dart';
 import '../domain/pro_models.dart';
 import '../../commerce/presentation/commerce_providers.dart';
 import 'pro_providers.dart';

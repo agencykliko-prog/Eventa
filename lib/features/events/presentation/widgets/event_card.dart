@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/i18n/tr.dart';
-import '../../../../core/theme/app_icons.dart';
-import '../../../../core/theme/eventa_colors.dart';
+import '../../../../ui/theme/app_icons.dart';
+import '../../../../ui/theme/eventa_colors.dart';
 import '../../../../core/utils/formatters.dart';
-import '../../../../core/widgets/avatars.dart';
-import '../../../../core/widgets/pressable.dart';
+import '../../../../ui/widgets/avatars.dart';
+import '../../../../ui/widgets/pressable.dart';
 import '../../domain/models.dart';
 
 /// Carte d'événement plein cadre : la photo porte tout, le texte se pose

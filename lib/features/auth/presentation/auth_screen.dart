@@ -7,24 +7,24 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/tr.dart';
-import '../data/auth_gateway.dart';
-import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/theme/eventa_colors.dart';
+import '../../../core/auth/auth_gateway.dart';
+import '../../../app/router/app_router.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/app_theme.dart';
+import '../../../ui/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
-import '../../../core/widgets/avatars.dart';
-import '../../../core/widgets/brand.dart';
-import '../../../core/widgets/entrance.dart';
+import '../../../ui/widgets/avatars.dart';
+import '../../../ui/widgets/brand.dart';
+import '../../../ui/widgets/entrance.dart';
 import '../../../core/sound/sounds.dart';
-import '../../../core/widgets/forms.dart';
-import '../../../core/widgets/mascot.dart';
-import '../../../core/widgets/pressable.dart';
-import '../../../core/widgets/ui.dart';
+import '../../../ui/widgets/forms.dart';
+import '../../../ui/widgets/mascot.dart';
+import '../../../ui/widgets/pressable.dart';
+import '../../../ui/widgets/ui.dart';
 import '../../account/presentation/photo_cropper.dart';
 import '../../events/domain/models.dart';
-import '../domain/profile.dart';
-import 'session_provider.dart';
+import '../../../core/auth/profile.dart';
+import '../../../core/auth/session_provider.dart';
 
 /// Connexion et inscription, pour les deux profils.
 class AuthScreen extends ConsumerStatefulWidget {

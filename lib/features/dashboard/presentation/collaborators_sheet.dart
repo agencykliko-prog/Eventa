@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/i18n/tr.dart';
-import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/theme/eventa_colors.dart';
-import '../../../core/widgets/avatars.dart';
-import '../../../core/widgets/pressable.dart';
-import '../../../core/widgets/ui.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/app_theme.dart';
+import '../../../ui/theme/eventa_colors.dart';
+import '../../../ui/widgets/avatars.dart';
+import '../../../ui/widgets/pressable.dart';
+import '../../../ui/widgets/ui.dart';
 import '../../commerce/domain/commerce_models.dart';
 import '../../commerce/presentation/commerce_providers.dart';
 import '../../events/domain/models.dart';

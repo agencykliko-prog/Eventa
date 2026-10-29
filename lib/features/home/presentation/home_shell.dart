@@ -6,14 +6,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/tr.dart';
-import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/theme/eventa_colors.dart';
-import '../../../core/widgets/brand.dart';
-import '../../../core/widgets/pressable.dart';
-import '../../auth/presentation/session_provider.dart';
-import '../../creator/presentation/creator_providers.dart';
+import '../../../app/router/app_router.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/app_theme.dart';
+import '../../../ui/theme/eventa_colors.dart';
+import '../../../ui/widgets/brand.dart';
+import '../../../ui/widgets/pressable.dart';
+import '../../../core/auth/session_provider.dart';
+import '../../pro/presentation/creator_providers.dart';
 
 /// Branches du shell (ordre fixe) : accueil, explorer, demandes, agenda, compte.
 abstract final class Branch {

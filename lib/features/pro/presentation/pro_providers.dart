@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/i18n/tr.dart';
 import '../../../core/utils/formatters.dart';
-import '../../auth/presentation/session_provider.dart';
-import '../../creator/presentation/creator_providers.dart';
+import '../../../core/auth/session_provider.dart';
+import 'creator_providers.dart';
 import '../domain/pro_models.dart';
 
 /// Commission Calandix prélevée sur chaque prestation (cf. centre de contrôle).

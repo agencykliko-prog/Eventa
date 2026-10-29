@@ -1,8 +1,8 @@
-import 'package:eventa/core/theme/app_theme.dart';
-import 'package:eventa/features/admin/presentation/admin_providers.dart';
-import 'package:eventa/features/auth/domain/profile.dart';
-import 'package:eventa/features/auth/presentation/session_provider.dart';
-import 'package:eventa/features/inbox/inbox_screen.dart';
+import 'package:eventa/ui/theme/app_theme.dart';
+import 'package:eventa/admin/presentation/admin_providers.dart';
+import 'package:eventa/core/auth/profile.dart';
+import 'package:eventa/core/auth/session_provider.dart';
+import 'package:eventa/features/inbox/presentation/inbox_screen.dart';
 import 'package:eventa/features/pro/presentation/verification_providers.dart';
 import 'package:eventa/features/pro/presentation/verification_screen.dart';
 import 'package:flutter/material.dart';

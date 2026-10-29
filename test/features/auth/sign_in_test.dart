@@ -1,6 +1,6 @@
-import 'package:eventa/core/theme/app_theme.dart';
+import 'package:eventa/ui/theme/app_theme.dart';
 import 'package:eventa/features/auth/presentation/auth_screen.dart';
-import 'package:eventa/features/auth/presentation/session_provider.dart';
+import 'package:eventa/core/auth/session_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/i18n/tr.dart';
-import '../../../../core/theme/eventa_colors.dart';
-import '../../../../core/widgets/avatars.dart';
-import '../../../../core/widgets/ui.dart';
+import '../../../../ui/theme/eventa_colors.dart';
+import '../../../../ui/widgets/avatars.dart';
+import '../../../../ui/widgets/ui.dart';
 import '../../../events/domain/models.dart';
 import '../../../events/presentation/widgets/task_timeline.dart';
 

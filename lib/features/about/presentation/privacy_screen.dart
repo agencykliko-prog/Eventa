@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/eventa_colors.dart';
-import '../../../core/widgets/mascot.dart';
-import '../../../core/widgets/ui.dart';
-import '../../auth/presentation/session_provider.dart';
+import '../../../app/router/app_router.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/eventa_colors.dart';
+import '../../../ui/widgets/mascot.dart';
+import '../../../ui/widgets/ui.dart';
+import '../../../core/auth/session_provider.dart';
 import 'about_screen.dart';
 
 /// Une section de la politique : titre, paragraphes et listes.

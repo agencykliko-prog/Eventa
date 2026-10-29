@@ -1,4 +1,4 @@
-import 'package:eventa/core/theme/app_theme.dart';
+import 'package:eventa/ui/theme/app_theme.dart';
 import 'package:eventa/features/events/data/demo_data.dart';
 import 'package:eventa/features/events/data/event_templates.dart';
 import 'package:eventa/features/events/data/events_repository.dart';

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/tr.dart';
-import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/eventa_colors.dart';
-import '../../../core/widgets/ui.dart';
+import '../../../app/router/app_router.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/eventa_colors.dart';
+import '../../../ui/widgets/ui.dart';
 
 /// Page d'une section de l'espace pro : retour, titre, description.
 class ProPage extends StatelessWidget {

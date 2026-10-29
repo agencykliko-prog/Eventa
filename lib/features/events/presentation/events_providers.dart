@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/backend/backend.dart';
-import '../../auth/presentation/session_provider.dart';
+import '../../../core/auth/session_provider.dart';
 import '../data/events_remote.dart';
 import '../data/events_repository.dart';
 import '../domain/models.dart';

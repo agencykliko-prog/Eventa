@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/i18n/tr.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../../../core/theme/app_icons.dart';
-import '../../../../core/theme/eventa_colors.dart';
-import '../../../../core/widgets/ui.dart';
+import '../../../../ui/theme/app_theme.dart';
+import '../../../../ui/theme/app_icons.dart';
+import '../../../../ui/theme/eventa_colors.dart';
+import '../../../../ui/widgets/ui.dart';
 import '../../../events/domain/models.dart';
 
 class GuestsPanel extends StatelessWidget {

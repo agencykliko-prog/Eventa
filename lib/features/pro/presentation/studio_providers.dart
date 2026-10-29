@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/i18n/tr.dart';
 import '../../commerce/presentation/commerce_providers.dart';
-import '../../creator/presentation/creator_providers.dart';
+import 'creator_providers.dart';
 
 // ─── Studio Creator : outils de l'offre Creator (29 900 FCFA / mois) ────────
 

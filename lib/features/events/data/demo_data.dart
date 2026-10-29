@@ -1,4 +1,4 @@
-import '../../../core/theme/app_icons.dart';
+import '../../../ui/theme/app_icons.dart';
 import '../../commerce/data/catalog.dart';
 import '../domain/models.dart';
 

@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 
 import '../../../core/i18n/tr.dart';
-import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/eventa_colors.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/eventa_colors.dart';
 import '../../events/domain/models.dart';
 
 // ─── Paiements ──────────────────────────────────────────────────────────

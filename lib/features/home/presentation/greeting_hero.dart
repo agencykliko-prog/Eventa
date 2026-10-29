@@ -6,10 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/i18n/tr.dart';
 import '../../../core/sound/sounds.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/theme/eventa_colors.dart';
+import '../../../ui/theme/app_theme.dart';
+import '../../../ui/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
-import '../../../core/widgets/mascot.dart';
+import '../../../ui/widgets/mascot.dart';
 
 /// En-tête d'accueil : une carte encre et violet où la mascotte du profil
 /// entre par la gauche en saluant, avec une bulle « Bonjour ! », un halo qui

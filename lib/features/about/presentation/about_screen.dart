@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/tr.dart';
-import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/eventa_colors.dart';
-import '../../../core/widgets/brand.dart';
-import '../../../core/widgets/entrance.dart';
-import '../../../core/widgets/mascot.dart';
-import '../../../core/widgets/ui.dart';
-import '../../../core/widgets/contact_team.dart';
+import '../../../app/router/app_router.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/eventa_colors.dart';
+import '../../../ui/widgets/brand.dart';
+import '../../../ui/widgets/entrance.dart';
+import '../../../ui/widgets/mascot.dart';
+import '../../../ui/widgets/ui.dart';
+import '../../../ui/widgets/contact_team.dart';
 
 /// Texte bilingue des pages éditoriales (prose longue, hors dictionnaire).
 String bi(String fr, String en) => L10n.isEn ? en : fr;

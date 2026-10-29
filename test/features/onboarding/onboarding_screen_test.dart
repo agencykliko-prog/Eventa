@@ -1,6 +1,6 @@
-import 'package:eventa/app.dart';
-import 'package:eventa/features/auth/domain/profile.dart';
-import 'package:eventa/features/auth/presentation/session_provider.dart';
+import 'package:eventa/app/app.dart';
+import 'package:eventa/core/auth/profile.dart';
+import 'package:eventa/core/auth/session_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

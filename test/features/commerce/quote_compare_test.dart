@@ -1,4 +1,4 @@
-import 'package:eventa/core/theme/app_theme.dart';
+import 'package:eventa/ui/theme/app_theme.dart';
 import 'package:eventa/features/booking/presentation/quote_compare_screen.dart';
 import 'package:eventa/features/commerce/data/catalog.dart';
 import 'package:eventa/features/commerce/domain/commerce_models.dart';

@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/tr.dart';
-import '../../../core/theme/eventa_colors.dart';
+import '../../../ui/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
-import '../../../core/widgets/ui.dart';
-import '../../notifications/notifications_provider.dart';
+import '../../../ui/widgets/ui.dart';
+import '../../../core/notifications/notifications_provider.dart';
 
 Future<void> showNotificationsSheet(BuildContext context) =>
     showEventaSheet<void>(context, builder: (_) => const _Notifications());

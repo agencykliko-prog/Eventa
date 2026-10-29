@@ -2,9 +2,9 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../i18n/tr.dart';
-import '../theme/eventa_colors.dart';
-import 'prefs_store_stub.dart'
-    if (dart.library.js_interop) 'prefs_store_web.dart';
+import '../../ui/theme/eventa_colors.dart';
+import '../../platform/mobile/prefs_store_mobile.dart'
+    if (dart.library.js_interop) '../../platform/web/prefs_store_web.dart';
 
 enum AppLanguage {
   fr('Français', 'fr'),

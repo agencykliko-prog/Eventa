@@ -1,7 +1,7 @@
-import 'package:eventa/core/theme/app_theme.dart';
-import 'package:eventa/features/auth/domain/profile.dart';
-import 'package:eventa/features/auth/presentation/session_provider.dart';
-import 'package:eventa/features/creator/presentation/creator_providers.dart';
+import 'package:eventa/ui/theme/app_theme.dart';
+import 'package:eventa/core/auth/profile.dart';
+import 'package:eventa/core/auth/session_provider.dart';
+import 'package:eventa/features/pro/presentation/creator_providers.dart';
 import 'package:eventa/features/pro/domain/pro_models.dart';
 import 'package:eventa/features/pro/presentation/availability_screen.dart';
 import 'package:eventa/features/pro/presentation/orders_screen.dart';

@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/tr.dart';
-import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/eventa_colors.dart';
-import '../../../core/widgets/avatars.dart';
-import '../../../core/widgets/brand.dart';
-import '../../../core/widgets/entrance.dart';
-import '../../../core/widgets/ui.dart';
+import '../../../app/router/app_router.dart';
+import '../../../ui/theme/app_theme.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/eventa_colors.dart';
+import '../../../ui/widgets/avatars.dart';
+import '../../../ui/widgets/brand.dart';
+import '../../../ui/widgets/entrance.dart';
+import '../../../ui/widgets/ui.dart';
 
 /// Bienvenue sur fond blanc : collage de cartes d'événements posées sur une
 /// tache douce, indicateurs qui flottent, textes centrés.

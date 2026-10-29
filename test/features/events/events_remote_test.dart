@@ -1,5 +1,5 @@
-import 'package:eventa/features/auth/presentation/session_provider.dart';
-import 'package:eventa/features/auth/domain/profile.dart';
+import 'package:eventa/core/auth/session_provider.dart';
+import 'package:eventa/core/auth/profile.dart';
 import 'package:eventa/features/events/data/events_remote.dart';
 import 'package:eventa/features/events/data/events_repository.dart';
 import 'package:eventa/features/events/domain/models.dart';

@@ -5,15 +5,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/tr.dart';
-import '../../../core/prefs/prefs_store_stub.dart'
-    if (dart.library.js_interop) '../../../core/prefs/prefs_store_web.dart';
-import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/eventa_colors.dart';
+import '../../../platform/mobile/prefs_store_mobile.dart'
+    if (dart.library.js_interop) '../../../platform/web/prefs_store_web.dart';
+import '../../../app/router/app_router.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
-import '../../../core/widgets/mascot.dart';
-import '../../../core/widgets/ui.dart';
-import '../../auth/presentation/session_provider.dart';
+import '../../../ui/widgets/mascot.dart';
+import '../../../ui/widgets/ui.dart';
+import '../../../core/auth/session_provider.dart';
 import '../../commerce/domain/commerce_models.dart';
 import '../../commerce/presentation/commerce_providers.dart';
 import '../../commerce/presentation/payment_sheet.dart';
