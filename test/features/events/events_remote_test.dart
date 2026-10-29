@@ -67,10 +67,10 @@ void main() {
         },
       ],
       'guests': [
-        {'rsvp': 'yes'},
-        {'rsvp': 'yes'},
-        {'rsvp': 'no'},
-        {'rsvp': 'pending'},
+        {'id': 'g1', 'name': 'Yao', 'rsvp': 'yes', 'companions': 2},
+        {'id': 'g2', 'name': 'Adjoua', 'rsvp': 'yes', 'phone': '0707070707'},
+        {'id': 'g3', 'name': 'Koffi', 'rsvp': 'no', 'group_name': 'Amis'},
+        {'id': 'g4', 'name': 'Bintou', 'rsvp': 'pending'},
       ],
     });
 
@@ -92,6 +92,14 @@ void main() {
     expect(e.guests.invited, 4);
     expect(e.guests.confirmed, 2);
     expect(e.guests.declined, 1);
+    expect(e.guests.list.map((g) => g.name), [
+      'Adjoua',
+      'Bintou',
+      'Koffi',
+      'Yao',
+    ], reason: 'triés par nom');
+    expect(e.guests.headcount, 4, reason: 'Yao vient avec 2 personnes');
+    expect(e.guests.list[2].group, 'Amis');
     expect(e.team.single.id, _me);
   });
 

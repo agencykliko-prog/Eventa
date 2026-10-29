@@ -491,6 +491,53 @@ class Payment {
   final String method;
 }
 
+enum Rsvp { pending, yes, no }
+
+/// Un invité de la liste, avec sa réponse.
+@immutable
+class Guest {
+  const Guest({
+    required this.id,
+    required this.name,
+    this.phone,
+    this.group,
+    this.rsvp = Rsvp.pending,
+    this.companions = 0,
+    this.diet,
+    this.addedAt,
+  });
+
+  final String id;
+  final String name;
+  final String? phone;
+  final String? group;
+  final Rsvp rsvp;
+
+  /// Personnes qui l'accompagnent (conjoint, enfants…).
+  final int companions;
+  final String? diet;
+  final DateTime? addedAt;
+
+  Guest copyWith({
+    String? id,
+    String? name,
+    String? phone,
+    String? group,
+    Rsvp? rsvp,
+    int? companions,
+    String? diet,
+  }) => Guest(
+    id: id ?? this.id,
+    name: name ?? this.name,
+    phone: phone ?? this.phone,
+    group: group ?? this.group,
+    rsvp: rsvp ?? this.rsvp,
+    companions: companions ?? this.companions,
+    diet: diet ?? this.diet,
+    addedAt: addedAt,
+  );
+}
+
 @immutable
 class Guests {
   const Guests({
@@ -498,14 +545,46 @@ class Guests {
     required this.confirmed,
     required this.declined,
     this.todayNew = 0,
+    this.list = const [],
+    this.expected = 0,
   });
+
+  /// Compteurs tirés de la liste. Tant qu'elle est vide, le nombre d'invités
+  /// prévu à la création de l'événement sert de repère.
+  factory Guests.fromList(List<Guest> list, {int expected = 0}) {
+    final now = DateTime.now();
+    bool today(DateTime? d) =>
+        d != null &&
+        d.year == now.year &&
+        d.month == now.month &&
+        d.day == now.day;
+    return Guests(
+      invited: list.isEmpty ? expected : list.length,
+      confirmed: list.where((g) => g.rsvp == Rsvp.yes).length,
+      declined: list.where((g) => g.rsvp == Rsvp.no).length,
+      todayNew: list.where((g) => today(g.addedAt)).length,
+      list: list,
+      expected: expected,
+    );
+  }
 
   final int invited;
   final int confirmed;
   final int declined;
   final int todayNew;
+  final List<Guest> list;
+
+  /// Nombre d'invités prévu à la création de l'événement.
+  final int expected;
 
   int get pending => invited - confirmed - declined;
+
+  /// Personnes attendues : invités présents et leurs accompagnants.
+  int get headcount => list.isEmpty
+      ? confirmed
+      : list
+            .where((g) => g.rsvp == Rsvp.yes)
+            .fold(0, (s, g) => s + 1 + g.companions);
 }
 
 @immutable
@@ -607,6 +686,7 @@ class Event {
     List<TeamMember>? team,
     List<EventVendor>? vendors,
     List<Activity>? activity,
+    Guests? guests,
     int? targetBudget,
   }) => Event(
     id: id,
@@ -625,7 +705,7 @@ class Event {
     vendors: vendors ?? this.vendors,
     team: team ?? this.team,
     activity: activity ?? this.activity,
-    guests: guests,
+    guests: guests ?? this.guests,
     nextPayment: nextPayment,
   );
 }

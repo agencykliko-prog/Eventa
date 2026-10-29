@@ -23,6 +23,7 @@ import '../../features/creator/presentation/creator_home_screen.dart';
 import '../../features/creator/presentation/requests_screen.dart';
 import '../../features/dashboard/presentation/event_dashboard_screen.dart';
 import '../../features/events/domain/models.dart';
+import '../../features/guests/presentation/guests_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/inbox/inbox_screen.dart';
 import '../../features/home/presentation/home_shell.dart';
@@ -68,6 +69,7 @@ abstract final class Routes {
   static String event(String id) => '/evenement/$id';
   static String budget(String id) => '/evenement/$id/budget';
   static String tasks(String id) => '/evenement/$id/taches';
+  static String guests(String id) => '/evenement/$id/invites';
   static String agent(String id) => '/evenement/$id/agent';
   static String compareQuotes(String id) => '/evenement/$id/devis';
   static String vendor(String id) => '/prestataire/$id';
@@ -364,6 +366,11 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: 'taches',
             builder: (c, s) =>
                 _bounded(TasksScreen(id: s.pathParameters['id']!)),
+          ),
+          GoRoute(
+            path: 'invites',
+            builder: (c, s) =>
+                _bounded(GuestsScreen(id: s.pathParameters['id']!)),
           ),
           GoRoute(
             path: 'devis',

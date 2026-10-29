@@ -290,6 +290,7 @@ const _screenNames = {
   '/evenement/:id': 'Tableau de bord événement',
   '/evenement/:id/budget': 'Budget',
   '/evenement/:id/taches': 'Tâches',
+  '/evenement/:id/invites': 'Invités',
   '/nouvel-evenement': 'Nouvel événement',
   '/premium': 'Premium',
   '/business': 'Offre Creator',

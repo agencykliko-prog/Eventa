@@ -369,7 +369,13 @@ class _DashboardState extends ConsumerState<_Dashboard> {
               ),
             ),
           ),
-          SliverToBoxAdapter(child: SectionTitle('Invités & RSVP'.tr)),
+          SliverToBoxAdapter(
+            child: SectionTitle(
+              'Invités & RSVP'.tr,
+              action: 'Voir la liste'.tr,
+              onAction: () => context.push(Routes.guests(e.id)),
+            ),
+          ),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverToBoxAdapter(

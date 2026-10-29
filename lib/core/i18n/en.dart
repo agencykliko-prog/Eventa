@@ -1494,4 +1494,31 @@ const en = <String, String>{
   'Découvrir la démo sans compte': 'Explore the demo without an account',
   'Enregistrement impossible. Vérifiez votre connexion puis réessayez.':
       'Couldn’t save. Check your connection and try again.',
+  // ─── Liste des invités ─────────────────────────────────────────────────
+  'Voir la liste': 'See the list',
+  'Ajouter un invité': 'Add a guest',
+  'Présent': 'Attending',
+  'Absent': 'Not attending',
+  'Changer la réponse': 'Change the reply',
+  '{0} personnes attendues avec les accompagnants':
+      '{0} people expected, plus-ones included',
+  'Chercher un nom ou un groupe': 'Search a name or a group',
+  'Aucun invité ne correspond.': 'No guest matches.',
+  'Aucun invité dans la liste': 'No guests on the list',
+  '{0} invités prévus. Ajoutez-les pour suivre leurs réponses.':
+      '{0} guests planned. Add them to track their replies.',
+  'Ajoutez vos invités pour suivre leurs réponses.':
+      'Add your guests to track their replies.',
+  'Nouvel invité': 'New guest',
+  'Modifier l’invité': 'Edit guest',
+  'Prénom et nom': 'First and last name',
+  'Groupe': 'Group',
+  'Famille, amis, collègues…': 'Family, friends, colleagues…',
+  'Régime ou allergies': 'Diet or allergies',
+  'Accompagnants': 'Plus-ones',
+  'Indiquez le nom de l’invité.': 'Enter the guest’s name.',
+  '{0} ajouté à la liste': '{0} added to the list',
+  'Invité mis à jour': 'Guest updated',
+  'Retirer de la liste': 'Remove from the list',
+  '{0} retiré de la liste': '{0} removed from the list',
 };

@@ -77,6 +77,94 @@ abstract final class DemoData {
           ),
       ];
 
+  static const _firstNames = [
+    'Aya',
+    'Kouamé',
+    'Adjoua',
+    'Yao',
+    'Aminata',
+    'Koffi',
+    'Mariam',
+    'Serge',
+    'Affoué',
+    'Ibrahim',
+    'Akissi',
+    'Moussa',
+    'Ama',
+    'Didier',
+    'Fanta',
+    'Hervé',
+    'Nadège',
+    'Souleymane',
+    'Grâce',
+    'Arnaud',
+    'Bintou',
+    'Junior',
+    'Estelle',
+    'Lassina',
+    'Christelle',
+    'Brice',
+    'Salimata',
+    'Wilfried',
+  ];
+  static const _lastNames = [
+    'Kouassi',
+    'Konan',
+    'Traoré',
+    'Coulibaly',
+    'N’Guessan',
+    'Bamba',
+    'Yapi',
+    'Diallo',
+    'Kouadio',
+    'Ouattara',
+    'Aka',
+    'Koné',
+    'Tanoh',
+    'Gbagbo',
+    'Assi',
+    'Doumbia',
+    'Ehui',
+    'Cissé',
+    'Amani',
+    'Touré',
+  ];
+
+  /// Liste d'invités fictive qui retombe sur les compteurs voulus.
+  static Guests _guests(
+    String prefix, {
+    required int invited,
+    required int confirmed,
+    required int declined,
+    required int todayNew,
+    required List<String> groups,
+  }) {
+    final now = DateTime.now();
+    final list = [
+      for (var i = 0; i < invited; i++)
+        Guest(
+          id: '$prefix-g$i',
+          name:
+              '${_firstNames[i % _firstNames.length]} '
+              '${_lastNames[(i + i ~/ _firstNames.length) % _lastNames.length]}',
+          phone: i % 3 == 0
+              ? null
+              : '07 ${(10 + i % 89)} ${(20 + i * 13 % 79)} ${(30 + i * 7 % 69)}',
+          group: groups[i % groups.length],
+          rsvp: i < confirmed
+              ? Rsvp.yes
+              : i < confirmed + declined
+              ? Rsvp.no
+              : Rsvp.pending,
+          companions: i < confirmed && i % 4 == 0 ? 1 : 0,
+          addedAt: i >= invited - todayNew
+              ? now
+              : now.subtract(Duration(days: 2 + i % 20)),
+        ),
+    ]..sort((a, b) => a.name.compareTo(b.name));
+    return Guests.fromList(list, expected: invited);
+  }
+
   static List<Event> events() => [wedding(), birthday(), babyShower()];
 
   static Event wedding() => Event(
@@ -374,11 +462,18 @@ abstract final class DemoData {
         module: Module.budget,
       ),
     ],
-    guests: const Guests(
+    guests: _guests(
+      'w',
       invited: 250,
       confirmed: 162,
       declined: 18,
       todayNew: 8,
+      groups: const [
+        'Famille de la mariée',
+        'Famille du marié',
+        'Amis',
+        'Collègues',
+      ],
     ),
     nextPayment: Payment(
       label: 'Solde Lagune Sound',
@@ -496,7 +591,14 @@ abstract final class DemoData {
         module: Module.guests,
       ),
     ],
-    guests: const Guests(invited: 60, confirmed: 31, declined: 4, todayNew: 3),
+    guests: _guests(
+      'b',
+      invited: 60,
+      confirmed: 31,
+      declined: 4,
+      todayNew: 3,
+      groups: const ['Famille', 'Amis', 'Collègues'],
+    ),
     nextPayment: Payment(
       label: 'Solde Rooftop Le Toit',
       amount: 300000,
@@ -607,7 +709,14 @@ abstract final class DemoData {
         module: Module.budget,
       ),
     ],
-    guests: const Guests(invited: 35, confirmed: 22, declined: 2, todayNew: 2),
+    guests: _guests(
+      's',
+      invited: 35,
+      confirmed: 22,
+      declined: 2,
+      todayNew: 2,
+      groups: const ['Famille', 'Amies'],
+    ),
     nextPayment: Payment(
       label: 'Gâteau Douce Heure',
       amount: 60000,

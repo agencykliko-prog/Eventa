@@ -214,6 +214,63 @@ class EventsNotifier extends AsyncNotifier<List<Event>> {
         );
       });
 
+  // ─── Invités ─────────────────────────────────────────────────────────
+
+  void _setGuests(String eventId, List<Guest> Function(List<Guest>) f) =>
+      _update(
+        eventId,
+        (e) => e.copyWith(
+          guests: Guests.fromList(
+            f(e.guests.list),
+            expected: e.guests.expected,
+          ),
+        ),
+      );
+
+  /// Ajoute un invité et renvoie son identifiant définitif.
+  String addGuest(String eventId, Guest g) {
+    // La base attend un identifiant UUID.
+    final guest = ref.read(liveSessionProvider) && !isServerId(g.id)
+        ? Guest(
+            id: newUuid(),
+            name: g.name,
+            phone: g.phone,
+            group: g.group,
+            rsvp: g.rsvp,
+            companions: g.companions,
+            diet: g.diet,
+            addedAt: g.addedAt ?? DateTime.now(),
+          )
+        : g;
+    _setGuests(
+      eventId,
+      (l) => [...l, guest]..sort((a, b) => a.name.compareTo(b.name)),
+    );
+    _persist((r) => r.saveGuest(eventId, guest));
+    return guest.id;
+  }
+
+  void updateGuest(String eventId, Guest g) {
+    _setGuests(eventId, (l) => [for (final x in l) x.id == g.id ? g : x]);
+    _persist((r) => r.saveGuest(eventId, g));
+  }
+
+  void setRsvp(String eventId, String guestId, Rsvp rsvp) {
+    final g = state.value
+        ?.where((e) => e.id == eventId)
+        .firstOrNull
+        ?.guests
+        .list
+        .where((x) => x.id == guestId)
+        .firstOrNull;
+    if (g != null) updateGuest(eventId, g.copyWith(rsvp: rsvp));
+  }
+
+  void removeGuest(String eventId, String guestId) {
+    _setGuests(eventId, (l) => l.where((x) => x.id != guestId).toList());
+    _persist((r) => r.deleteGuest(guestId));
+  }
+
   // ─── Équipe ──────────────────────────────────────────────────────────
 
   void addMember(String eventId, TeamMember m) =>

@@ -43,7 +43,7 @@ class SupabaseEventsRepository extends EventsRepository {
   Future<List<Event>> fetchEvents() async {
     final rows = await _db
         .from('events')
-        .select('*, budget_lines(*), expenses(*), tasks(*), guests(rsvp)')
+        .select('*, budget_lines(*), expenses(*), tasks(*), guests(*)')
         .eq('archived', false)
         .order('starts_at');
     return [for (final r in rows) eventFromRow(r)];
@@ -98,11 +98,25 @@ class SupabaseEventsRepository extends EventsRepository {
       vendors: const [],
       team: [_me],
       activity: const [],
-      guests: Guests(
-        invited: guests.isEmpty ? expected : guests.length,
-        confirmed: guests.where((g) => g['rsvp'] == 'yes').length,
-        declined: guests.where((g) => g['rsvp'] == 'no').length,
+      guests: Guests.fromList(
+        [for (final g in guests) _guest(g)]
+          ..sort((a, b) => a.name.compareTo(b.name)),
+        expected: expected,
       ),
+    );
+  }
+
+  Guest _guest(Map<String, dynamic> g) {
+    final added = g['created_at'] as String?;
+    return Guest(
+      id: g['id'] as String,
+      name: g['name'] as String,
+      phone: g['phone'] as String?,
+      group: g['group_name'] as String?,
+      rsvp: _enum(Rsvp.values, g['rsvp']) ?? Rsvp.pending,
+      companions: (g['companions'] as num?)?.toInt() ?? 0,
+      diet: g['diet'] as String?,
+      addedAt: added == null ? null : DateTime.parse(added).toLocal(),
     );
   }
 
@@ -224,6 +238,22 @@ class SupabaseEventsRepository extends EventsRepository {
         'receipt_ref': x.id,
         'created_by': userId,
       });
+
+  @override
+  Future<void> saveGuest(String eventId, Guest g) => _db.from('guests').upsert({
+    'id': g.id,
+    'event_id': eventId,
+    'name': g.name,
+    'phone': g.phone,
+    'group_name': g.group,
+    'rsvp': g.rsvp.name,
+    'companions': g.companions,
+    'diet': g.diet,
+  });
+
+  @override
+  Future<void> deleteGuest(String guestId) =>
+      _db.from('guests').delete().eq('id', guestId);
 
   Map<String, dynamic> _line(String eventId, BudgetLine l) => {
     'event_id': eventId,

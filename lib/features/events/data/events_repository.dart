@@ -24,6 +24,10 @@ abstract class EventsRepository {
   Future<void> deleteLine(String eventId, BudgetCategory c) async {}
 
   Future<void> addExpense(String eventId, Expense x) async {}
+
+  Future<void> saveGuest(String eventId, Guest g) async {}
+
+  Future<void> deleteGuest(String guestId) async {}
 }
 
 class DemoEventsRepository extends EventsRepository {

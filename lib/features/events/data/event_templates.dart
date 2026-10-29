@@ -239,7 +239,7 @@ abstract final class EventTemplates {
           module: Module.team,
         ),
       ],
-      guests: Guests(invited: guests, confirmed: 0, declined: 0),
+      guests: Guests.fromList(const [], expected: guests),
     );
   }
 }

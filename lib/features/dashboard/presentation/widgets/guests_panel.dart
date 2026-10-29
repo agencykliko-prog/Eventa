@@ -27,16 +27,19 @@ class GuestsPanel extends StatelessWidget {
             children: [
               Text('${g.confirmed}', style: context.text.headlineMedium),
               const SizedBox(width: 6),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 4),
-                child: Text(
-                  'confirmés sur {0}'.trf([g.invited]),
-                  style: context.text.titleSmall?.copyWith(
-                    color: context.eventa.muted,
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  child: Text(
+                    'confirmés sur {0}'.trf([g.invited]),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: context.text.titleSmall?.copyWith(
+                      color: context.eventa.muted,
+                    ),
                   ),
                 ),
               ),
-              const Spacer(),
               if (g.todayNew > 0)
                 Tag(
                   label: '+{0} aujourd\'hui'.trf([g.todayNew]),
