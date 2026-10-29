@@ -31,7 +31,7 @@
     setTimeout(() => { if (!window.gsap) d.classList.remove('anim'); }, 2500);
   }
 </script>
-<link rel="stylesheet" href="styles.css?v=38">
+<link rel="stylesheet" href="styles.css?v=39">
 </head>
 <body>
 
@@ -87,8 +87,7 @@
     </div>
 
     <div class="hero-visual" data-speed="clamp(0.88)">
-      <div class="phone phone-tilt" data-spin aria-label="Aperçu de l’accueil de l’application">
-        <span class="side side-l1"></span><span class="side side-l2"></span><span class="side side-l3"></span><span class="side side-r"></span><span class="island"></span><div class="phone-back" aria-hidden="true"><span class="cams"><i></i><i></i><i></i></span></div>
+      <div class="phone phone-tilt" data-spin data-phone3d aria-label="Aperçu de l’accueil de l’application">
         <div class="screen screen-home">
           <div class="sh-top"><img decoding="async" width="200" height="200" src="img/avatar_1.webp" alt=""><div><small>Lundi 26 octobre</small><b>Awa</b></div><span class="bell"><i>3</i></span></div>
           <div class="sh-hero">
@@ -107,6 +106,7 @@
           </div>
           <div class="sh-tabs" aria-hidden="true"><i></i><i></i><b>+</b><i></i><i></i></div>
         </div>
+        <img class="phone-frame" src="img/phone/frame.webp" width="1043" height="2156" alt="" aria-hidden="true" decoding="async">
       </div>
       <div class="bubble b-in b1">Le DJ confirme pour samedi 🎶<time>10:42</time></div>
       <div class="bubble b-out b2">Acompte payé avec Wave ✓<time>10:44</time></div>
@@ -272,10 +272,12 @@
         <a class="btn btn-ink-ghost" data-demo-pro href="#">Version prestataire</a>
       </div>
     </div>
-    <div class="phone phone-live" data-spin>
-      <span class="side side-l1"></span><span class="side side-l2"></span><span class="side side-l3"></span><span class="side side-r"></span><span class="island"></span><div class="phone-back" aria-hidden="true"><span class="cams"><i></i><i></i><i></i></span></div>
-      <iframe title="Démo de l’application Eventa" data-demo-frame loading="lazy"></iframe>
-      <div class="phone-fallback">La démo n’est pas joignable pour le moment.<br>Réessayez dans quelques minutes.</div>
+    <div class="phone phone-live" data-spin data-phone3d="calm">
+      <div class="screen">
+        <iframe title="Démo de l’application Eventa" data-demo-frame loading="lazy"></iframe>
+        <div class="phone-fallback">La démo n’est pas joignable pour le moment.<br>Réessayez dans quelques minutes.</div>
+      </div>
+      <img class="phone-frame" src="img/phone/frame.webp" width="1043" height="2156" alt="" aria-hidden="true" decoding="async" loading="lazy">
     </div>
   </div>
 </section>
@@ -445,6 +447,9 @@
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollSmoother.min.js"></script>
-<script defer src="app.js?v=37"></script>
+<script defer src="app.js?v=38"></script>
+<!-- Téléphones 3D : three.js en module, chargé à part. Sans lui, la maquette plate reste. -->
+<script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }</script>
+<script type="module" src="phone3d.js?v=1"></script>
 </body>
 </html>

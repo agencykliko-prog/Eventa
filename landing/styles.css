@@ -182,38 +182,26 @@ h1, h2, h3, h4, p { margin: 0; }
 }
 
 /* Téléphone */
-/* iPhone 14 Pro Max : cadre fin, coins très arrondis, Dynamic Island,
-   boutons latéraux ; il tourne une fois sur lui-même (rotation 3D). */
-.phone {
-  --frame: #2B2440;
-  position: relative; width: 300px; aspect-ratio: 430 / 932;
-  border-radius: 54px; padding: 9px;
-  background: #0B0712;
-  box-shadow: inset 0 0 0 2px var(--frame), inset 0 0 0 3.5px #4A4262;
-  transform-style: preserve-3d;
+/* Téléphone réaliste : maquette détourée (img/phone/frame.webp, 1043 × 2156)
+   posée sur un écran HTML. phone3d.js le passe en 3D avec three.js ; sans
+   WebGL ou en mouvement réduit, cette version plate reste. */
+.phone { position: relative; width: 300px; aspect-ratio: 1043 / 2156; }
+.phone .screen {
+  position: absolute; left: 2.876%; top: 1.02%; width: 94.25%; height: 97.87%;
+  border-radius: 15.87% / 7.39%; overflow: hidden; background: var(--cream);
+  backface-visibility: hidden;
 }
-.phone .screen, .phone iframe { width: 100%; height: 100%; border-radius: 45px; overflow: hidden; border: 0; background: var(--cream); backface-visibility: hidden; }
-.island { position: absolute; top: 20px; left: 50%; translate: -50% 0; width: 96px; height: 28px; border-radius: 99px; background: #000; z-index: 3; backface-visibility: hidden; }
-.side { position: absolute; width: 3px; border-radius: 2px; background: #3B3352; }
-.side-l1 { left: -3px; top: 17%; height: 30px; }
-.side-l2 { left: -3px; top: 25%; height: 56px; }
-.side-l3 { left: -3px; top: 34%; height: 56px; }
-.side-r { right: -3px; top: 27%; height: 86px; }
-/* Dos du téléphone (visible pendant la rotation) */
-.phone-back { position: absolute; inset: 0; border-radius: 54px; transform: rotateY(180deg) translateZ(1px); backface-visibility: hidden;
-  background: linear-gradient(150deg, #4B3B7A, #2A1E4A 60%, #1B1233); box-shadow: inset 0 0 0 2px var(--frame); }
-.cams { position: absolute; top: 18px; left: 18px; width: 46%; aspect-ratio: 1; border-radius: 34px; background: rgba(255, 255, 255, .08);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .15); }
-.cams i { position: absolute; width: 38%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 40% 40%, #2c3550, #05060b 65%); box-shadow: 0 0 0 4px #1d1630; }
-.cams i:nth-child(1) { left: 8%; top: 8%; }
-.cams i:nth-child(2) { left: 8%; bottom: 8%; }
-.cams i:nth-child(3) { right: 8%; top: 31%; }
-.phone.spin { animation: spin3d 2.2s cubic-bezier(.65, 0, .35, 1) both; }
-@keyframes spin3d { from { transform: perspective(1400px) rotateY(0); } to { transform: perspective(1400px) rotateY(360deg); } }
+.phone iframe { display: block; width: 100%; height: 100%; border: 0; }
+.phone-frame { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; user-select: none;
+  filter: drop-shadow(0 28px 36px rgba(26, 6, 55, .28)); }
+/* Mode 3D : le canevas WebGL remplace la maquette plate. */
+.phone.p3d .phone-frame { visibility: hidden; }
+.phone.p3d .screen { will-change: transform; }
+.p3d-canvas { position: absolute; left: 50%; top: 50%; translate: -50% -50%; pointer-events: none; }
 .phone-tilt { position: absolute; right: 70px; bottom: -14px; rotate: 6deg; z-index: 1; }
 
 /* Écran d'accueil reproduit */
-.phone .screen-home { position: relative; font-size: 12px; background: var(--white); padding-top: 54px; }
+.phone .screen-home { font-size: 12px; background: var(--white); padding-top: 54px; }
 .sh-top { display: flex; align-items: center; gap: 8px; padding: 0 14px; }
 .sh-top img { width: 30px; height: 30px; border-radius: 50%; }
 .sh-top small { display: block; font-size: 9px; color: var(--muted); }
@@ -472,7 +460,7 @@ h1, h2, h3, h4, p { margin: 0; }
 /* ── Démo ───────────────────────────────────────────────── */
 .demo { padding-top: 40px; }
 .phone-live { justify-self: center; width: 360px; }
-.phone-fallback { display: none; position: absolute; inset: 9px; border-radius: 45px; backface-visibility: hidden; background: var(--lavender); color: var(--muted); padding: 40px 28px; text-align: center; align-content: center; font-weight: 500; }
+.phone-fallback { display: none; position: absolute; inset: 0; background: var(--lavender); color: var(--muted); padding: 40px 28px; text-align: center; align-content: center; font-weight: 500; }
 .phone-live.offline .phone-fallback { display: grid; }
 
 /* ── Creators ───────────────────────────────────────────── */
@@ -640,9 +628,7 @@ h1, h2, h3, h4, p { margin: 0; }
   .pill-nav.open .nav-links { display: flex; flex-direction: column; width: 100%; order: 5; margin: 6px 0 0; }
   .hero-grid { padding-top: 48px; }
   .hero-visual { height: 520px; }
-  .phone { width: 250px; border-radius: 46px; }
-  .phone .screen, .phone iframe { border-radius: 38px; }
-  .phone-back { border-radius: 46px; }
+  .phone { width: 250px; }
   .ci-badge { width: 104px; }
   .ci-flag { width: 40px; height: 40px; }
   .to-top { width: 48px; height: 48px; right: 14px; bottom: 14px; }
