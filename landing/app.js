@@ -6,6 +6,8 @@
   const root = document.documentElement;
   const G = !reduce && root.classList.contains('anim') && window.gsap && window.ScrollTrigger;
   if (!G) root.classList.remove('anim');
+  // Défilement lissé (grands écrans uniquement), créé par motion().
+  let smoother = null;
   const fcfa = (n) => Math.round(n).toLocaleString('fr-FR').replace(/ | /g, ' ');
 
   /* ── Mascottes ─────────────────────────────────────────
@@ -196,6 +198,23 @@
     gsap.registerPlugin(ScrollTrigger);
     // La barre d'adresse mobile qui se replie ne recalcule pas tout.
     ScrollTrigger.config({ ignoreMobileResize: true });
+
+    // Défilement lissé et parallaxe (data-speed) sur grand écran à la souris.
+    // Créé AVANT les ScrollTrigger. Sur tactile, le défilement natif reste :
+    // plus fluide, et les formulaires comme la démo intégrée se comportent
+    // normalement.
+    if (window.ScrollSmoother) {
+      gsap.registerPlugin(ScrollSmoother);
+      gsap.matchMedia().add('(min-width: 981px) and (pointer: fine)', () => {
+        smoother = ScrollSmoother.create({ smooth: 1.1, effects: true });
+        root.classList.add('smooth');
+        return () => {
+          smoother.kill();
+          smoother = null;
+          root.classList.remove('smooth');
+        };
+      });
+    }
     const hero = document.querySelector('.hero');
     const inHero = (sel) => hero.querySelectorAll(sel);
     const phone = hero.querySelector('.phone-tilt');
@@ -252,13 +271,6 @@
           },
         });
       },
-    });
-
-    // Grands écrans : le hero se sépare doucement en partant.
-    gsap.matchMedia().add('(min-width: 981px)', () => {
-      const out = { trigger: hero, start: 'top top', end: 'bottom top', scrub: .6 };
-      gsap.to(hero.querySelector('.hero-copy'), { y: -90, ease: 'none', scrollTrigger: out });
-      gsap.to(hero.querySelector('.hero-visual'), { y: 70, ease: 'none', scrollTrigger: { ...out } });
     });
 
     // Positions recalculées une fois les polices et les images en place.
@@ -333,9 +345,28 @@
     let tq = false;
     const check = () => { tq = false; toTop.classList.toggle('show', scrollY > innerHeight * 1.2); };
     addEventListener('scroll', () => { if (!tq) { tq = true; requestAnimationFrame(check); } }, { passive: true });
-    toTop.addEventListener('click', () => scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }));
+    toTop.addEventListener('click', () => {
+      if (smoother) smoother.scrollTo(0, true);
+      else scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+    });
     check();
   }
+
+  /* ── Ancres internes ─────────────────────────────────── */
+  // Avec ScrollSmoother, le contenu est déplacé par transformation : le saut
+  // natif vers une ancre tombe à côté, on passe par smoother.scrollTo().
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!smoother || !a || a.getAttribute('href').length < 2) return;
+    const target = document.getElementById(a.getAttribute('href').slice(1));
+    if (!target) return;
+    e.preventDefault();
+    smoother.scrollTo(target, true, 'top top');
+    history.replaceState(null, '', a.getAttribute('href'));
+    // Le focus suit (lien d'évitement, navigation au clavier).
+    if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+    target.focus({ preventScroll: true });
+  });
 
   /* ── Liens vers l'application de démo ────────────────── */
   // En ligne, l'application est servie sous /app/ ; en local, par le serveur de démo (port 8080).
@@ -364,7 +395,10 @@
     t._h = setTimeout(() => t.classList.remove('show'), 2600);
   };
 
-  /* ── Accès anticipé : envoi à Netlify Forms ──────────── */
+  /* ── Accès anticipé : enregistré dans Supabase ───────── */
+  // Clé publishable : publique par conception, la table n'accepte que l'insertion.
+  const SUPABASE_URL = 'https://wszjcjmwenpzqvyixqds.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_fRfVPiiBvhsYHc4e-d1rTw_lAWP1D5F';
   const early = document.querySelector('[data-early]');
   if (early) {
     const msg = early.querySelector('.form-msg');
@@ -376,10 +410,16 @@
       msg.className = 'form-msg';
       msg.textContent = 'Envoi…';
       try {
-        const body = new URLSearchParams(new FormData(early)).toString();
-        const r = await fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body });
-        // En local (démo), le serveur ne gère pas les formulaires : on simule.
-        if (!r.ok && !local) throw new Error(r.status);
+        if (early.elements['bot-field'].value) throw new Error('bot');
+        // Numéro normalisé : chiffres seulement, + conservé en tête.
+        const whatsapp = early.elements.whatsapp.value.trim().replace(/(?!^\+)[^0-9]/g, '');
+        const r = await fetch(`${SUPABASE_URL}/rest/v1/early_access`, {
+          method: 'POST',
+          headers: { apikey: SUPABASE_KEY, 'Content-Type': 'application/json', Prefer: 'return=minimal' },
+          body: JSON.stringify({ nom: early.elements.nom.value.trim(), whatsapp, consent: true, source: 'landing' }),
+        });
+        // 409 : numéro déjà inscrit, on le traite comme un succès.
+        if (!r.ok && r.status !== 409) throw new Error(r.status);
         early.reset();
         msg.className = 'form-msg ok';
         msg.textContent = 'Merci ! On vous écrit sur WhatsApp dès l’ouverture.';
