@@ -13,7 +13,20 @@ fi
 
 flutter config --no-analytics >/dev/null
 flutter pub get
-flutter build web --release --base-href /app/
+
+# Connexion Supabase : les variables d'environnement Netlify, si elles
+# existent, remplacent les valeurs par défaut de lib/core/backend/
+# supabase_config.dart. Une variable absente ou vide n'est pas transmise,
+# pour ne jamais écraser la valeur par défaut par une chaîne vide.
+defines=()
+for name in SUPABASE_URL SUPABASE_PUBLISHABLE_KEY; do
+  if [ -n "${!name:-}" ]; then
+    defines+=("--dart-define=$name=${!name}")
+    echo "Supabase : $name fourni par l'environnement"
+  fi
+done
+
+flutter build web --release --base-href /app/ ${defines[@]+"${defines[@]}"}
 
 rm -rf dist
 mkdir -p dist
