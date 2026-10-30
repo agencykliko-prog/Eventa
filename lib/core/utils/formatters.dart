@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 
-import '../../core/i18n/tr.dart';
+import '../i18n/tr.dart';
 
 NumberFormat get _fcfa => NumberFormat.decimalPattern(L10n.intl);
 

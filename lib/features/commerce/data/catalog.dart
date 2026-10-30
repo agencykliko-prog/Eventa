@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 
-import '../../../core/theme/app_icons.dart';
-import '../../events/domain/models.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../core/models/models.dart';
 import '../domain/commerce_models.dart';
 
 /// Catalogue de démonstration — prestataires, produits et offres fictifs.

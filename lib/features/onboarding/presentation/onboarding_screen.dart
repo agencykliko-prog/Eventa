@@ -4,118 +4,78 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/tr.dart';
-import '../../../core/router/app_router.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/eventa_colors.dart';
-import '../../../core/widgets/avatars.dart';
-import '../../../core/widgets/brand.dart';
-import '../../../core/widgets/entrance.dart';
-import '../../../core/widgets/ui.dart';
+import '../../../app/router/app_router.dart';
+import '../../../ui/theme/app_theme.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/eventa_colors.dart';
+import '../../../ui/widgets/avatars.dart';
+import '../../../ui/widgets/brand.dart';
+import '../../../ui/widgets/entrance.dart';
+import '../../../ui/widgets/pressable.dart';
+import '../../../ui/widgets/ui.dart';
 
-/// Bienvenue sur fond blanc : collage de cartes d'événements posées sur une
-/// tache douce, indicateurs qui flottent, textes centrés.
+/// Bienvenue : logo discret, promesse, collage d'événements, un seul appel
+/// à l'action et le lien de connexion pour ceux qui ont déjà un compte.
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Confetti.dark ? null : Colors.white,
+      backgroundColor: Confetti.dark ? null : const Color(0xFFFAF9FF),
       body: SafeArea(
         child: LayoutBuilder(
           builder: (context, c) {
             if (c.maxWidth >= 900 && c.maxHeight >= 560) {
               return _Desktop(height: c.maxHeight);
             }
-            final collageH = (c.maxHeight * 0.5).clamp(280.0, 460.0);
-            // Défile seulement si l'écran est trop court ; sinon les
-            // boutons restent calés en bas.
+            final collageH = (c.maxHeight * 0.54).clamp(260.0, 500.0);
+            // Défile seulement si l'écran est trop court ; sinon le bouton
+            // reste calé en bas.
             return CustomScrollView(
               physics: const ClampingScrollPhysics(),
               slivers: [
                 SliverFillRemaining(
                   hasScrollBody: false,
-                  child: Column(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.fromLTRB(24, 14, 24, 0),
-                        child: Entrance(child: CalandixWordmark(size: 24)),
-                      ),
-                      SizedBox(
-                        height: collageH,
-                        child: Stack(
-                          children: [
-                            Positioned.fill(
-                              child: CustomPaint(painter: _BlobPainter()),
-                            ),
-                            const Positioned.fill(child: _Collage()),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(24, 4, 24, 16),
-                          child: Column(
-                            children: [
-                              Entrance(
-                                index: 6,
-                                child: Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: 'Le budget parfait\npour '.tr,
-                                      ),
-                                      TextSpan(
-                                        text: 'célébrer'.tr,
-                                        style: TextStyle(
-                                          color: Confetti.violet,
-                                        ),
-                                      ),
-                                      const TextSpan(text: '.'),
-                                    ],
-                                  ),
-                                  textAlign: TextAlign.center,
-                                  style: context.text.displaySmall?.copyWith(
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              Entrance(
-                                index: 7,
-                                child: Text(
-                                  'Des prestataires vérifiés, vos invités et votre équipe : tout votre événement au même endroit.'
-                                      .tr,
-                                  textAlign: TextAlign.center,
-                                  style: context.text.bodyLarge?.copyWith(
-                                    color: context.eventa.muted,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 24),
-                              const Spacer(),
-                              Entrance(
-                                index: 8,
-                                child: PillButton(
-                                  label: 'Créer un compte'.tr,
-                                  onPressed: () => context.push(Routes.signUp),
-                                ),
-                              ),
-                              const SizedBox(height: 10),
-                              Entrance(
-                                index: 9,
-                                child: PillButton(
-                                  label: 'Se connecter'.tr,
-                                  tone: ButtonTone.ghost,
-                                  onPressed: () => context.push(Routes.signIn),
-                                ),
-                              ),
-                            ],
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+                    child: Column(
+                      children: [
+                        const Entrance(child: CalandixWordmark(size: 17)),
+                        const SizedBox(height: 18),
+                        Entrance(
+                          index: 1,
+                          child: _Promise(
+                            textAlign: TextAlign.center,
+                            style: context.text.displaySmall!,
                           ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 6),
+                        SizedBox(height: collageH, child: const _Showcase()),
+                        const SizedBox(height: 10),
+                        Entrance(
+                          index: 7,
+                          child: Text(
+                            'Votre événement dans une seule application'.tr,
+                            textAlign: TextAlign.center,
+                            style: context.text.bodyLarge?.copyWith(
+                              color: context.eventa.muted,
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        const SizedBox(height: 20),
+                        Entrance(
+                          index: 8,
+                          child: PillButton(
+                            label: 'Commencez gratuitement'.tr,
+                            onPressed: () => context.push(Routes.signUp),
+                          ),
+                        ),
+                        const SizedBox(height: 14),
+                        const Entrance(index: 9, child: _HasAccount()),
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -127,7 +87,83 @@ class OnboardingScreen extends StatelessWidget {
   }
 }
 
-/// Bienvenue desktop : promesse et boutons à gauche, collage à droite.
+/// « On gère le budget. Vous célébrez. »
+class _Promise extends StatelessWidget {
+  const _Promise({required this.style, this.textAlign});
+
+  final TextStyle style;
+  final TextAlign? textAlign;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text.rich(
+      TextSpan(
+        children: [
+          TextSpan(text: 'On gère le budget.\nVous '.tr),
+          TextSpan(
+            text: 'célébrez'.tr,
+            style: TextStyle(color: Confetti.violet),
+          ),
+          const TextSpan(text: '.'),
+        ],
+      ),
+      textAlign: textAlign,
+      style: style,
+    );
+  }
+}
+
+/// Collage posé sur sa tache douce.
+class _Showcase extends StatelessWidget {
+  const _Showcase();
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Positioned.fill(child: CustomPaint(painter: _BlobPainter())),
+        const Positioned.fill(child: _Collage()),
+      ],
+    );
+  }
+}
+
+/// « Déjà un compte ? Se connecter »
+class _HasAccount extends StatelessWidget {
+  const _HasAccount();
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      alignment: WrapAlignment.center,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 6,
+      children: [
+        Text(
+          'Déjà un compte ?'.tr,
+          style: context.text.bodyLarge?.copyWith(color: context.eventa.muted),
+        ),
+        Pressable(
+          onTap: () => context.push(Routes.signIn),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: Text(
+              'Se connecter'.tr,
+              style: context.text.bodyLarge?.copyWith(
+                color: Confetti.violet,
+                fontWeight: FontWeight.w700,
+                decoration: TextDecoration.underline,
+                decorationColor: Confetti.violet,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Bienvenue desktop : promesse et bouton à gauche, collage à droite.
 class _Desktop extends StatelessWidget {
   const _Desktop({required this.height});
 
@@ -144,7 +180,7 @@ class _Desktop extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Entrance(child: CalandixWordmark(size: 28)),
+              const Entrance(child: CalandixWordmark(size: 20)),
               Expanded(
                 child: Row(
                   children: [
@@ -156,21 +192,11 @@ class _Desktop extends StatelessWidget {
                         children: [
                           Entrance(
                             index: 6,
-                            child: Text.rich(
-                              TextSpan(
-                                children: [
-                                  TextSpan(text: 'Le budget parfait\npour '.tr),
-                                  TextSpan(
-                                    text: 'célébrer'.tr,
-                                    style: TextStyle(color: Confetti.violet),
-                                  ),
-                                  const TextSpan(text: '.'),
-                                ],
-                              ),
-                              style: context.text.displayMedium?.copyWith(
-                                fontSize: 60,
-                                height: 1.04,
-                                letterSpacing: -1.8,
+                            child: _Promise(
+                              style: context.text.displayMedium!.copyWith(
+                                fontSize: 56,
+                                height: 1.06,
+                                letterSpacing: -1.6,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
@@ -178,40 +204,26 @@ class _Desktop extends StatelessWidget {
                           const SizedBox(height: 18),
                           Entrance(
                             index: 7,
-                            child: ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 440),
-                              child: Text(
-                                'Des prestataires vérifiés, vos invités et votre équipe : tout votre événement au même endroit.'
-                                    .tr,
-                                style: context.text.bodyLarge?.copyWith(
-                                  fontSize: 19,
-                                  height: 1.45,
-                                  color: context.eventa.muted,
-                                ),
+                            child: Text(
+                              'Votre événement dans une seule application'.tr,
+                              style: context.text.bodyLarge?.copyWith(
+                                fontSize: 19,
+                                height: 1.45,
+                                color: context.eventa.muted,
                               ),
                             ),
                           ),
-                          const SizedBox(height: 36),
+                          const SizedBox(height: 32),
                           Entrance(
                             index: 8,
-                            child: Wrap(
-                              spacing: 12,
-                              runSpacing: 12,
-                              children: [
-                                PillButton(
-                                  label: 'Créer un compte'.tr,
-                                  expand: false,
-                                  onPressed: () => context.push(Routes.signUp),
-                                ),
-                                PillButton(
-                                  label: 'Se connecter'.tr,
-                                  tone: ButtonTone.ghost,
-                                  expand: false,
-                                  onPressed: () => context.push(Routes.signIn),
-                                ),
-                              ],
+                            child: PillButton(
+                              label: 'Commencez gratuitement'.tr,
+                              expand: false,
+                              onPressed: () => context.push(Routes.signUp),
                             ),
                           ),
+                          const SizedBox(height: 12),
+                          const Entrance(index: 9, child: _HasAccount()),
                         ],
                       ),
                     ),
@@ -220,14 +232,7 @@ class _Desktop extends StatelessWidget {
                       flex: 6,
                       child: SizedBox(
                         height: collageH,
-                        child: Stack(
-                          children: [
-                            Positioned.fill(
-                              child: CustomPaint(painter: _BlobPainter()),
-                            ),
-                            const Positioned.fill(child: _Collage()),
-                          ],
-                        ),
+                        child: const _Showcase(),
                       ),
                     ),
                   ],
@@ -488,7 +493,7 @@ class _Chip extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 11.5,
                   color: hue.text,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
               Text(
@@ -545,7 +550,7 @@ class _Countdown extends StatelessWidget {
             style: TextStyle(
               color: Colors.white,
               fontSize: 12,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],

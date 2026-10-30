@@ -4,12 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/i18n/tr.dart';
-import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/eventa_colors.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
-import '../../../core/widgets/pressable.dart';
-import '../../../core/widgets/ui.dart';
-import '../../creator/presentation/creator_providers.dart';
+import '../../../ui/widgets/pressable.dart';
+import '../../../ui/widgets/ui.dart';
+import 'creator_providers.dart';
 import 'pro_providers.dart';
 import 'pro_widgets.dart';
 
@@ -415,7 +415,7 @@ class _MonthGrid extends ConsumerWidget {
                                       '$load/${a.capacityPerDay}',
                                       style: TextStyle(
                                         fontSize: 9,
-                                        fontWeight: FontWeight.w600,
+                                        fontWeight: FontWeight.w500,
                                         color: fg,
                                       ),
                                     ),

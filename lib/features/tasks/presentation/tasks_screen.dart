@@ -3,14 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/tr.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/eventa_colors.dart';
+import '../../../ui/theme/app_theme.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
-import '../../../core/widgets/mascot.dart';
-import '../../../core/widgets/pressable.dart';
-import '../../../core/widgets/ui.dart';
-import '../../events/domain/models.dart';
+import '../../../ui/widgets/mascot.dart';
+import '../../../ui/widgets/pressable.dart';
+import '../../../ui/widgets/ui.dart';
+import '../../../core/models/models.dart';
 import '../../events/presentation/events_providers.dart';
 import '../../events/presentation/widgets/task_timeline.dart';
 
@@ -240,7 +240,7 @@ class _Segmented extends StatelessWidget {
                             style: context.text.labelMedium?.copyWith(
                               fontWeight: f == value
                                   ? FontWeight.w800
-                                  : FontWeight.w600,
+                                  : FontWeight.w500,
                               color: f == value
                                   ? Confetti.ink
                                   : context.eventa.muted,

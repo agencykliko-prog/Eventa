@@ -1,4 +1,4 @@
-import 'package:eventa/core/theme/app_theme.dart';
+import 'package:eventa/ui/theme/app_theme.dart';
 import 'package:eventa/features/about/presentation/about_screen.dart';
 import 'package:eventa/features/about/presentation/privacy_screen.dart';
 import 'package:eventa/features/about/presentation/terms_screen.dart';

@@ -1,4 +1,4 @@
-import '../domain/models.dart';
+import '../../../core/models/models.dart';
 import 'demo_data.dart';
 
 /// Contrat d'accès aux événements. En démo, les données sont locales et les

@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 
-import '../../../core/theme/app_icons.dart';
-import '../domain/models.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../core/models/models.dart';
 import 'demo_data.dart';
 
 /// Modèles par famille : répartition du budget et checklist pré-remplie,

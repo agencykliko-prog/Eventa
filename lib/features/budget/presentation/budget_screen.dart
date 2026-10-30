@@ -4,22 +4,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/tr.dart';
-import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/app_theme.dart';
-import '../../../core/theme/eventa_colors.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/app_theme.dart';
+import '../../../ui/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
-import '../../../core/widgets/donut.dart';
-import '../../../core/widgets/entrance.dart';
-import '../../../core/widgets/forms.dart';
-import '../../../core/widgets/mascot.dart';
-import '../../../core/widgets/pressable.dart';
-import '../../../core/widgets/ui.dart';
+import '../../../ui/dataviz/donut.dart';
+import '../../../ui/widgets/entrance.dart';
+import '../../../ui/widgets/forms.dart';
+import '../../../ui/widgets/mascot.dart';
+import '../../../ui/widgets/pressable.dart';
+import '../../../ui/widgets/ui.dart';
 import '../../commerce/domain/commerce_models.dart';
 import '../../dashboard/presentation/widgets/budget_overview.dart';
 import '../../events/data/event_templates.dart';
-import '../../events/domain/models.dart';
+import '../../../core/models/models.dart';
 import '../../events/presentation/events_providers.dart';
-import '../../export/export_sheet.dart';
+import '../../export/presentation/export_sheet.dart';
 import '../../premium/presentation/paywall.dart';
 import '../../premium/presentation/premium_nudge.dart';
 
@@ -110,7 +110,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
               icon: const Icon(AppIcons.add, size: 20),
               label: Text(
                 'Dépense'.tr,
-                style: TextStyle(fontWeight: FontWeight.w600),
+                style: TextStyle(fontWeight: FontWeight.w500),
               ),
             ),
     );

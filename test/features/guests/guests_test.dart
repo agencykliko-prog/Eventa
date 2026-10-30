@@ -1,8 +1,8 @@
-import 'package:eventa/core/theme/app_theme.dart';
+import 'package:eventa/ui/theme/app_theme.dart';
 import 'package:eventa/features/events/data/demo_data.dart';
 import 'package:eventa/features/events/data/event_templates.dart';
 import 'package:eventa/features/events/data/events_repository.dart';
-import 'package:eventa/features/events/domain/models.dart';
+import 'package:eventa/core/models/models.dart';
 import 'package:eventa/features/events/presentation/events_providers.dart';
 import 'package:eventa/features/guests/presentation/guests_screen.dart';
 import 'package:flutter/material.dart';

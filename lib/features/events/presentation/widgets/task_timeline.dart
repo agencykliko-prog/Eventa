@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/i18n/tr.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../../../core/theme/app_icons.dart';
-import '../../../../core/theme/eventa_colors.dart';
+import '../../../../ui/theme/app_theme.dart';
+import '../../../../ui/theme/app_icons.dart';
+import '../../../../ui/theme/eventa_colors.dart';
 import '../../../../core/utils/formatters.dart';
-import '../../../../core/widgets/avatars.dart';
-import '../../../../core/widgets/pressable.dart';
-import '../../domain/models.dart';
+import '../../../../ui/widgets/avatars.dart';
+import '../../../../ui/widgets/pressable.dart';
+import '../../../../core/models/models.dart';
 
 Hue moduleHue(Module m) => switch (m) {
   Module.budget => Hue.lagoon,
@@ -118,7 +118,7 @@ class _TimelineRow extends StatelessWidget {
                       shortDate(t.due),
                       style: context.text.labelSmall?.copyWith(
                         color: context.eventa.muted,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                 ],
@@ -165,7 +165,7 @@ class _TimelineRow extends StatelessWidget {
                     '${timeOf(t.due)} – ${timeOf(end)}${overdue ? ' · en retard'.tr : ''}',
                     style: context.text.labelSmall?.copyWith(
                       color: overdue ? Confetti.danger : context.eventa.muted,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(height: 2),

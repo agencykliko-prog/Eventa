@@ -2,16 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/i18n/tr.dart';
-import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/eventa_colors.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
-import '../../../core/widgets/avatars.dart';
-import '../../../core/widgets/forms.dart';
-import '../../../core/widgets/ui.dart';
-import '../../creator/presentation/creator_providers.dart';
+import '../../../ui/widgets/avatars.dart';
+import '../../../ui/widgets/forms.dart';
+import '../../../ui/widgets/ui.dart';
+import 'creator_providers.dart';
 import '../domain/pro_models.dart';
 import 'pro_providers.dart';
 import 'pro_widgets.dart';
+import '../../../ui/dataviz/dataviz.dart';
 
 /// F. Réputation & performance : avis vérifiés, réactivité, indicateurs
 /// et satisfaction client.
@@ -117,9 +118,9 @@ class ReputationScreen extends ConsumerWidget {
           ),
         ),
         SectionTitle('Indicateurs de performance'.tr),
-        StatGrid(
+        KpiGrid.compact(
           children: [
-            ProStat(
+            KpiCard.compact(
               label: 'Taux de réponse'.tr,
               value:
                   '${requests.isEmpty ? 0 : (answered / requests.length * 100).round()} %',
@@ -127,20 +128,20 @@ class ReputationScreen extends ConsumerWidget {
               icon: AppIcons.message,
               caption: 'Objectif : 90 %'.tr,
             ),
-            ProStat(
+            KpiCard.compact(
               label: 'Temps de réponse moyen'.tr,
               value: '1 h 12',
               hue: Hue.violet,
               icon: AppIcons.timer,
               caption: 'Top 20 % de votre catégorie'.tr,
             ),
-            ProStat(
+            KpiCard.compact(
               label: 'Taux d’acceptation'.tr,
               value: '${(acceptance * 100).round()} %',
               hue: Hue.mango,
               icon: AppIcons.calendarCheck,
             ),
-            ProStat(
+            KpiCard.compact(
               label: 'Prestations honorées'.tr,
               value: '100 %',
               hue: Hue.coral,

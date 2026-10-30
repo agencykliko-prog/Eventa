@@ -1,4 +1,4 @@
-import 'package:eventa/core/theme/app_theme.dart';
+import 'package:eventa/ui/theme/app_theme.dart';
 import 'package:eventa/features/commerce/presentation/commerce_providers.dart';
 import 'package:eventa/features/premium/presentation/business_screen.dart';
 import 'package:flutter/material.dart';

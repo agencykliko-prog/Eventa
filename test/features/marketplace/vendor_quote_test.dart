@@ -1,8 +1,8 @@
-import 'package:eventa/core/theme/app_theme.dart';
-import 'package:eventa/features/auth/domain/profile.dart';
-import 'package:eventa/features/auth/presentation/session_provider.dart';
+import 'package:eventa/ui/theme/app_theme.dart';
+import 'package:eventa/core/auth/profile.dart';
+import 'package:eventa/core/auth/session_provider.dart';
 import 'package:eventa/features/commerce/data/catalog.dart';
-import 'package:eventa/features/events/domain/models.dart';
+import 'package:eventa/core/models/models.dart';
 import 'package:eventa/features/events/presentation/events_providers.dart';
 import 'package:eventa/features/marketplace/data/vendor_media.dart';
 import 'package:eventa/features/marketplace/presentation/vendor_screen.dart';

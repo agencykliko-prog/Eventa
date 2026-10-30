@@ -1245,9 +1245,6 @@ const en = <String, String>{
   ' et notre ': ' and our ',
   'J’accepte les conditions': 'I accept the terms',
   'Cochez la case pour continuer.': 'Tick the box to continue.',
-  'Le budget parfait\npour ': 'The perfect budget\nto ',
-  'célébrer': 'celebrate',
-  'Des prestataires vérifiés, vos invités et votre équipe : tout votre événement au même endroit.': 'Verified vendors, your guests and your team: your whole event in one place.',
   '{0} Go': '{0} GB',
   '{0} sur {1}': '{0} of {1}',
 
@@ -1521,4 +1518,13 @@ const en = <String, String>{
   'Invité mis à jour': 'Guest updated',
   'Retirer de la liste': 'Remove from the list',
   '{0} retiré de la liste': '{0} removed from the list',
+  // ─── Bienvenue et notifications ────────────────────────────────────────
+  'On gère le budget.\nVous ': 'We handle the budget.\nYou ',
+  'célébrez': 'celebrate',
+  'Votre événement dans une seule application': 'Your event in a single app',
+  'Commencez gratuitement': 'Get started for free',
+  'Déjà un compte ?': 'Already have an account?',
+  'Ne manquez rien de votre événement': 'Don’t miss a thing about your event',
+  'Recevez un rappel pour vos tâches, les réponses de vos invités et les messages de vos prestataires.': 'Get reminders for your tasks, your guests’ replies and messages from your vendors.',
+  'Activer les notifications': 'Turn on notifications',
 };

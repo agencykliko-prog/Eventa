@@ -2,7 +2,7 @@ import 'package:eventa/core/utils/formatters.dart';
 import 'package:eventa/features/events/data/demo_data.dart';
 import 'package:eventa/features/events/data/event_templates.dart';
 import 'package:eventa/features/events/data/events_repository.dart';
-import 'package:eventa/features/events/domain/models.dart';
+import 'package:eventa/core/models/models.dart';
 import 'package:eventa/features/events/presentation/events_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';

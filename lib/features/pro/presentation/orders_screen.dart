@@ -3,17 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/i18n/tr.dart';
 import '../../../core/sound/sounds.dart';
-import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/eventa_colors.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/eventa_colors.dart';
 import '../../../core/utils/formatters.dart';
-import '../../../core/widgets/avatars.dart';
-import '../../../core/widgets/forms.dart';
-import '../../../core/widgets/ui.dart';
-import '../../creator/presentation/creator_providers.dart';
+import '../../../ui/widgets/avatars.dart';
+import '../../../ui/widgets/forms.dart';
+import '../../../ui/widgets/ui.dart';
+import 'creator_providers.dart';
 import '../../marketplace/presentation/explore_screen.dart';
 import '../domain/pro_models.dart';
 import 'pro_providers.dart';
 import 'pro_widgets.dart';
+import '../../../ui/dataviz/dataviz.dart';
 
 /// Exigences du client à préparer pour une commande.
 List<String> requirementsOf(ClientRequest r) => [
@@ -54,27 +55,27 @@ class _OrdersScreenState extends ConsumerState<OrdersScreen> {
           'Chaque réservation confirmée, de la préparation à la clôture.'.tr,
       children: [
         const SizedBox(height: 12),
-        StatGrid(
+        KpiGrid.compact(
           children: [
-            ProStat(
+            KpiCard.compact(
               label: 'En cours'.tr,
               value: '${orders.where((r) => !isClosed(r)).length}',
               hue: Hue.lagoon,
               icon: AppIcons.calendarCheck,
             ),
-            ProStat(
+            KpiCard.compact(
               label: 'Prochaine prestation'.tr,
               value: next == null ? '—' : countdownLabel(next.date),
               hue: Hue.coral,
               icon: AppIcons.timer,
             ),
-            ProStat(
+            KpiCard.compact(
               label: 'Clôturées'.tr,
               value: '${orders.where(isClosed).length}',
               hue: Hue.violet,
               icon: AppIcons.checkCircle,
             ),
-            ProStat(
+            KpiCard.compact(
               label: 'Montant en cours'.tr,
               value: fcfaCompact(
                 orders

@@ -3,8 +3,8 @@ import 'package:flutter/widgets.dart' show IconData;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/backend/backend.dart';
-import '../../../core/theme/app_icons.dart';
-import '../domain/models.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../core/models/models.dart';
 import 'event_templates.dart';
 import 'events_repository.dart';
 

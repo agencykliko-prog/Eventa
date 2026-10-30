@@ -46,12 +46,42 @@ flutter build web --release
 
 ## Structure
 
+Un seul code Flutter sert le web et le mobile ; seul ce qui dépend vraiment
+de la plateforme est isolé dans `platform/`.
+
 ```
 lib/
-  core/        thème, routeur, composants partagés, utilitaires
-  features/    une dossier par fonctionnalité (auth, home, dashboard,
-               budget, planning, marketplace, booking, creator, …)
-test/          tests unitaires et de widgets
+  main.dart      démarrage (Supabase, formats de date)
+  app/           application et routeur (routes, garde d'accès)
+  core/          socle sans interface
+    auth/        session, profil, passerelle d'authentification
+    backend/     client Supabase
+    config/      configuration (URL, clé publishable)
+    models/      modèles de domaine partagés (événement, budget,
+                 prestataires, invités, équipe et droits)
+    payments/    paiements SasPay (via les Edge Functions)
+    prefs/, i18n/, analytics/, sound/, utils/
+  ui/            design system
+    theme/       couleurs, typographie, icônes, mouvement
+    widgets/     composants (boutons, panneaux, formulaires, mascotte…)
+    dataviz/     kit commun des tableaux de bord : KpiCard, KpiGrid,
+                 BarChart, Sparkline, Donut, LiveDot
+  features/      un dossier par domaine (events, budget, planning, booking,
+                 marketplace, pro, premium, notifications, …), en
+                 data / domain / presentation
+  admin/         console d'administration (web)
+  platform/
+    web/         implémentations navigateur (téléchargement, liens, préférences)
+    mobile/      implémentations hors navigateur
+supabase/        migrations et Edge Functions (Deno)
+test/            tests unitaires et de widgets
 ```
+
+Règles de dépendance :
+- `core/` n'importe jamais `features/` ni `admin/`. Seule exception admise :
+  `ui/theme/` (les modèles portent leur icône et leur couleur).
+- `ui/theme/` n'importe rien du projet hormis `core/i18n/`.
+- Un indicateur ou un graphique de tableau de bord vient toujours de
+  `ui/dataviz/` (organisateur, espace pro et administration).
 
 Le contexte produit est décrit dans [PRODUCT.md](PRODUCT.md).

@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/analytics/analytics.dart';
 import '../../../core/i18n/tr.dart';
-import '../../admin/domain/admin_models.dart';
-import '../../admin/presentation/admin_providers.dart';
-import '../../auth/presentation/session_provider.dart';
+import '../../../admin/domain/admin_models.dart';
+import '../../../admin/presentation/admin_providers.dart';
+import '../../../core/auth/session_provider.dart';
 
 // ─── Vérification du prestataire ────────────────────────────────────────
 // Le Creator dépose ses pièces et envoie son dossier ; l'équipe Calandix le

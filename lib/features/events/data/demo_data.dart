@@ -1,6 +1,6 @@
-import '../../../core/theme/app_icons.dart';
+import '../../../ui/theme/app_icons.dart';
 import '../../commerce/data/catalog.dart';
-import '../domain/models.dart';
+import '../../../core/models/models.dart';
 
 /// Données de démonstration (fictives). Les dates sont relatives à
 /// aujourd'hui pour que les comptes à rebours restent cohérents.

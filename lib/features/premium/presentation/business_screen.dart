@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/i18n/tr.dart';
-import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/eventa_colors.dart';
-import '../../../core/widgets/entrance.dart';
-import '../../../core/widgets/ui.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/eventa_colors.dart';
+import '../../../ui/widgets/entrance.dart';
+import '../../../ui/widgets/ui.dart';
 import '../../../core/utils/formatters.dart';
 import '../../commerce/data/catalog.dart';
 import '../../commerce/domain/commerce_models.dart';

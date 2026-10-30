@@ -1,6 +1,6 @@
-import 'package:eventa/app.dart';
-import 'package:eventa/features/auth/domain/profile.dart';
-import 'package:eventa/features/auth/presentation/session_provider.dart';
+import 'package:eventa/app/app.dart';
+import 'package:eventa/core/auth/profile.dart';
+import 'package:eventa/core/auth/session_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -22,11 +22,11 @@ void main() {
   ) async {
     await start(tester);
     expect(
-      find.textContaining('Le budget parfait', findRichText: true),
+      find.textContaining('On gère le budget', findRichText: true),
       findsOneWidget,
     );
 
-    await tester.tap(find.text('Créer un compte'));
+    await tester.tap(find.text('Commencez gratuitement'));
     await tester.pump(const Duration(milliseconds: 700));
 
     expect(find.text('Organisateur'), findsOneWidget);

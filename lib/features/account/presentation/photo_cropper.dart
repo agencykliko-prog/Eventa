@@ -6,9 +6,9 @@ import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/i18n/tr.dart';
-import '../../../core/theme/app_icons.dart';
-import '../../../core/theme/eventa_colors.dart';
-import '../../../core/widgets/ui.dart';
+import '../../../ui/theme/app_icons.dart';
+import '../../../ui/theme/eventa_colors.dart';
+import '../../../ui/widgets/ui.dart';
 
 /// Importe une image, laisse l'utilisateur la recadrer (glisser, pincer,
 /// curseur de zoom) dans un cercle, et renvoie le résultat en PNG.

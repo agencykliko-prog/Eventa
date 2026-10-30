@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../core/theme/eventa_colors.dart';
-import '../../events/domain/models.dart';
+import '../../../ui/theme/eventa_colors.dart';
+import '../../../core/models/models.dart';
 
 /// Photos libres de droits (Unsplash), servies depuis leur CDN comme le
 /// recommande Unsplash. Une réserve par catégorie alimente les portfolios.

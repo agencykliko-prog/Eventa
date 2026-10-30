@@ -3,13 +3,13 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../../../../core/i18n/tr.dart';
-import '../../../../core/theme/app_icons.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../../../core/theme/eventa_colors.dart';
+import '../../../../ui/theme/app_icons.dart';
+import '../../../../ui/theme/app_theme.dart';
+import '../../../../ui/theme/eventa_colors.dart';
 import '../../../../core/utils/formatters.dart';
-import '../../../../core/widgets/pressable.dart';
-import '../../../../core/widgets/ui.dart';
-import '../../../events/domain/models.dart';
+import '../../../../ui/widgets/pressable.dart';
+import '../../../../ui/widgets/ui.dart';
+import '../../../../core/models/models.dart';
 
 /// Carte budget. Hiérarchie : le budget total d'abord, en grand ; puis
 /// l'allocation (payé, engagé, disponible) sur une seule barre.

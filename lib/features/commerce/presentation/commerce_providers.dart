@@ -6,8 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/analytics/analytics.dart';
 import '../../../core/i18n/tr.dart';
 import '../../../core/sound/sounds.dart';
-import '../../auth/presentation/session_provider.dart';
-import '../../events/domain/models.dart';
+import '../../../core/auth/session_provider.dart';
+import '../../../core/models/models.dart';
 import '../../events/presentation/events_providers.dart';
 import '../domain/commerce_models.dart';
 
