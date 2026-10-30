@@ -198,7 +198,7 @@ class _GreetingHeroState extends ConsumerState<GreetingHero>
                                   fontFamily: AppTheme.font,
                                   fontSize: compact ? 15 : 16.5,
                                   height: 1.3,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                   color: Colors.white.withValues(alpha: 0.82),
                                 ),
                               ),

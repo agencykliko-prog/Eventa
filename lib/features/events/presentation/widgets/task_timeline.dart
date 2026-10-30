@@ -118,7 +118,7 @@ class _TimelineRow extends StatelessWidget {
                       shortDate(t.due),
                       style: context.text.labelSmall?.copyWith(
                         color: context.eventa.muted,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                 ],
@@ -165,7 +165,7 @@ class _TimelineRow extends StatelessWidget {
                     '${timeOf(t.due)} – ${timeOf(end)}${overdue ? ' · en retard'.tr : ''}',
                     style: context.text.labelSmall?.copyWith(
                       color: overdue ? Confetti.danger : context.eventa.muted,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(height: 2),

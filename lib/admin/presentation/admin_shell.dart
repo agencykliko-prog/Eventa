@@ -354,7 +354,7 @@ class _MenuItem extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: context.text.titleSmall?.copyWith(
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
                   color: locked ? Confetti.inkFaint : Confetti.ink,
                 ),
               ),

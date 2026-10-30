@@ -165,7 +165,7 @@ class _AppFieldState extends State<AppField> {
               labelText: widget.floating ? widget.label : null,
               floatingLabelStyle: TextStyle(
                 color: Confetti.coralDeep,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
               ),
               labelStyle: TextStyle(color: Confetti.inkMuted),
               contentPadding: widget.floating

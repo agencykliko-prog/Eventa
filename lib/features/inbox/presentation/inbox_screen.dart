@@ -154,7 +154,7 @@ class _Row extends ConsumerWidget {
                       _ago(c.lastAt),
                       style: context.text.labelSmall?.copyWith(
                         color: unread > 0 ? Confetti.violet : Confetti.inkFaint,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -177,7 +177,7 @@ class _Row extends ConsumerWidget {
                         overflow: TextOverflow.ellipsis,
                         style: context.text.bodySmall?.copyWith(
                           color: unread > 0 ? Confetti.ink : Confetti.inkMuted,
-                          fontWeight: unread > 0 ? FontWeight.w600 : null,
+                          fontWeight: unread > 0 ? FontWeight.w700 : null,
                         ),
                       ),
                     ),

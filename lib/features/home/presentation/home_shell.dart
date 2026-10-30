@@ -348,7 +348,7 @@ class _Rail extends StatelessWidget {
                                 t.label,
                                 style: TextStyle(
                                   fontSize: 10.5,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                   color: Confetti.ink,
                                 ),
                               ),

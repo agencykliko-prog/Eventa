@@ -110,7 +110,7 @@ class _BudgetScreenState extends ConsumerState<BudgetScreen> {
               icon: const Icon(AppIcons.add, size: 20),
               label: Text(
                 'Dépense'.tr,
-                style: TextStyle(fontWeight: FontWeight.w600),
+                style: TextStyle(fontWeight: FontWeight.w500),
               ),
             ),
     );

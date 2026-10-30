@@ -22,11 +22,11 @@ void main() {
   ) async {
     await start(tester);
     expect(
-      find.textContaining('Le budget parfait', findRichText: true),
+      find.textContaining('On gère le budget', findRichText: true),
       findsOneWidget,
     );
 
-    await tester.tap(find.text('Créer un compte'));
+    await tester.tap(find.text('Commencez gratuitement'));
     await tester.pump(const Duration(milliseconds: 700));
 
     expect(find.text('Organisateur'), findsOneWidget);

@@ -415,7 +415,7 @@ class _MonthGrid extends ConsumerWidget {
                                       '$load/${a.capacityPerDay}',
                                       style: TextStyle(
                                         fontSize: 9,
-                                        fontWeight: FontWeight.w600,
+                                        fontWeight: FontWeight.w500,
                                         color: fg,
                                       ),
                                     ),

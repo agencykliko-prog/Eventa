@@ -240,7 +240,7 @@ class _Segmented extends StatelessWidget {
                             style: context.text.labelMedium?.copyWith(
                               fontWeight: f == value
                                   ? FontWeight.w800
-                                  : FontWeight.w600,
+                                  : FontWeight.w500,
                               color: f == value
                                   ? Confetti.ink
                                   : context.eventa.muted,

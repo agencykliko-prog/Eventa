@@ -27,6 +27,7 @@ import '../../features/guests/presentation/guests_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/inbox/presentation/inbox_screen.dart';
 import '../../features/home/presentation/home_shell.dart';
+import '../../features/notifications/presentation/notification_prompt.dart';
 import '../../features/marketplace/presentation/explore_screen.dart';
 import '../../features/marketplace/presentation/vendor_screen.dart';
 import '../../features/onboarding/presentation/onboarding_screen.dart';
@@ -178,7 +179,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         ),
       ),
       StatefulShellRoute.indexedStack(
-        builder: (c, s, shell) => HomeShell(shell: shell),
+        builder: (c, s, shell) =>
+            NotificationPrompt(child: HomeShell(shell: shell)),
         branches: [
           StatefulShellBranch(
             routes: [
