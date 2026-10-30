@@ -719,3 +719,4 @@ html.smooth { scroll-behavior: auto; }
   .nav-links { gap: 0; }
   .nav-links a { padding: 10px 9px; font-size: 14px; }
 }
+.btn .wide-only { margin-left: -4px; }
