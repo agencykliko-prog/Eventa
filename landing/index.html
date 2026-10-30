@@ -33,12 +33,76 @@
 </script>
 <link rel="icon" type="image/png" href="img/favicon.png">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
-<link rel="stylesheet" href="styles.css?v=40">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Satisfy&display=swap">
+<link rel="stylesheet" href="styles.css?v=45">
 </head>
 <body>
 
 <a class="skip" href="#contenu">Aller au contenu</a>
 
+
+<!-- Navigation fixe : hors du cadre lissé, qui se déplace par transformation. -->
+<nav class="pill-nav" aria-label="Navigation principale">
+  <a class="logo" href="#haut" aria-label="Calandix, accueil">
+    <svg class="logo-cards" viewBox="0 0 324 321" aria-hidden="true"><rect class="c-mango" x="5" y="0" width="313" height="200" rx="60"/><rect class="c-coral" x="5" y="60" width="313" height="200" rx="60"/><g transform="rotate(10.7 162 205)"><rect class="c-violet" x="11" y="110" width="302" height="191" rx="56"/></g></svg>
+    <img class="logo-word" src="img/calandix-wordmark.webp" width="789" height="161" alt="">
+  </a>
+  <div class="nav-links">
+    <details class="nav-why">
+      <summary>Calandix</summary>
+      <div class="why-panel">
+        <p class="eyebrow ink">Pourquoi choisir Calandix ?</p>
+        <p class="why-title">Votre événement mérite une organisation à la hauteur de vos <em class="script">ambitions</em>.</p>
+        <p class="why-intro">Mariage, dot, baptême, anniversaire ou cérémonie d’entreprise : chaque célébration compte. Calandix réunit en un seul espace tout ce dont vous avez besoin pour l’organiser sereinement, sans tableaux éparpillés ni appels interminables.</p>
+        <div class="why-grid">
+        <article class="why-card">
+        <span class="why-icon" aria-hidden="true">💰</span>
+        <h3>Budget : suivez chaque dépense</h3>
+        <p class="why-sub">Gardez le contrôle de chaque franc CFA.</p>
+        <p>Entre la salle, le traiteur, la décoration, les tenues et les imprévus, un budget peut vite déraper. Avec Calandix, vous fixez votre enveloppe globale, vous la répartissez par poste et vous enregistrez chaque paiement au fur et à mesure, qu’il soit effectué en espèces, par virement ou par Mobile Money.</p>
+        <p>En un coup d’œil, vous savez ce qui a été réglé, ce qui reste à payer et où vous en êtes par rapport à votre objectif. Fini les mauvaises surprises la veille du grand jour.</p>
+        </article>
+        <article class="why-card">
+        <span class="why-icon" aria-hidden="true">🎉</span>
+        <h3>Prestataires : comparez et réservez</h3>
+        <p class="why-sub">Choisissez les bons partenaires, en toute confiance.</p>
+        <p>Traiteurs, DJ, décorateurs, photographes, salles de réception, location de chaises et de bâches : trouver le bon prestataire au bon prix demande du temps. Calandix vous aide à centraliser vos contacts, comparer les devis et suivre l’avancement de chaque réservation.</p>
+        <p>Vous savez qui a confirmé, qui attend un acompte et qui doit encore vous recontacter. Vos échanges restent organisés, et vos engagements sont respectés.</p>
+        </article>
+        <article class="why-card">
+        <span class="why-icon" aria-hidden="true">👥</span>
+        <h3>Invités : confirmez les présences</h3>
+        <p class="why-sub">Recevez chacun comme il se doit.</p>
+        <p>Chez nous, une invitation dépasse souvent le cercle restreint : la famille, les amis, les collègues, les voisins. Calandix vous permet de constituer votre liste d’invités, de partager votre invitation et de suivre les confirmations en temps réel.</p>
+        <p>Vous connaissez le nombre exact de personnes attendues, ce qui vous permet d’ajuster le nombre de couverts, de places assises et de boissons. Moins de gaspillage, plus d’élégance dans l’accueil.</p>
+        </article>
+        <article class="why-card">
+        <span class="why-icon" aria-hidden="true">📅</span>
+        <h3>Planning : ne manquez aucune étape</h3>
+        <p class="why-sub">Chaque échéance au bon moment.</p>
+        <p>De la première visite de salle au dernier essayage, en passant par la remise des cartes d’invitation, un événement réussi repose sur une succession d’étapes bien orchestrées. Calandix structure votre calendrier, vous rappelle les tâches importantes et vous permet de répartir les responsabilités entre les membres de votre comité d’organisation.</p>
+        <p>Tout le monde sait ce qu’il doit faire, et quand. Vous avancez sereinement, du premier jour jusqu’au jour J.</p>
+        </article>
+        </div>
+        <div class="why-end">
+          <p class="h-md">Calandix, l’organisation de vos événements, en toute <em class="script">sérénité</em>.</p>
+          <a class="btn btn-cta btn-violet" href="#demo">Commencer gratuitement</a>
+        </div>
+      </div>
+    </details>
+    <a href="#budget">Budget</a>
+    <a href="#prestataires">Prestataires</a>
+    <a href="#creators">Pour les pros</a>
+    <a href="#tarifs">Tarifs</a>
+    <a href="#faq">FAQ</a>
+  </div>
+  <div class="nav-cta">
+    <a class="btn btn-cta btn-sm" href="#demo">Organiser<span class="wide-only">gratuitement</span></a>
+  </div>
+  <button class="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
+</nav>
 
 <!-- ScrollSmoother (grands écrans) : le contenu défile dans ce cadre. Les
      éléments fixes (confettis, retour en haut, messages) restent dehors. -->
@@ -52,39 +116,19 @@
 
 <!-- ─── Ouverture ─────────────────────────────────────────── -->
 <header class="band band-violet hero" id="haut">
-  <nav class="pill-nav" aria-label="Navigation principale">
-    <a class="logo" href="#haut" aria-label="Calandix, accueil">
-      <img src="img/calandix-logo.webp" width="640" height="103" alt="">
-    </a>
-    <div class="nav-links">
-      <a href="#budget">Budget</a>
-      <a href="#prestataires">Prestataires</a>
-      <a href="#creators">Pour les pros</a>
-      <a href="#tarifs">Tarifs</a>
-      <a href="#faq">FAQ</a>
-    </div>
-    <div class="nav-cta">
-      <a class="ghost" href="#demo">Se connecter</a>
-      <a class="btn btn-cta btn-sm" href="#demo">Organiser gratuitement</a>
-    </div>
-    <button class="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
-  </nav>
 
   <div class="balloons" aria-hidden="true" data-speed="clamp(0.6)"></div>
 
   <div class="wrap hero-grid" id="contenu">
     <div class="hero-copy" data-speed="clamp(1.15)">
       <p class="eyebrow">Côte d’Ivoire · Fêtes &amp; événements</p>
-      <h1 class="display split">Le budget parfait pour <em class="script">célébrer</em>.</h1>
-      <p class="lead">Mariage, anniversaire, baby shower ou séminaire : budget, prestataires vérifiés, invités et équipe, tout votre événement au même endroit.</p>
+      <h1 class="display split">Organiser un événement <em class="script">inoubliable</em></h1>
+      <p class="lead">Créez votre budget, trouvez les meilleurs prestataires, invitez vos proches et suivez chaque étape depuis une seule application.</p>
       <div class="hero-actions">
-        <a class="btn btn-cta" href="#demo">Organiser gratuitement</a>
-        <a class="btn-link" href="#creators">Je suis prestataire <span aria-hidden="true">→</span></a>
+        <a class="btn btn-cta" href="#demo">Organiser<span class="wide-only">gratuitement</span></a>
+        <a class="btn btn-outline" href="#creators">Je suis prestataire</a>
       </div>
-      <div class="community">
-        <span class="faces" aria-hidden="true"><img decoding="async" width="200" height="200" src="img/avatar_1.webp" alt=""><img decoding="async" loading="lazy" width="200" height="200" src="img/avatar_2.webp" alt=""><img decoding="async" loading="lazy" width="200" height="200" src="img/avatar_3.webp" alt=""><img decoding="async" loading="lazy" width="200" height="200" src="img/avatar_4.webp" alt=""></span>
-        <p>Plus de <b>1.2k utilisateurs</b> nous font déjà confiance.</p>
-      </div>
+      <a class="scroll-down" href="#budget" aria-label="Descendre vers la suite de la page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12l7 7 7-7"/></svg></a>
     </div>
 
     <div class="hero-visual" data-speed="clamp(0.88)">
@@ -266,19 +310,23 @@
   <div class="wrap split-2">
     <div>
       <p class="eyebrow ink">Mon prochain event</p>
-      <h2 class="h-xl split">Essayez-la ici, tout de suite.</h2>
-      <p class="body-l ink-soft">L’application tourne dans le téléphone à côté. Saisissez n’importe quel e-mail et mot de passe : les données sont fictives.</p>
+      <h2 class="h-xl split">Essayez-la, <em class="script">tout de suite</em>.</h2>
+      <p class="body-l ink-soft">Ouvrez la démo et découvrez l’application. Saisissez n’importe quel e-mail et mot de passe : les données sont fictives.</p>
       <div class="hero-actions">
         <a class="btn btn-cta btn-violet" data-demo href="#">Ouvrir la démo en plein écran</a>
         <a class="btn btn-ink-ghost" data-demo-pro href="#">Version prestataire</a>
       </div>
     </div>
-    <div class="phone phone-live" data-spin data-phone3d="calm">
+    <div class="phone-stage">
+      <span class="stage-disc" aria-hidden="true"></span>
+      <span class="stage-chip chip-a" aria-hidden="true">Budget en FCFA</span>
+      <span class="stage-chip chip-b" aria-hidden="true">Mobile Money</span>
+      <div class="phone phone-live" data-spin data-phone3d="calm">
       <div class="screen">
-        <iframe title="Démo de l’application Calandix" data-demo-frame loading="lazy"></iframe>
-        <div class="phone-fallback">La démo n’est pas joignable pour le moment.<br>Réessayez dans quelques minutes.</div>
+        <img class="screen-shot" src="img/phone/bienvenue.webp" width="860" height="1864" alt="Page de bienvenue de l’application Calandix : « On gère le budget. Vous célébrez. »" decoding="async" loading="lazy">
       </div>
       <img class="phone-frame" src="img/phone/frame.webp" width="1043" height="2156" alt="" aria-hidden="true" decoding="async" loading="lazy">
+      </div>
     </div>
   </div>
 </section>
@@ -288,7 +336,7 @@
   <div class="wrap">
     <div class="center-head">
       <p class="eyebrow">Pour les prestataires et agences</p>
-      <h2 class="h-xl split">Votre agence événementielle, dans une seule app.</h2>
+      <h2 class="h-xl split">Votre agence événementielle, dans <em class="script">une seule app</em>.</h2>
       <p class="body-l">Recevez des demandes qualifiées, envoyez des devis détaillés et suivez vos reversements, sans courir après les acomptes.</p>
     </div>
     <div class="pro-grid">
@@ -345,7 +393,7 @@
 <!-- ─── FAQ ───────────────────────────────────────────────── -->
 <section class="band band-violet" id="faq" data-edge="scallop">
   <div class="wrap narrow">
-    <h2 class="h-xl center split">Questions ? Réponses.</h2>
+    <h2 class="h-xl center split">Questions ? <em class="script">Réponses</em>.</h2>
     <div class="faq">
       <details><summary>Mon argent est-il en sécurité ?</summary><p>L’acompte est conservé jusqu’à la validation de la prestation, puis reversé au prestataire. En cas de litige, les fonds restent bloqués le temps de l’examen.</p></details>
       <details><summary>Quels moyens de paiement sont acceptés ?</summary><p>Orange Money, MTN MoMo, Wave, Moov Money et la carte bancaire. Les frais sont affichés avant de payer.</p></details>
@@ -415,7 +463,10 @@
 </section>
 
 <footer class="footer">
-  <div class="wrap foot-brand" aria-hidden="true"><img decoding="async" loading="lazy" src="img/calandix-logo-light.webp" width="1600" height="258" alt=""></div>
+  <div class="wrap foot-brand" aria-hidden="true">
+    <svg class="logo-cards" viewBox="0 0 324 321"><rect class="c-mango" x="5" y="0" width="313" height="200" rx="60"/><rect class="c-coral" x="5" y="60" width="313" height="200" rx="60"/><g transform="rotate(10.7 162 205)"><rect class="c-violet" x="11" y="110" width="302" height="191" rx="56"/></g></svg>
+    <img class="logo-word" decoding="async" loading="lazy" src="img/calandix-wordmark-light.webp" width="1261" height="258" alt="">
+  </div>
   <img decoding="async" loading="lazy" width="384" height="384" class="foot-mascot" src="img/mascots/green_peace.webp" alt="" aria-hidden="true">
   <div class="wrap foot-grid">
     <div>
@@ -448,7 +499,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollSmoother.min.js"></script>
-<script defer src="app.js?v=38"></script>
+<script defer src="app.js?v=41"></script>
 <!-- Téléphones 3D : three.js en module, chargé à part. Sans lui, la maquette plate reste. -->
 <script type="importmap">{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/" } }</script>
 <script type="module" src="phone3d.js?v=1"></script>

@@ -224,13 +224,14 @@
     // Ouverture : navigation, titre mot à mot, texte, puis le téléphone qui
     // monte, le badge qui tourne et les bulles de discussion.
     gsap.timeline({ defaults: { duration: .8, ease: 'power3.out' } })
-      .fromTo(inHero('.pill-nav'), { autoAlpha: 0, y: -24 }, { autoAlpha: 1, y: 0, duration: .6, clearProps: 'transform' }, 0)
+      // La barre se place par transformation (CSS) : seule son opacité est animée.
+      .fromTo('.pill-nav', { autoAlpha: 0 }, { autoAlpha: 1, duration: .6 }, 0)
       .fromTo(inHero('.eyebrow'), { autoAlpha: 0, y: 16 }, { autoAlpha: 1, y: 0 }, .15)
       .fromTo(title.querySelectorAll('.w > span'), { y: 0, yPercent: 105 }, {
         yPercent: 0, duration: .9, ease: 'power4.out', stagger: .07,
         onComplete: () => title.classList.add('in'),
       }, .25)
-      .fromTo(inHero('.lead, .hero-actions, .community'), { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, stagger: .1 }, '-=.45')
+      .fromTo(inHero('.lead, .hero-actions, .scroll-down'), { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, stagger: .1 }, '-=.45')
       .addLabel('visual', .35)
       .fromTo(phone, { autoAlpha: 0, y: dist * 2.5 }, {
         autoAlpha: 1, y: 0, duration: 1.1, ease: 'expo.out', clearProps: 'transform',
@@ -352,6 +353,39 @@
     check();
   }
 
+  /* ── Barre de navigation fixe ────────────────────────── */
+  // Sous le bandeau en haut de page, collée en haut dès qu'on défile.
+  const navBar = document.querySelector('.pill-nav');
+  const banner = document.querySelector('.banner');
+  const placeNav = () => navBar.style.setProperty('--nav-shift', `${banner.offsetHeight + 4}px`);
+  const stickNav = () => navBar.classList.toggle('scrolled', scrollY > 8);
+  let navQueued = false;
+  addEventListener('scroll', () => {
+    if (navQueued) return;
+    navQueued = true;
+    requestAnimationFrame(() => { navQueued = false; stickNav(); });
+  }, { passive: true });
+  addEventListener('resize', placeNav);
+  placeNav();
+  stickNav();
+
+  /* ── Menu « Calandix » ───────────────────────────────── */
+  const whyMenu = document.querySelector('.nav-why');
+  const closeWhy = () => { whyMenu.open = false; };
+  document.addEventListener('click', (e) => {
+    // Un clic ailleurs, ou sur un lien du menu, le referme.
+    if (!whyMenu.contains(e.target) || e.target.closest('.why-panel a')) closeWhy();
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeWhy(); });
+
+  /* ── Logo du pied de page : s'empile à son arrivée ───── */
+  const footLogo = document.querySelector('.foot-brand');
+  new IntersectionObserver((entries, obs) => {
+    if (!entries[0].isIntersecting) return;
+    footLogo.classList.add('in');
+    obs.disconnect();
+  }, { threshold: .4 }).observe(footLogo);
+
   /* ── Ancres internes ─────────────────────────────────── */
   // Avec ScrollSmoother, le contenu est déplacé par transformation : le saut
   // natif vers une ancre tombe à côté, on passe par smoother.scrollTo().
@@ -361,7 +395,7 @@
     const target = document.getElementById(a.getAttribute('href').slice(1));
     if (!target) return;
     e.preventDefault();
-    smoother.scrollTo(target, true, 'top top');
+    smoother.scrollTo(target, true, 'top 86px');
     history.replaceState(null, '', a.getAttribute('href'));
     // Le focus suit (lien d'évitement, navigation au clavier).
     if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
@@ -376,14 +410,6 @@
   document.querySelectorAll('[data-demo]').forEach((a) => { a.href = app('/connexion'); a.target = '_blank'; a.rel = 'noopener'; });
   document.querySelectorAll('[data-demo-pro]').forEach((a) => { a.href = app('/connexion?profil=creator'); a.target = '_blank'; a.rel = 'noopener'; });
   document.querySelectorAll('[data-app-link]').forEach((a) => { a.href = app(a.dataset.appLink); a.target = '_blank'; a.rel = 'noopener'; });
-
-  const frame = document.querySelector('[data-demo-frame]');
-  if (frame) {
-    const shell = frame.closest('.phone-live');
-    fetch(base.replace('/#', '/'), { mode: 'no-cors', cache: 'no-store' })
-      .then(() => { frame.src = app('/connexion'); })
-      .catch(() => shell.classList.add('offline'));
-  }
 
   /* ── Petit message en bas d'écran ──────────────────────── */
   const toast = (msg) => {
@@ -469,6 +495,6 @@
     nav.classList.toggle('open', open);
   });
   nav.querySelectorAll('.nav-links a').forEach((a) => a.addEventListener('click', () => {
-    burger.setAttribute('aria-expanded', 'false'); nav.classList.remove('open');
+    burger.setAttribute('aria-expanded', 'false'); nav.classList.remove('open'); closeWhy();
   }));
 })();
