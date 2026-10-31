@@ -32,3 +32,9 @@ rm -rf dist
 mkdir -p dist
 cp -r landing/. dist/
 cp -r build/web dist/app
+
+# Adresses publiques (canonique, partage, sitemap) : celle du site déployé.
+# Netlify fournit URL : le domaine principal dès qu'il est branché.
+if [ -n "${URL:-}" ]; then
+  sed -i "s#https://eventa.ci#${URL%/}#g" dist/index.html dist/robots.txt dist/sitemap.xml
+fi

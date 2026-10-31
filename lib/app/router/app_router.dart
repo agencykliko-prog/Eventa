@@ -119,8 +119,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         }
         return null;
       }
-      // La politique de confidentialité reste lisible, connecté ou non.
-      if (loc == Routes.privacy || loc == Routes.terms) return null;
+      // Les pages d'information restent lisibles, connecté ou non.
+      if (loc == Routes.privacy || loc == Routes.terms || loc == Routes.about) {
+        return null;
+      }
       final public =
           loc == Routes.onboarding ||
           loc.startsWith(Routes.signIn) ||

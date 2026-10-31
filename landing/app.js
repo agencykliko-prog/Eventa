@@ -54,7 +54,10 @@
     img.addEventListener('animationend', () => img.classList.remove('jump', 'swap'));
   });
   // Toutes les poses en cache : les changements sont instantanés.
-  Object.values(poses).flat().forEach((n) => { const i = new Image(); i.src = src(n); });
+  addEventListener('load', () => setTimeout(() => {
+    if (navigator.connection?.saveData) return;
+    Object.values(poses).flat().forEach((n) => { const i = new Image(); i.src = src(n); });
+  }, 2500), { once: true });
 
   // Les mascottes se penchent vers le pointeur.
   let px = innerWidth / 2, py = innerHeight / 3, leanQueued = false;
